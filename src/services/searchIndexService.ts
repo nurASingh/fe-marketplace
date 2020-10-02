@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const SEARCH_API_PATH = process.env.VUE_APP_SEARCH_INDEX
+const SEARCH_API_PATH = process.env.VUE_APP_RADICLE_API + '/index'
 const PROJECT_ID = process.env.VUE_APP_PROJECT_ID || ''
 
 const taxonomy = {

@@ -28,7 +28,7 @@ function __pushcode() {
   rsync -aP -e "ssh  -p 7019" $PATH_DEPLOY/* bob@$SERVER:/var/www/dcmarket
 }
 
-BUILD_PATH=../loopbomb-dev/fe-lsat
+BUILD_PATH=../fe-lsat
 __build
 cp $BUILD_PATH/dist/lsat-entry*.js $PATH_DEPLOY/.
 
