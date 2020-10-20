@@ -119,8 +119,9 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
-  background-color: #000;
-  color: #ffffff;
+  background-color: #fff;
+  color: #000;
+  font-size: 1rem;
 }
 
 ::-webkit-input-placeholder { /* Edge */
@@ -137,8 +138,29 @@ body {
 }
 
 .dropdown-menu {
-  background-color: #000 !important;
-  border: 1pt solid #fff;
+  min-width: 10rem;
+  padding: 0.5rem 0;
+  margin: 0.125rem 0 0;
+  font-size: 1rem;
+  color: #707070;
+  text-align: left;
+  list-style: none;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.15);
+  border-radius: 0.25rem;
+}
+
+.dropdown-menu-wide ul {
+  min-width: 25rem !important;
+}
+
+.dropdown-item {
+  color: #212121 !important;
+}
+
+.nav-link {
+  color: #fff !important;
 }
 
 .footer{
@@ -149,14 +171,14 @@ body {
   padding: 0;
 }
 h1 {
-  font-size: 17px;
+  font-size: 24px;
   font-weight: 700;
   letter-spacing: 0px;
   text-transform: capitalize;
   opacity: 1;
 }
 h2 {
-  font-size: 36px;
+  font-size: 17px;
   font-weight: 200;
   letter-spacing: 0px;
   text-transform: capitalize;
@@ -177,7 +199,7 @@ h4 {
 }
 p {
   text-align: left;
-  font-size: 12px;
+  font-size: 18px;
   font-weight: 300;
   letter-spacing: 0px;
   opacity: 1;

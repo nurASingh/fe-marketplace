@@ -1,32 +1,72 @@
 <template>
 <div class="d-flex justify-content-center">
-<b-navbar type="dark" variant="dark" class="my-nav mx-0 px-5" style="width: 100%;">
+<b-navbar :style="bannerImage" toggleable="lg" variant="transparent" class="my-nav mx-0 px-5" style="width: 100%;">
 
-  <b-navbar-brand href="#"><router-link to="/" class="navbar-brand">Risidio Auctions</router-link></b-navbar-brand>
+  <b-navbar-brand href="#"><router-link to="/" class="navbar-brand"><img :src="logo" alt="risidio-logo"/></router-link></b-navbar-brand>
   <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
-  <b-collapse id="nav-collapse" is-nav class="bg-dark">
+  <b-collapse id="nav-collapse" is-nav>
     <!-- Right aligned nav items -->
-    <b-navbar-nav class="mx-auto">
-      <b-nav-form>
-        <b-form-input v-model="query"  size="sm" style="width: 500px" class="mr-sm-2" placeholder=""></b-form-input>
-        <b-button @click.prevent="doSearch" variant="outline-primary" size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
-      </b-nav-form>
-    </b-navbar-nav>
-    <b-navbar-nav class="ml-auto">
-      <b-nav-item-dropdown class="v-text ml-3" right v-if="loggedIn" no-caret>
+    <b-navbar-nav class="">
+      <b-nav-item-dropdown caret>
+        <!-- Using 'button-content' slot -->
+        <template v-slot:button-content class="text-danger">
+          <span>Gallery</span>
+        </template>
+        <b-dropdown-item>Type of Collectables</b-dropdown-item>
+        <b-dropdown-item>All</b-dropdown-item>
+        <b-dropdown-item>Popular</b-dropdown-item>
+        <b-dropdown-item>On Sale</b-dropdown-item>
+        <b-dropdown-item>On Auction</b-dropdown-item>
+        <b-dropdown-item>On Offer</b-dropdown-item>
+        <b-dropdown-item>Recently Added</b-dropdown-item>
+      </b-nav-item-dropdown>
+      <b-nav-item>Collections</b-nav-item>
+      <b-nav-item>Artists</b-nav-item>
+      <b-nav-item-dropdown caret class="dropdown-menu-wide">
         <!-- Using 'button-content' slot -->
         <template v-slot:button-content>
-          <i class="fas fa-bars"></i>
+          <span class="text-white">Applications</span>
         </template>
-        <b-dropdown-item>{{ username }}</b-dropdown-item>
+        <div class="row">
+          <div class="col-6">
+            <b-dropdown-item>Type of Collectables</b-dropdown-item>
+            <b-dropdown-item>All</b-dropdown-item>
+            <b-dropdown-item>Popular</b-dropdown-item>
+            <b-dropdown-item>On Sale</b-dropdown-item>
+            <b-dropdown-item>On Auction</b-dropdown-item>
+            <b-dropdown-item>On Offer</b-dropdown-item>
+            <b-dropdown-item>Recently Added</b-dropdown-item>
+          </div>
+          <div class="col-6">
+            <b-dropdown-item>Type of Collectables</b-dropdown-item>
+            <b-dropdown-item>All</b-dropdown-item>
+            <b-dropdown-item>Popular</b-dropdown-item>
+            <b-dropdown-item>On Sale</b-dropdown-item>
+            <b-dropdown-item>On Auction</b-dropdown-item>
+            <b-dropdown-item>On Offer</b-dropdown-item>
+            <b-dropdown-item>Recently Added</b-dropdown-item>
+          </div>
+        </div>
+      </b-nav-item-dropdown>
+      <b-nav-item class="text-success">Become a Contributer</b-nav-item>
+    </b-navbar-nav>
+    <b-navbar-nav class="ml-auto">
+      <b-nav-item>How It Works</b-nav-item>
+      <b-nav-item>About Risidio</b-nav-item>
+      <b-nav-item>Help</b-nav-item>
+      <b-nav-item-dropdown class="text-white ml-3" right v-if="loggedIn" no-caret>
+        <!-- Using 'button-content' slot -->
+        <template v-slot:button-content>
+          <b-avatar class="bg-info"></b-avatar>
+        </template>
+        <b-dropdown-item><span>{{ username }}</span></b-dropdown-item>
         <b-dropdown-divider></b-dropdown-divider>
-        <b-dropdown-item v-if="eligible"><a href="#" class="my-4 btn text-white btn-lg bg-danger " style="" @click.prevent="claimFreeCredits">Claim Free Credits</a></b-dropdown-item>
-        <b-dropdown-item v-if="showAdmin || isDev"><router-link to="/my-sessions"><i class="far fa-play-circle"></i> My Sessions</router-link></b-dropdown-item>
-        <b-dropdown-item><router-link :to="marketplaceUrl"><i class="far fa-play-circle"></i> Marketplace</router-link></b-dropdown-item>
-        <b-dropdown-item><router-link to="/startLoop"><i class="far fa-play-circle"></i> Play</router-link></b-dropdown-item>
-        <b-dropdown-item><router-link to="/buyCredits"><i class="far fa-play-circle"></i> Buy Credits</router-link></b-dropdown-item>
-        <b-dropdown-item><router-link class="text-dark" to="/my-items"><i class="far fa-folder-open"></i> My Loops</router-link></b-dropdown-item>
+        <b-dropdown-item><span>Balance: {{ balance }}</span></b-dropdown-item>
+        <b-dropdown-item><span>Addr: {{ stxAddress }}</span></b-dropdown-item>
+        <b-dropdown-divider></b-dropdown-divider>
+        <b-dropdown-item><router-link to="/app-admin"><i class="far fa-play-circle"></i> Connect Project</router-link></b-dropdown-item>
+        <b-dropdown-item><router-link to="/my-items"><i class="far fa-folder-open"></i> My Collectibles</router-link></b-dropdown-item>
         <b-dropdown-item><span @click="logout()"><i class="fas fa-sign-out-alt"></i> Logout</span></b-dropdown-item>
       </b-nav-item-dropdown>
       <b-nav-item @click.prevent="startLogin()" href="#" v-else>Login</b-nav-item>
@@ -37,40 +77,67 @@
 </template>
 
 <script>
+import { APP_CONSTANTS } from '@/app-constants'
+
 export default {
   name: 'MainNavbar',
   components: {
   },
   data () {
     return {
-      query: null
+      query: null,
+      logo: require('@/assets/img/Group 15980.svg')
     }
   },
   methods: {
-    doSearch () {
-      if (this.$route.name !== 'Marketplace') {
-        this.$router.push('/marketplace')
-      }
-      this.$store.dispatch('searchStore/search', this.query + '*')
-    },
     logout () {
-      this.$store.dispatch('authStore/startLogout').then(() => {
-        localStorage.clear()
-        sessionStorage.clear()
-        this.$router.push('/')
-        this.$emit('closeMenu')
-      })
+      this.$emit('updateEventCode', { eventCode: 'connect-logout' })
     },
     startLogin () {
-      this.$emit('showConnect', { connectCode: 'login' })
+      this.$emit('updateEventCode', { eventCode: 'connect-login' })
     }
   },
   computed: {
+    content () {
+      const content = this.$store.getters['contentStore/getHomepage']
+      return content
+    },
+    bannerImage () {
+      if (this.$route.name === 'homepage') {
+        return ''
+      }
+      const content = this.$store.getters['contentStore/getHomepage']
+      if (!content) {
+        return
+      }
+      return {
+        padding: '0 0 0 0',
+        height: '128px',
+        width: '100%',
+        'background-repeat': 'no-repeat',
+        'background-image': `url(${content.marketplace_image.url})`,
+        'background-position': 'center center',
+        '-webkit-background-size': 'cover',
+        '-moz-background-size': 'cover',
+        '-o-background-size': 'cover',
+        'background-size': 'cover',
+        opacity: 1
+      }
+    },
     showAdmin () {
-      return this.$store.state.authStore.myProfile.showAdmin || location.origin.indexOf('local') > -1
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      return profile.showAdmin || location.origin.indexOf('local') > -1
+    },
+    balance () {
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      return (profile && profile.wallet) ? profile.wallet.balance : 0
+    },
+    stxAddress () {
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      return (profile && profile.wallet) ? profile.wallet.keyInfo.address : 'n/a'
     },
     username () {
-      const profile = this.$store.state.authStore.myProfile
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
       if (!profile) {
         return 'unknown'
       } else if (profile.name && profile.name.length > 0) {
@@ -82,12 +149,12 @@ export default {
       }
     },
     avatar () {
-      const myProfile = this.$store.getters['authStore/getMyProfile']
-      if (myProfile.loggedIn) {
-        if (myProfile.avatarUrl) {
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      if (profile.loggedIn) {
+        if (profile.avatarUrl) {
           return (
             '<img style="width: 30px; height: 30px; border-radius: 20px;" src="' +
-            myProfile.avatarUrl +
+            profile.avatarUrl +
             '"/>'
           )
         } else {
@@ -98,25 +165,20 @@ export default {
       }
     },
     loggedIn () {
-      const myProfile = this.$store.getters['authStore/getMyProfile']
-      return myProfile.loggedIn
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      return profile.loggedIn
     }
   }
 }
 </script>
 
-<style scoped>
-.my-nav {
-  height: 55px;
-  margin: 0 1rem 0 1rem;
+<style lang="scss">
+@import "@/assets/scss/custom.scss";
+.dropdown-item:hover, .dropdown-item:focus {
+    text-decoration: none;
+    background-color: $info !important;
 }
-.v-text {
-  font-family: 'Roboto', sans-serif;
-  font-weight: 200;
-  font-size: 1.7rem;
+.dropdown-toggle::after {
+  color: $success;
 }
-.v-image {
-  height: 30px;
-}
-
 </style>

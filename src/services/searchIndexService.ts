@@ -1,27 +1,6 @@
 import axios from 'axios'
 
-const SEARCH_API_PATH = process.env.VUE_APP_RADICLE_API + '/index'
-const PROJECT_ID = process.env.VUE_APP_PROJECT_ID || ''
-
-const taxonomy = {
-  keywords: ['contemporary', 'modern', 'outsider', 'political', 'bauhaus', 'impressionism', 'noir', 'cartoon', 'illustration', 'grafitti'],
-  media: [
-    { label: 'Digital Image', value: 'image' },
-    { label: 'Digital Sound', value: 'sound' },
-    { label: 'Digital Video', value: 'video' },
-    { label: 'Jewellery', value: 'jewellery' },
-    { label: 'Painting', value: 'painting' },
-    { label: 'Photography', value: 'photography' },
-    { label: 'Print', value: 'print' },
-    { label: 'Sculpture', value: 'sculpture' }
-  ],
-  saleTypes: [
-    { label: 'Buy Now', value: 'buyNow', soid: 1 },
-    { label: 'Make Offer', value: 'makeOffer', soid: 3 },
-    { label: 'In Auction', value: 'inAuction', soid: 2 },
-    { label: 'Listing', value: 'listing', soid: 0 }
-  ]
-}
+const SEARCH_API_PATH = process.env.VUE_APP_API_RISIDIO + '/index'
 
 /**
  *  The service is a client to the brightblock sever side grpc client.
@@ -37,30 +16,26 @@ const searchIndexService = {
     })
   },
 
-  addRecord: function (objType: string, indexable: { domain: string; projectId: string; objType: string; keywords: never[]; privacy: string; saleData: { soid: number; amount: number; fiatCurrency: string; reserve: number }; metaData: { medium: string; saleType: string; saleAmount: number; saleCurrency: string; saleReserve: number }; medium: string }) {
+  addRecord: function (objType: string, project: any) {
     return new Promise(function (resolve, reject) {
+      const indexable: any = {}
       indexable.domain = location.hostname
-      indexable.projectId = PROJECT_ID
+      indexable.owner = project.owner
+      indexable.title = project.name
+      indexable.description = project.description
+      indexable.projectId = project.contractAddress + '-' + project.contractName
+      indexable.imageUrl = project.logo
       indexable.objType = objType
-      if (indexable.keywords && !Array.isArray(indexable.keywords)) {
-        indexable.keywords = []
+      if (project.keywords && !Array.isArray(project.keywords)) {
+        indexable.keywords = ['digital', 'collectible', 'project']
       }
       if (!indexable.privacy) {
         indexable.privacy = 'public'
       }
-      const saleType = taxonomy.saleTypes[0]
-      if (indexable.saleData) {
-        let saleType = taxonomy.saleTypes.find(saleType => saleType.soid === indexable.saleData.soid)
-        if (!saleType) {
-          saleType = { label: '', soid: 0, value: '0' }
-        }
-      }
+      project.saleType = { label: '', soid: 0, value: '0' }
       indexable.metaData = {
-        medium: indexable.medium,
-        saleType: saleType.value,
-        saleAmount: (indexable.saleData) ? indexable.saleData.amount : 0,
-        saleCurrency: (indexable.saleData) ? indexable.saleData.fiatCurrency : 'EUR',
-        saleReserve: (indexable.saleData) ? indexable.saleData.reserve : 0
+        contractAddress: project.contractAddress,
+        contractName: project.contractName
       }
       axios.post(SEARCH_API_PATH + '/addRecord', indexable).then((result) => {
         resolve(result)
@@ -132,9 +107,28 @@ const searchIndexService = {
       })
     })
   },
+  findProjects: function () {
+    return new Promise(function (resolve, reject) {
+      const url = SEARCH_API_PATH + '/findByObject/project'
+      axios.get(url).then((result) => {
+        resolve(result.data.details)
+      }).catch((error) => {
+        reject(new Error('Unable index record: ' + error))
+      })
+    })
+  },
   findByDomainAndObjectTypeAndTitleOrDescriptionOrCategoryOrKeyword: function (domain: string, objType: string, term: string, query: string) {
     return new Promise(function (resolve, reject) {
       axios.get(SEARCH_API_PATH + '/findByDomainAndObjectTypeAndTitleOrDescriptionOrCategoryOrKeyword/' + domain + '/' + objType + '/' + term + '?q=' + query).then((result) => {
+        resolve(result.data.details)
+      }).catch((error) => {
+        reject(new Error('Unable index record: ' + error))
+      })
+    })
+  },
+  findArtworkById: function (query: string) {
+    return new Promise(function (resolve, reject) {
+      axios.get(SEARCH_API_PATH + '/findArtworkByTitleOrDescriptionOrCategoryOrKeyword/id' + '?q=' + query).then((result) => {
         resolve(result.data.details)
       }).catch((error) => {
         reject(new Error('Unable index record: ' + error))

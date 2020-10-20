@@ -1,15 +1,23 @@
 <template>
-<div class="mx-2">
-  <div class="" :style="sectionDimensions">
-    <div class="">
-      <div class="container">
-        <h1>Marketplace</h1>
-        <div class="row">
-          <div class="col-3" v-for="(result, index) in resultSet" :key="index">
-            <img width="100%" :src="result.assetUrl"/>
-            <div class="tagline"><span class="tagline1">{{result.title}}</span></div>
-            <div class="tagline">{{created(result.created)}}</div>
-          </div>
+<div class="row">
+  <div class="col-3">
+    <h3>Projects</h3>
+    <div v-for="(result, index) in projects" :key="index">
+      <img width="150px" :src="result.assetUrl"/>
+      <div class="">
+        <!-- <router-link class="mr-3" to="/app-admin"><b-icon icon="eye"></b-icon></router-link> -->
+        <a href="#" @click.prevent="findByProjectId(result.projectId)">{{result.title}}</a>
+      </div>
+    </div>
+  </div>
+  <div class="col-9">
+    <h1>Marketplace</h1>
+    <div class="row">
+      <div class="col-3" v-for="(result, index) in resultSet" :key="index">
+        <div v-if="result">
+          <router-link :to="'/assets/' + result.assetHash"><img width="100%" :src="result.assetUrl"/></router-link>
+          <div class="tagline"><span class="tagline1">{{result.title}}</span></div>
+          <div class="tagline">{{created(result.created)}}</div>
         </div>
       </div>
     </div>
@@ -19,6 +27,7 @@
 
 <script>
 import moment from 'moment'
+import { APP_CONSTANTS } from '@/app-constants'
 
 export default {
   name: 'Marketplace',
@@ -31,25 +40,24 @@ export default {
   },
   mounted () {
     this.loading = false
-    this.$store.dispatch('searchStore/findByProjectId', 'loopbomb').then((results) => {
-      this.results = results
-    })
-    // this.$store.dispatch('searchStore/findByProjectId').then((results) => {
-    //  this.results = results
-    // })
+    this.findByProjectId('loopbomb')
   },
   methods: {
+    findByProjectId (projectId) {
+      this.$store.dispatch('searchStore/findByProjectId', projectId).then((results) => {
+        this.results = results
+      })
+    },
     created (created) {
       return moment(created).format('YYYY-MM-DD HH:mm:SS')
     }
   },
   computed: {
     resultSet () {
-      return this.$store.getters['searchStore/getResultSet']
+      return this.$store.getters[APP_CONSTANTS.KEY_SEARCH_RESULTS]
     },
-    sectionDimensions () {
-      // const height = this.$store.getters['searchStore/getResultSet']
-      return 'min-height: 100vh; width: auto;'
+    projects () {
+      return this.$store.getters[APP_CONSTANTS.KEY_PROJECTS]
     }
   }
 }

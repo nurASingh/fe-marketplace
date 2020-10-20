@@ -1,59 +1,157 @@
 <template>
-<div class="mx-2">
-  <div class="" :style="sectionDimensions">
-    <div class="">
-      <h1>Homepage</h1>
-      <div class="">
-        <div class="" style="position: relative; top: 60px;">
-          <img width="100%" :src="blocks"/>
-          <div class="ml-4 tagline">Risidio <span class="tagline1">Stacking</span></div>
+<div v-if="content" >
+  <div :style="bannerImage" class="pt-5 d-flex align-items-center flex-column">
+    <div class="my-auto text-white text-center">
+        <prismic-rich-text
+          :field="content.header"
+        />
+        <div>
+          <b-button class="mr-3"><span v-html="content.header_buttons[0].button1[0].text"></span></b-button>
+          <b-button class="ml-3"><span v-html="content.header_buttons[0].button2[0].text"></span></b-button>
         </div>
-        <div class="mb-5" style="position: relative; top: 70px; min-height: 350px; ">
-          <div class="ml-4 my-4 level1">
-            Earn Bitcoin while contributing to the development of the user owned internet
-          </div>
-          <div class="ml-4 my-4 mb-5 level2">
-            Get stacking with tools and services that help you take part and understand the process.
-          </div>
-        </div>
-        <div class="mt-5">
-          <div class=" ml-4 my-4 d-flex justify-content-around">
-            <b-button to="/get-stacks" variant="info" class="text-white button1" style="width: 49%;">Start Stacking</b-button>
-            <b-button v-scroll-to="{ element: '#nextSection', duration: 2500 }" variant="outline-info" class="text-info button2" style="width: 49%;">Learn more</b-button>
-          </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-center main-search">
+    <div class="text-center no-wrap">
+      <b-input-group>
+        <template v-slot:append>
+          <a href="#"  @click.prevent="doSearch"><b-icon icon="search"/></a>
+        </template>
+        <template v-slot:prepend>
+          <b-dropdown caret>
+            <!-- Using 'button-content' slot -->
+            <template v-slot:button-content>
+              <span>Search by</span>
+            </template>
+            <b-dropdown-item></b-dropdown-item>
+            <b-dropdown-item>Application</b-dropdown-item>
+            <b-dropdown-item>Artist</b-dropdown-item>
+            <b-dropdown-item>Collection</b-dropdown-item>
+            <b-dropdown-item>On Auction</b-dropdown-item>
+            <b-dropdown-item>On Sale</b-dropdown-item>
+          </b-dropdown>
+        </template>
+        <b-form-input v-model="query"  size="sm" style="width: 500px" class="mr-sm-2" placeholder=""></b-form-input>
+      </b-input-group>
+    </div>
+  </div>
+  <div class="mt-5 d-flex justify-content-center main-search">
+    <div><a class="mx-2" :class="isActive('discover')" href="#" @click.prevent="category = 'discover'">Discover</a></div>
+    <div><a class="mx-2" :class="isActive('popular')" href="#" @click.prevent="category = 'popular'">Popular</a></div>
+    <div><a class="mx-2" :class="isActive('collections')" href="#" @click.prevent="category = 'collections'">Collections</a></div>
+    <div><a class="mx-2" :class="isActive('artists')" href="#" @click.prevent="category = 'artists'">Artists</a></div>
+    <div><a class="mx-2" :class="isActive('applications')" href="#" @click.prevent="category = 'applications'">Applications</a></div>
+  </div>
+
+  <div class="container" v-if="content" :key="componentKey">
+    <div class="row mb-4">
+      <div v-for="(item, index) in block1Items" :key="index" class="col-md-3 col-sm-4 col-xs-6" >
+        <div @mouseleave="hoverOut()" @mouseover="hoverIn(index)" class="mb-4">
+          <img width="100%" :src="item.b1_image1.url"/>
+          <div class="desc-text" v-if="dHover[index]" v-html="item.b1_text1[0].text"></div>
         </div>
       </div>
     </div>
   </div>
-  <div class="mx-auto" id="nextSection">
-    <div class="mx-auto text-left mb-5" style="max-width: 450px;">
-      <div class="level1 mb-5">How to get started with Stacking</div>
-      <div class="text-center level2"><img :src="stxIcon"/></div>
-      <div class="level2">Delegation means you can take part even if your below the 0.002% threshold.</div>
-      <div class="text-center level2"><img :src="lckIcon"/></div>
-      <div class="level2">To get stacker register a bitcoin address and lock up some STX.</div>
-      <div class="text-center level2"><img :src="btcIcon"/></div>
-      <div class="level2">We remove the barriers and provide transparency.</div>
-      <div class="level2">Don't trust - verify!</div>
-      <div class="level2 border-top pt-4">For a full tutorial or any questions, watch our videos below, or reach out to us.</div>
+  <div class="d-flex justify-content-center my-5">
+    <div class="text-center no-wrap">
+      <b-button>See more collectables</b-button>
     </div>
-    <div class="d-flex justify-content-center mb-5">
-      <div class="">
-        <iframe :style="videoDimensions" src="https://www.youtube.com/embed/ECMQdapdNyM" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+
+  <div class="container d-flex justify-content-between my-5">
+    <div class="text-center no-wrap">&nbsp;</div>
+    <div class="text-center no-wrap">
+      <h1>Featured Applications</h1>
+    </div>
+    <div class="text-right no-wrap">
+      <a class="text-info">View all applications <b-icon icon="caret-right-fill"/></a>
+    </div>
+  </div>
+  <div class="container my-5" v-if="content">
+    <div class="row">
+      <div v-for="(item, index1) in block2Items" :key="index1" class="col-md-3 col-sm-6 col-xs-12" >
+        <div class="mb-4">
+          <img width="50%" :src="content.block1[index1].b1_image1.url"/>
+          <img width="50%" :src="content.block1[index1 + 1].b1_image1.url"/>
+          <img width="100%" :src="item.app_image.url"/>
+          <div class="text-center" v-html="item.app_text[0].text"></div>
+        </div>
       </div>
     </div>
-    <div class="d-flex justify-content-center mb-5">
-      <div class="">
-        <iframe :style="videoDimensions" src="https://www.youtube.com/embed/oJCys8ESqEc" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+  </div>
+<!--
+  <div class="container d-flex justify-content-between my-5">
+    <div class="text-center no-wrap">&nbsp;</div>
+    <div class="text-center no-wrap">
+      <h1>Featured Collections</h1>
+    </div>
+    <div class="text-right no-wrap">
+      <a class="text-info">View all collections <b-icon icon="caret-right-fill"/></a>
+    </div>
+  </div>
+  <div class="container my-5" v-if="content">
+    <div class="row">
+      <div v-for="(item, index2) in block1Items" :key="index2" class="col-md-3 col-sm-6 col-xs-12" >
+        <div class="mb-4">
+          <img width="50%" :src="content.block1[index2].b1_image1.url"/>
+          <img width="50%" :src="content.block1[index2 + 1].b1_image1.url"/>
+          <img width="50%" :src="content.block1[index2 + 2].b1_image1.url"/>
+          <img width="50%" :src="content.block1[index2 + 3].b1_image1.url"/>
+          <div class="text-center" v-html="item.app_text[0].text"></div>
+        </div>
       </div>
     </div>
-    <div class="d-flex justify-content-center mb-5">
-      <div class="">
-        <iframe :style="videoDimensions" src="https://www.youtube.com/embed/otAh4OTToDY" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>      </div>
+  </div>
+-->
+
+  <div class="container d-flex justify-content-between my-5">
+    <div class="text-center no-wrap">&nbsp;</div>
+    <div class="text-center no-wrap">
+      <h1>Featured Artists</h1>
     </div>
-    <div class="d-flex justify-content-center mb-5">
-      <div class="">
-        <iframe :style="videoDimensions" src="https://www.youtube.com/embed/ymPB-P_7LE8" frameborder="1" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+    <div class="text-right no-wrap">
+      <a class="text-info">View all artists <b-icon icon="caret-right-fill"/></a>
+    </div>
+  </div>
+  <div class="container my-5" v-if="content">
+    <div class="row">
+      <div v-for="(item, index3) in block1Items" :key="index3" class="col-md-3 col-sm-6 col-xs-12" >
+        <div class="mb-4" v-if="index3 < 4">
+          <img width="100%" :src="item.b1_image1.url"/>
+          <div class="desc-text" v-html="item.b1_text1[0].text"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="pt-5 d-flex align-items-center flex-column mx-5" style="height: 70vh; border-top: 1pt solid #d3e7e8;">
+    <div class="my-auto text-dark text-center">
+      <prismic-rich-text
+        :field="content.info"
+      />
+    </div>
+  </div>
+  <!-- trading section with background -->
+  <div :style="tradingImage" class="pt-5 d-flex align-items-center flex-column">
+    <div class="my-auto text-white text-center">
+        <prismic-rich-text
+          :field="content.trading[0].trading_info"
+        />
+        <div>
+          <b-button class="mr-3"><span v-html="content.trading_buttons[0].button1[0].text"></span></b-button>
+          <b-button class="ml-3"><span v-html="content.trading_buttons[0].button2[0].text"></span></b-button>
+        </div>
+    </div>
+  </div>
+  <!-- news and blog section -->
+  <div class="container">
+    <div class="row">
+      <div v-for="(item, index2) in content.blogs" :key="index2" class="col-md-3 col-sm-6 col-xs-12" >
+        <div class="mb-4">
+          <img width="100%" :src="item.image1.url"/>
+          <div class="text-center" v-html="item.words[0].text"></div>
+        </div>
       </div>
     </div>
   </div>
@@ -69,94 +167,119 @@ export default {
   },
   data () {
     return {
-      blocks: require('@/assets/img/Block_Graphic.svg'),
-      btcIcon: require('@/assets/img/BTC_icon.svg'),
-      stxIcon: require('@/assets/img/STX_icon.svg'),
-      lckIcon: require('@/assets/img/Lock_icon.svg')
+      query: null,
+      componentKey: 0,
+      category: 'discover',
+      dHover: [false, false, false, false, false, false, false, false, false, false, false, false]
     }
   },
   mounted () {
     this.loading = false
   },
   methods: {
-    background () {
-      return {
-        border: '1pt solid #fff',
-        padding: '0 0 0 0',
-        'margin-right': '100px',
-        height: 'auto',
-        width: '100%',
-        'background-repeat': 'no-repeat',
-        'background-image': `url(${this.blocks})`,
-        'background-position': 'center center',
-        '-webkit-background-size': 'cover',
-        '-moz-background-size': 'cover',
-        '-o-background-size': 'contain',
-        'background-size': 'cover',
-        'background-color': '#000',
-        opacity: 1
+    hoverIn (index) {
+      this.dHover[index] = true
+      this.componentKey += 1
+    },
+    hoverOut () {
+      this.dHover = [false, false, false, false, false, false, false, false, false, false, false, false]
+      this.componentKey += 1
+    },
+    doSearch () {
+      if (this.$route.name !== 'marketplace') {
+        this.$router.push('/marketplace')
       }
+      this.$store.dispatch('searchStore/findBySearchTerm', this.query)
+    },
+    isActive (category) {
+      if (this.category === category) {
+        return 'text-success'
+      }
+      return ''
+    },
+    explore () {
+      this.$router.push('/marketplace')
     }
   },
   computed: {
+    bannerImage () {
+      const content = this.$store.getters['contentStore/getHomepage']
+      if (!content) {
+        return
+      }
+      return {
+        'z-index': -1,
+        padding: '0 0 0 0',
+        height: '378px',
+        width: '100%',
+        position: 'relative',
+        top: '-78px',
+        'background-repeat': 'no-repeat',
+        'background-image': `url(${content.image.url})`,
+        'background-position': 'center center',
+        '-webkit-background-size': 'cover',
+        '-moz-background-size': 'cover',
+        '-o-background-size': 'cover',
+        'background-size': 'cover',
+        opacity: 1
+      }
+    },
+    tradingImage () {
+      const content = this.$store.getters['contentStore/getHomepage']
+      if (!content) {
+        return
+      }
+      return {
+        'z-index': -1,
+        padding: '0 0 0 0',
+        height: '378px',
+        width: '100%',
+        position: 'relative',
+        top: '-78px',
+        'background-repeat': 'no-repeat',
+        'background-image': `url(${content.trading[0].trading_image.url})`,
+        'background-position': 'center center',
+        '-webkit-background-size': 'cover',
+        '-moz-background-size': 'cover',
+        '-o-background-size': 'cover',
+        'background-size': 'cover',
+        opacity: 1
+      }
+    },
     sectionDimensions () {
       const height = this.$store.getters[APP_CONSTANTS.KEY_SECTION_HEIGHT]
       return 'min-height: ' + height + 'px; width: auto;'
     },
-    videoDimensions () {
-      let width = this.$store.getters[APP_CONSTANTS.KEY_SECTION_WIDTH]
-      width = window.innerWidth - 200
-      const height = width * 432 / 768
-      const maxHeight = 750 * 432 / 768
-      const minHeight = 320 * 432 / 768
-      return 'height: ' + height + 'px; width: ' + width + 'px; max-width: 750px; max-height: ' + maxHeight + 'px;' + 'px; min-width: 320px; min-height: ' + minHeight + 'px;'
+    block2Items () {
+      const content = this.$store.getters['contentStore/getHomepage']
+      return content.block2
+    },
+    block1Items () {
+      const content = this.$store.getters['contentStore/getHomepage']
+      return content.block1
+    },
+    content () {
+      const content = this.$store.getters['contentStore/getHomepage']
+      return content
     }
   }
 }
 </script>
 <style lang="scss" scoped>
 @import "@/assets/scss/custom.scss";
-.video-container {
-  max-width: 768px;
-  max-height: 432px;
-  margin: 0 auto;
-}
-.tagline {
-  font-size: 28px;
-  font-weight: 300;
+.main-search {
   position: relative;
-  top: -35px;
+  top: -100px;
 }
-.tagline1 {
-  font-weight: 600;
-  color: $yellow;
-}
-.level1 {
-  font-size: 28px;
-  font-weight: 600;
-  color: #FFFFFF;
-}
-.level2 {
-  font-size: 16px;
-  font-weight: 300;
-  margin-top: 20px;
-}
-.button1 {
-  width: 158px;
-  height: 40px;
-  font-weight: 600;
+.desc-text {
+  position: absolute;;
+  width: 256px;
+  bottom: 23px;
+  background: $success;
+  padding: 5px;
+  height: 56px;
   background: #50B1B5 0% 0% no-repeat padding-box;
-  border-radius: 22px !important;
-}
-.button2 {
-  width: 158px;
-  height: 40px;
-  background: #323131 0% 0% no-repeat padding-box !important;
-  border: 0px solid #50B1B5 !important;
-  border-radius: 22px !important;
-  font-weight: 600;
-}
-.button2:hover {
-  color: #fff !important;
+  opacity: 0.95;
+  color: #fff;
 }
 </style>

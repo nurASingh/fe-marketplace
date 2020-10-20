@@ -4,11 +4,11 @@ set -e;
 export DEPLOYMENT=$1
 PATH_DEPLOY=../radsoc/volumes/www/production/dcmarket
 mkdir -p $PATH_DEPLOY
-export SERVER=hume.brightblock.org
-export BUILDER=build-prod
-if [ "$DEPLOYMENT" == "stag" ]; then
-  SERVER=zeno.brightblock.org;
-  BUILDER=build-stag
+export SERVER=zeno.brightblock.org
+export BUILDER=build-stag
+if [ "$DEPLOYMENT" == "prod" ]; then
+  SERVER=hume.brightblock.org;
+  BUILDER=build-prod
 fi
 
 printf "\n-----------------------------------------------------------------------------------------------------\n";
