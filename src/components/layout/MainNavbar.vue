@@ -2,12 +2,12 @@
 <div class="d-flex justify-content-center">
 <b-navbar :style="bannerImage" toggleable="lg" variant="transparent" class="my-nav mx-0 px-5" style="width: 100%;">
 
-  <b-navbar-brand href="#"><router-link to="/" class="navbar-brand"><img :src="logo" alt="risidio-logo"/></router-link></b-navbar-brand>
+  <b-navbar-brand href="/"><img :src="logo" alt="risidio-logo"/></b-navbar-brand>
   <b-navbar-toggle target="nav-collapse"></b-navbar-toggle>
 
   <b-collapse id="nav-collapse" is-nav>
     <!-- Right aligned nav items -->
-    <b-navbar-nav class="">
+    <b-navbar-nav class="align-items-center">
       <b-nav-item-dropdown caret>
         <!-- Using 'button-content' slot -->
         <template v-slot:button-content class="text-danger">
@@ -51,7 +51,7 @@
       </b-nav-item-dropdown>
       <b-nav-item class="text-success">Become a Contributer</b-nav-item>
     </b-navbar-nav>
-    <b-navbar-nav class="ml-auto">
+    <b-navbar-nav class="ml-auto align-items-center">
       <b-nav-item>How It Works</b-nav-item>
       <b-nav-item>About Risidio</b-nav-item>
       <b-nav-item>Help</b-nav-item>
@@ -185,5 +185,16 @@ export default {
   height: 100vh;
   width: 232px;
   background: #fff;
+}
+a.navbar-brand {
+  height: 80px;
+  width: auto;
+}
+nav .dropdown-menu {
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  box-shadow: 0px 3px 6px #00000029;
+  border-radius: 17px;
+  padding: 20px;
+  font-size: 12px;
 }
 </style>

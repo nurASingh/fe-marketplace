@@ -259,6 +259,9 @@ a:hover {
   text-decoration: none;
   color: $cyan;;
 }
+a:focus {
+  outline: none;
+}
 .nav-text > a {
   text-align: left;
   font-size: 12px;

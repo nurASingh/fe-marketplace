@@ -213,7 +213,7 @@ export default {
         height: '378px',
         width: '100%',
         position: 'relative',
-        top: '-78px',
+        top: '-96px',
         'background-repeat': 'no-repeat',
         'background-image': `url(${content.image.url})`,
         'background-position': 'center center',
