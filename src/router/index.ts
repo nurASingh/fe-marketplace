@@ -21,7 +21,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/app-admin',
     name: 'app-admin',
-    components: { default: ApplicationAdministration, header: MainNavbar }
+    components: { default: ApplicationAdministration, footer: MainFooter }
   },
   {
     path: '/connect-app',

@@ -30,7 +30,7 @@ export default new Vuex.Store({
     getProfile: state => {
       if (window.location.href.startsWith('http://localhost')) {
         return {
-          loggedIn: false,
+          loggedIn: true,
           environment: 'localhost',
           username: 'harold'
         }

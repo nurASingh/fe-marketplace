@@ -57,7 +57,7 @@
       <b-nav-item>Help</b-nav-item>
       <b-nav-item-dropdown class="text-white ml-3" right v-if="loggedIn" no-caret>
         <!-- Using 'button-content' slot -->
-        <template v-slot:button-content>
+        <template v-slot:button-content class="v-nav-user">
           <b-avatar class="bg-info"></b-avatar>
         </template>
         <b-dropdown-item><span>{{ username }}</span></b-dropdown-item>
@@ -180,5 +180,10 @@ export default {
 }
 .dropdown-toggle::after {
   color: $success;
+}
+.v-nav-user {
+  height: 100vh;
+  width: 232px;
+  background: #fff;
 }
 </style>
