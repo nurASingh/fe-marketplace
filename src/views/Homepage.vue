@@ -212,8 +212,6 @@ export default {
         padding: '0 0 0 0',
         height: '378px',
         width: '100%',
-        position: 'relative',
-        top: '-96px',
         'background-repeat': 'no-repeat',
         'background-image': `url(${content.image.url})`,
         'background-position': 'center center',

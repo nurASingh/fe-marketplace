@@ -8,7 +8,7 @@
   <b-collapse id="nav-collapse" is-nav>
     <!-- Right aligned nav items -->
     <b-navbar-nav class="align-items-center">
-      <b-nav-item-dropdown caret>
+      <b-nav-item-dropdown caret class="pl-2">
         <!-- Using 'button-content' slot -->
         <template v-slot:button-content class="text-danger">
           <span>Gallery</span>
@@ -49,14 +49,13 @@
           </div>
         </div>
       </b-nav-item-dropdown>
-      <b-nav-item class="text-success">Become a Contributer</b-nav-item>
+      <b-nav-item class="text-info">Become a Contributer</b-nav-item>
     </b-navbar-nav>
     <b-navbar-nav class="ml-auto align-items-center">
       <b-nav-item>How It Works</b-nav-item>
       <b-nav-item>About Risidio</b-nav-item>
       <b-nav-item>Help</b-nav-item>
-      <b-nav-item-dropdown class="text-white ml-3" right v-if="loggedIn" no-caret>
-        <!-- Using 'button-content' slot -->
+      <!-- <b-nav-item-dropdown class="text-white ml-3" right v-if="loggedIn" no-caret>
         <template v-slot:button-content class="v-nav-user">
           <b-avatar class="bg-info"></b-avatar>
         </template>
@@ -68,7 +67,24 @@
         <b-dropdown-item><router-link to="/app-admin"><i class="far fa-play-circle"></i> Connect Project</router-link></b-dropdown-item>
         <b-dropdown-item><router-link to="/my-items"><i class="far fa-folder-open"></i> My Collectibles</router-link></b-dropdown-item>
         <b-dropdown-item><span @click="logout()"><i class="fas fa-sign-out-alt"></i> Logout</span></b-dropdown-item>
-      </b-nav-item-dropdown>
+      </b-nav-item-dropdown>-->
+        <b-nav-item v-if="loggedIn">
+          <div v-b-toggle.login-sidebar v-html="avatar"></div>
+          <b-sidebar id="login-sidebar" right bg-variant="white" width="232px">
+            <div class="">
+              <div class="login-sidebar__username login-sidebar--border-bottom"><div>Hi, <span class="text-info">{{ username }}</span></div></div>
+              <div class="login-sidebar__item-group login-sidebar--border-bottom">
+                <div>Balance: {{ balance }}</div>
+                <div>Addr: {{ stxAddress }}</div>
+              </div>
+              <div class="login-sidebar__item-group login-sidebar--border-bottom">
+                <div><router-link to="/app-admin"><i class="far fa-play-circle"></i> Connect Project</router-link></div>
+                <div><router-link to="/my-items"><i class="far fa-folder-open"></i> My Collectibles</router-link></div>
+              </div>
+              <div class="login-sidebar__item-group"><span @click="logout()"><i class="fas fa-sign-out-alt"></i> Logout</span></div>
+            </div>
+          </b-sidebar>
+        </b-nav-item>
       <b-nav-item @click.prevent="startLogin()" href="#" v-else>Login</b-nav-item>
     </b-navbar-nav>
   </b-collapse>
@@ -120,8 +136,7 @@ export default {
         '-webkit-background-size': 'cover',
         '-moz-background-size': 'cover',
         '-o-background-size': 'cover',
-        'background-size': 'cover',
-        opacity: 1
+        'background-size': 'cover'
       }
     },
     showAdmin () {
@@ -174,12 +189,37 @@ export default {
 
 <style lang="scss">
 @import "@/assets/scss/custom.scss";
+
+.navbar {
+  background-color: #000;
+  position: fixed !important;
+  right: 0;
+  left: 0;
+  top: 0;
+}
+#nav-collapse ul li:not(:last-child) {
+  margin-right: 30px;
+}
+#nav-collapse ul li a {
+  padding: 0;
+}
+#nav-collapse ul:first-child li.text-info a {
+  color: $info !important;
+  font-weight: 700;
+}
+.dropdown-menu li:first-child {
+  margin-bottom: 30px;
+}
+.dropdown-menu li:not(:last-child):not(:first-child) {
+  margin-bottom: 15px;
+}
 .dropdown-item:hover, .dropdown-item:focus {
     text-decoration: none;
-    background-color: $info !important;
+    color: $info !important;
+    background-color: #fff !important;
 }
 .dropdown-toggle::after {
-  color: $success;
+  color: $info;
 }
 .v-nav-user {
   height: 100vh;
@@ -196,5 +236,40 @@ nav .dropdown-menu {
   border-radius: 17px;
   padding: 20px;
   font-size: 12px;
+}
+
+#login-sidebar:hover {
+  cursor: default;
+}
+#login-sidebar header {
+  padding: 11.5px;
+}
+#login-sidebar header button {
+  margin: 0 0 0 auto;
+  font-size: 1px;
+}
+#login-sidebar header button svg {
+  font-size: 15px;
+}
+.login-sidebar--border-bottom {
+  border-bottom: 1px solid #E3E3E3;
+}
+.login-sidebar__username {
+  height: 82px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.login-sidebar__username span {
+  font-weight: 700;
+}
+.login-sidebar__username div {
+  margin-bottom: 38px;
+}
+.login-sidebar__item-group {
+  padding: 30px 40px;
+}
+.login-sidebar__item-group div:not(:last-child) {
+  margin-bottom: 20px;
 }
 </style>

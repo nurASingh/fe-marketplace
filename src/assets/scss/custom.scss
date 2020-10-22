@@ -246,6 +246,9 @@ button {
 button:hover {
   color: white 0% 0% no-repeat padding-box;
 }
+button:focus {
+  outline: none;
+}
 .vueperslides__arrows button:hover {
   background: transparent;
 }
