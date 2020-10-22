@@ -314,6 +314,19 @@ a:hover {
   opacity: 1;
 }
 
+.app-footer {
+  position: relative;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  background-color: red;
+  color: white;
+  text-align: center;
+}
+.admin-app {
+  background: #F5F5F5;
+  min-height: 70vh;
+}
 // FOOTER ON MOBILE
 @media only screen and (max-width: 515px) {
   .footerContent h2 {
@@ -373,8 +386,8 @@ a:hover {
   font-weight: 600;
 }
 .modal-content {
-  background-color: #000;
-  border: 1pt solid #fff;
+  background-color: #fff;
+  border: 1pt solid #000;
 }
 .r-notifs {
   // Style of the notification itself 

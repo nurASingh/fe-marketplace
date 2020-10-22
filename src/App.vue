@@ -1,8 +1,13 @@
 <template>
   <div :key="componentKey" id="app" v-if="loaded" :style="sectionDimensions">
-    <router-view @updateEventCode="updateEventCode" name="header"/>
-    <router-view @updateEventCode="updateEventCode"  class=""/>
-    <router-view name="footer"/>
+    <div v-if="!adminPage">
+      <router-view @updateEventCode="updateEventCode" name="header" style="width: 100%; z-index: 200; position: absolute; top: 0;"/>
+    </div>
+    <div v-else>
+      <router-view v-if="showNavbar" @updateEventCode="updateEventCode" name="header" style="width: 100%; z-index: 200; position: absolute; top: 0;"/>
+    </div>
+    <router-view @updateEventCode="updateEventCode" @toggle-on-navbar="toggleOnNavbar" @toggle-off-navbar="toggleOffNavbar"/>
+    <router-view name="footer" :class="(adminPage) ? 'app-footer' : ''"/>
     <lsat-entry :paymentConfig="configuration" @paymentEvent="paymentEvent"></lsat-entry>
     <notifications :duration="10000" classes="r-notifs" position="bottom right" width="30%"/>
   </div>
@@ -19,12 +24,20 @@ export default {
   data () {
     return {
       results: null,
+      adminPage: false,
+      showNavbar: false,
       loaded: false,
       componentKey: 0,
       data: null
     }
   },
+  watch: {
+    '$route' () {
+      this.adminPage = this.$route.name.indexOf('-app') > -1
+    }
+  },
   mounted () {
+    this.adminPage = this.$route.name.indexOf('-app') > -1
     const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
     this.$store.dispatch('projectStore/fetchProjects', profile)
     this.$store.dispatch('searchStore/findProjects')
@@ -49,6 +62,12 @@ export default {
     })
   },
   methods: {
+    toggleOnNavbar () {
+      this.showNavbar = true
+    },
+    toggleOffNavbar () {
+      this.showNavbar = false
+    },
     updateEventCode (data) {
       this.$store.commit(APP_CONSTANTS.SET_EVENT_CODE, data)
       this.data = data

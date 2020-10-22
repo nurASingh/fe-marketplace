@@ -2,11 +2,13 @@ import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import Homepage from '../views/Homepage.vue'
 import ApplicationAdministration from '../views/ApplicationAdministration.vue'
-import ConnectApplicationWithContract from '../views/ConnectApplicationWithContract.vue'
-import ConnectApplicationWithoutContract from '../views/ConnectApplicationWithoutContract.vue'
+import MyApplications from '../views/MyApplications.vue'
+import MyApplication from '../views/MyApplication.vue'
 import ConnectApplication from '../views/ConnectApplication.vue'
+import CustomiseContract from '../views/CustomiseContract.vue'
 import AssetDetails from '../views/AssetDetails.vue'
 import Marketplace from '../views/Marketplace.vue'
+import FourOFour from '../views/FourOFour.vue'
 import MainNavbar from '@/components/layout/MainNavbar.vue'
 import MainFooter from '@/components/layout/MainFooter.vue'
 
@@ -19,29 +21,34 @@ const routes: Array<RouteConfig> = [
     components: { default: Homepage, header: MainNavbar, footer: MainFooter }
   },
   {
-    path: '/app-admin',
-    name: 'app-admin',
-    components: { default: ApplicationAdministration, footer: MainFooter }
+    path: '/admin-app',
+    name: 'admin-app',
+    components: { default: ApplicationAdministration, header: MainNavbar, footer: MainFooter }
+  },
+  {
+    path: '/my-apps',
+    name: 'my-apps',
+    components: { default: MyApplications, header: MainNavbar, footer: MainFooter }
+  },
+  {
+    path: '/my-app/:projectId',
+    name: 'my-app',
+    components: { default: MyApplication, header: MainNavbar, footer: MainFooter }
   },
   {
     path: '/connect-app',
-    name: 'connect-app',
-    components: { default: ConnectApplication, header: MainNavbar }
+    name: 'connect-app-create',
+    components: { default: ConnectApplication, header: MainNavbar, footer: MainFooter }
   },
   {
-    path: '/connect-app-with-contract',
-    name: 'connect-app-with-contract',
-    components: { default: ConnectApplicationWithContract, header: MainNavbar }
+    path: '/connect-app/:projectId',
+    name: 'connect-app-edit',
+    components: { default: ConnectApplication, header: MainNavbar, footer: MainFooter }
   },
   {
-    path: '/connect-app-with-contract/:contractId',
-    name: 'connect-app-with-contract-edit',
-    components: { default: ConnectApplicationWithContract, header: MainNavbar }
-  },
-  {
-    path: '/connect-app-without-contract',
-    name: 'connect-app-without-contract',
-    components: { default: ConnectApplicationWithoutContract, header: MainNavbar }
+    path: '/customise-contract/:projectId',
+    name: 'customise-app-contract',
+    components: { default: CustomiseContract, header: MainNavbar, footer: MainFooter }
   },
   {
     path: '/assets/:assetHash',
@@ -60,6 +67,15 @@ const routes: Array<RouteConfig> = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/Marketplace.vue')
+  },
+  {
+    path: '/404',
+    name: '404',
+    components: { default: FourOFour, header: MainNavbar, footer: MainFooter }
+  },
+  {
+    path: '*',
+    redirect: { path: '/404' }
   }
 ]
 

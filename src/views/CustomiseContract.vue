@@ -1,88 +1,79 @@
 <template>
-<div>
-  <h1>Connect Your DC Application</h1>
-  <b-form>
-    <p>Step 1: Enter Contract Address</p>
-    <div class="row">
-      <div class="col-md-6 col-sm-12">
-        <div class="mb-2">
-          <div class="mb-2">Contract Address <a href="#" @click.prevent="useMyAddress()">(use my address)</a></div>
-          <b-input v-model="params.contractAddress"></b-input>
+<div class="row">
+  <side-menu class="col-3 mr-0 pr-0 pt-5"/>
+  <div class="col-9 pt-5 admin-app" v-if="loaded">
+    <title-bar class="container" v-on="$listeners"/>
+    <div class="container" @click="$emit('toggle-off-navbar')">
+      <div class="row">
+        <div class="col-4">
+          <h1>Deploy Contract</h1>
+          <p style="font-size: 10px;">Contract id: {{projectId}} <router-link class="mr-3" :to="'/connect-app/' + projectId"><b-icon icon="pencil"/></router-link></p>
+          <b-form>
+            <div class="mt-5">
+                <div class="mb-2">
+                  <div class="mb-2">Contract Owner <a href="#" @click.prevent="useMyAddress()">(use my address)</a></div>
+                  <b-input v-model="params.contractOwner"></b-input>
+                </div>
+                <div class="mb-2">
+                  <div class="mb-2">Mint Price (micro stacks)</div>
+                  <b-input v-model="params.mintPrice"></b-input>
+                </div>
+                <div class="mb-2">
+                  <div class="mb-2">Base URI</div>
+                  <b-input v-model="params.callBack"></b-input>
+                  <div class="mt-2 d-flex justify-content-end">
+                    <a href="#" class="wallet-use text-white"><span class="text-light">
+                      Provide your own callback or use our stateless open source search index
+                      to store and retrieve asset meta data.
+                      To add a record to our search index post an indexable model to:
+                      http://api.risidio.local/index/addRecord see our <a href="https://github.com/radicleart/ms-search" target="_blank">github repo</a> for more details.
+                      To retrieve a record (given the asset hash) get from
+                      https://api.risidio.com/index/v1/asset/:asset-hash</span></a>
+                  </div>
+                </div>
+                <p>Please check your contract carefully - click deploy when happy</p>
+                <div class="my-3">
+                  <b-button variant="info" class="btn-lg mr-3" style="text-transform: capitalize; font-size: 14px;" @click.prevent="deployContract()">Deploy Contract</b-button>
+                  <b-button variant="danger" class="btn-lg" style="text-transform: capitalize; font-size: 14px;" to="/admin-app">Back</b-button>
+                </div>
+              </div>
+          </b-form>
         </div>
-      </div>
-      <div class="col-md-6 col-sm-12">
-        <div class="mb-2">
-          <div class="mb-2">Contract Name</div>
-          <b-input v-model="params.contractName"></b-input>
+          <div class="col-8">
+            <standard-application-contract :contractSourceDisplay="contractSourceDisplay"/>
+          </div>
         </div>
-      </div>
     </div>
-    <div class="mt-5" v-if="showStep2">
-      <p>Step 2: Set Contract Parameters</p>
-      <div class="row mt-4">
-        <div class="col-md-6 col-sm-12">
-          <div class="mb-2">
-            <div class="mb-2">Contract Owner <a href="#" @click.prevent="useMyAddress()">(use my address)</a></div>
-            <b-input v-model="params.contractOwner"></b-input>
-          </div>
-        </div>
-        <div class="col-md-6 col-sm-12">
-          <div class="mb-2">
-            <div class="mb-2">Mint Price (micro stacks)</div>
-            <b-input v-model="params.mintPrice"></b-input>
-          </div>
-        </div>
-        <div class="col-md-6 col-sm-12">
-          <div class="mb-2">
-            <div class="mb-2">Base URI</div>
-            <b-input v-model="params.callBack"></b-input>
-            <div class="mt-2 d-flex justify-content-end">
-              <a href="#" class="wallet-use text-white"><span class="text-light">
-                Provide your own callback or use our stateless open source search index
-                to store and retrieve asset meta data.
-                To add a record to our search index post an indexable model to:
-                http://api.risidio.local/index/addRecord see our <a href="https://github.com/radicleart/ms-search" target="_blank">github repo</a> for more details.
-                To retrieve a record (given the asset hash) get from
-                https://api.risidio.com/index/v1/asset/:asset-hash</span></a>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div>
-        <p>Please check your contract carefully - click deploy when happy</p>
-        <div class="my-3">
-          <b-button variant="info" class="btn-lg mr-3" style="text-transform: capitalize; font-size: 14px;" @click.prevent="deployContract()">Deploy Contract</b-button>
-          <b-button variant="danger" class="btn-lg" style="text-transform: capitalize; font-size: 14px;" to="/connect-app">Back</b-button>
-        </div>
-        <standard-application-contract :contractSourceDisplay="contractSourceDisplay"/>
-      </div>
-    </div>
-  </b-form>
+  </div>
 </div>
 </template>
 
 <script>
 import { APP_CONSTANTS } from '@/app-constants'
 import StandardApplicationContract from '@/components/admin/StandardApplicationContract'
+import SideMenu from '@/components/admin/SideMenu'
+import TitleBar from '@/components/admin/TitleBar'
 
 export default {
-  name: 'ConnectApplicationWithoutContract',
+  name: 'CustomiseContract',
   components: {
-    StandardApplicationContract
+    StandardApplicationContract,
+    SideMenu,
+    TitleBar
   },
   data () {
     return {
       feeAmount: 3000,
+      projectId: null,
       showContract: false,
-      loading: true,
+      loaded: false,
       nonce: 0,
       showStep2: false,
       params: {
         mintPrice: '100000',
         contractName: null,
-        contractOwner: 'STGPPTWJEZ2YAA7XMPVZ7EGKH0WX9F2DBNHTG5EY',
-        contractAddress: 'STGPPTWJEZ2YAA7XMPVZ7EGKH0WX9F2DBNHTG5EY',
-        callBack: 'https://api.risidio.com/index/v1/asset/'
+        contractOwner: 'owner',
+        callBack: 'https://your-callback-url'
       },
       // contractSourceDisplay: null,
       contractSource: `
@@ -144,41 +135,51 @@ export default {
     }
   },
   watch: {
+    /**
     params: {
       handler () {
         this.showStep2 = this.params.contractName && this.params.contractAddress
       },
       deep: true
     }
+    **/
   },
   mounted () {
-    // this.params.contractOwner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
-    // this.params.contractAddress = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
+    this.projectId = this.$route.params.projectId
+    this.$store.dispatch('projectStore/findProjectByProjectId', this.projectId).then((project) => {
+      if (!project) {
+        this.$router.push('/404')
+        return
+      }
+      this.project = project
+      this.loaded = true
+    })
   },
   methods: {
     useMyAddress: function () {
-      this.params.contractAddress = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
+      this.params.contractOwner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
     },
     validate: function () {
       let result = true
-      if (!this.params.contractAddress) {
-        this.$notify({ type: 'error', title: 'Project Details', text: 'Please enter the contract address of your contract' })
+      const mp = Number(this.params.mintPrice)
+      if (!this.params.mintPrice || isNaN(mp) || mp < 10000 || mp > 100000000) {
+        this.$notify({ type: 'error', title: 'Project Details', text: 'Please enter the mint price of your tokens (in micro stacks) between 0.001 and 100 stx' })
         result = false
       }
-      if (!this.params.contractName) {
-        this.$notify({ type: 'error', title: 'Project Details', text: 'Please enter the contract name of your contract' })
+      if (!this.params.callBack || !this.params.callBack.startsWith('https://')) {
+        this.$notify({ type: 'error', title: 'Project Details', text: 'Please enter a secure (https) callback url for your tokens - we append the asset hash to retrieve meta data.' })
         result = false
       }
-      if (!this.params.mintPrice) {
-        this.$notify({ type: 'error', title: 'Project Details', text: 'Please enter the mint price of your tokens (in micro stacks)' })
-        result = false
-      }
-      if (!this.params.callBack) {
-        this.$notify({ type: 'error', title: 'Project Details', text: 'Please enter the callback url for your tokens - we append the asset hash to retrieve meta data.' })
+      let tokenUrl
+      try {
+        tokenUrl = new URL(this.params.callBack)
+      } catch (e) {
+        tokenUrl = ''
         result = false
       }
       return result
     },
+    /**
     verifyContract: function () {
       if (!this.validate()) return
       let rep1 = '<span class="text-danger bg-white">' + this.params.contractOwner + '</span>'
@@ -189,7 +190,11 @@ export default {
       this.contractSourceDisplay = this.contractSourceDisplay.replaceAll('params.callBack', rep1)
       // this.showContract = !this.showContract
     },
+    **/
     deployContract: function () {
+      if (!this.validate()) {
+        return
+      }
       let source = this.contractSource.replaceAll('params.contractOwner', this.params.contractOwner)
       source = source.replaceAll('params.mintPrice', this.params.mintPrice)
       source = source.replaceAll('params.callBack', this.params.callBack)
@@ -197,14 +202,9 @@ export default {
         contractName: this.params.contractName,
         codeBody: source
       }
-
-      if (!this.validate()) {
-        return
-      }
-
       data.fee = this.feeAmount
       data.eventCode = 'connect-deploy-contract'
-      // this.$emit('updateEventCode', data)
+      this.$emit('updateEventCode', data)
       // this.$store.dispatch('authStore/deployContractBlockstack', data)
     }
   },
@@ -213,7 +213,6 @@ export default {
       return this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
     },
     contractSourceDisplay () {
-      if (!this.validate()) return
       let rep1 = '<span class="text-danger bg-white">' + this.params.contractOwner + '</span>'
       let contractSourceDisplay = this.contractSource.replaceAll('params.contractOwner', rep1)
       rep1 = '<span class="text-danger bg-white">' + this.params.mintPrice + '</span>'

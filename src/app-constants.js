@@ -9,5 +9,6 @@ export const APP_CONSTANTS = {
   KEY_PROFILE: 'getProfile',
   KEY_EVENT_CODE: 'getEventCode',
   SET_EVENT_CODE: 'setEventCode',
-  DISP_SAVE_PROJECT: 'projectStore/saveProject'
+  DISP_SAVE_PROJECT: 'projectStore/saveProject',
+  KEY_CONTRACT_DATA: 'stacksStore/getContractData'
 }
