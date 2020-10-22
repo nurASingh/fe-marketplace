@@ -5,7 +5,7 @@
     <div v-for="(result, index) in projects" :key="index">
       <img width="150px" :src="result.assetUrl"/>
       <div class="">
-        <!-- <router-link class="mr-3" to="/app-admin"><b-icon icon="eye"></b-icon></router-link> -->
+        <!-- <router-link class="mr-3" to="/admin-app"><b-icon icon="eye"></b-icon></router-link> -->
         <a href="#" @click.prevent="findByProjectId(result.projectId)">{{result.title}}</a>
       </div>
     </div>

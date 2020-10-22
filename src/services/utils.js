@@ -13,7 +13,7 @@ const utils = {
         const dataURL = canvas.toDataURL('image/png')
         const mimeType = dataURL.substring(dataURL.indexOf(':') + 1, dataURL.indexOf(';')) // => image/png
         const imageBuffer = dataUriToBuffer(dataURL)
-        resolve({ imageBuffer: imageBuffer, mimeType: mimeType })
+        resolve({ dataURL: dataURL, imageBuffer: imageBuffer, mimeType: mimeType })
       }
       img.src = url
     })

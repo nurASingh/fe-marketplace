@@ -1,6 +1,6 @@
 <template>
 <div v-if="content">
-  <footer class="text-white bg-secondary">
+  <footer id="footer" class="text-white bg-secondary">
     <div class="row text-center m-0 d-sm-flex d-none" style="height: 240px;">
       <div class="col-lg-4 col-md-3 d-md-block d-none" style="height: 240px;">
         <router-link to="/" class="pl-5 navbar-brand text-white" style="margin: 70px 0 0 0;"><img :src="logo" alt="risidio-logo" class="footer-logo"/></router-link>

@@ -3,6 +3,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import contentStore from './contentStore'
 import searchStore from './searchStore'
+import stacksStore from './stacksStore'
 import projectStore from './projectStore'
 
 Vue.use(Vuex)
@@ -11,7 +12,8 @@ export default new Vuex.Store({
   modules: {
     contentStore,
     searchStore,
-    projectStore
+    projectStore,
+    stacksStore
   },
   state: {
     apiKey: null,
@@ -32,7 +34,9 @@ export default new Vuex.Store({
         return {
           loggedIn: true,
           environment: 'localhost',
-          username: 'harold'
+          username: 'harold',
+          stxAddress: '1234567890',
+          superAdmin: true
         }
       } else {
         return state.myProfile

@@ -16,26 +16,17 @@ const searchIndexService = {
     })
   },
 
-  addRecord: function (objType: string, project: any) {
+  addRecord: function (project: any) {
     return new Promise(function (resolve, reject) {
-      const indexable: any = {}
-      indexable.domain = location.hostname
-      indexable.owner = project.owner
-      indexable.title = project.name
-      indexable.description = project.description
-      indexable.projectId = project.contractAddress + '-' + project.contractName
-      indexable.imageUrl = project.logo
-      indexable.objType = objType
+      const indexable: any = project
       if (project.keywords && !Array.isArray(project.keywords)) {
         indexable.keywords = ['digital', 'collectible', 'project']
       }
       if (!indexable.privacy) {
         indexable.privacy = 'public'
       }
-      project.saleType = { label: '', soid: 0, value: '0' }
-      indexable.metaData = {
-        contractAddress: project.contractAddress,
-        contractName: project.contractName
+      if (!indexable.metaData) {
+        indexable.metaData = {}
       }
       axios.post(SEARCH_API_PATH + '/addRecord', indexable).then((result) => {
         resolve(result)

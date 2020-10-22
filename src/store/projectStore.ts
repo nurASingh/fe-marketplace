@@ -2,6 +2,7 @@ import projectService from '@/services/projectService.js'
 import searchIndexService from '@/services/searchIndexService'
 import store from '.'
 import { APP_CONSTANTS } from '@/app-constants'
+import moment from 'moment'
 
 const projectStore = {
   namespaced: true,
@@ -28,21 +29,50 @@ const projectStore = {
         })
       })
     },
-    findProjectByContractId ({ state, commit }: any, contractId: string) {
+    findProjectByProjectId ({ state, commit }: any, projectId: string) {
       return new Promise(resolve => {
         const profile = store.getters[APP_CONSTANTS.KEY_PROFILE]
         let item = null
         if (state.rootFile) {
-          item = state.rootFile.projects.find(item => item.contractAddress + '-' + item.contractName === contractId)
+          item = state.rootFile.projects.find(item => item.projectId === projectId)
         }
         if (item) {
           resolve(item)
         } else {
           projectService.fetchProjects(profile).then((rootFile: any) => {
             commit('rootFile', rootFile)
-            const item = state.rootFile.projects.find(item => item.contractAddress + '-' + item.contractName === contractId)
+            const item = state.rootFile.projects.find(item => item.projectId === projectId)
             resolve(item)
           })
+        }
+      })
+    },
+    deleteProject ({ state, commit }: any, projectId: string) {
+      return new Promise(resolve => {
+        const profile = store.getters[APP_CONSTANTS.KEY_PROFILE]
+        if (!profile.superAdmin) {
+          resolve(false)
+          return
+        }
+        if (state.rootFile) {
+          const index = state.rootFile.projects.findIndex((o) => o.projectId === projectId)
+          if (index > -1) {
+            state.rootFile.projects.splice(index, 1)
+            searchIndexService.removeRecord('project', projectId).then(() => {
+              projectService.saveProject(state.rootFile).then((rootFile) => {
+                commit('rootFile', rootFile)
+                resolve(true)
+              }).catch(() => {
+                resolve(false)
+              })
+            }).catch(() => {
+              resolve(false)
+            })
+          } else {
+            resolve(false)
+          }
+        } else {
+          resolve(false)
         }
       })
     },
@@ -69,19 +99,36 @@ const projectStore = {
     },
     saveProject ({ state, commit }: any, data: any) {
       return new Promise((resolve, reject) => {
+        if (!data.project.contractName ||
+          !data.project.contractAddress ||
+          !data.project.title ||
+          !data.project.description) {
+          reject(new Error('Bad project data'))
+          return
+        }
         projectService.uploadProjectLogo(data.project.contractName, data.imageData).then((gaiaUrl: string) => {
-          data.project.logo = gaiaUrl
-          let index = state.rootFile.projects.findIndex((o) => o.contractName === data.project.contractName)
+          const project = {
+            domain: location.hostname,
+            imageUrl: gaiaUrl,
+            updated: moment({}).valueOf(),
+            projectId: data.project.contractAddress + '.' + data.project.contractName,
+            title: data.project.title,
+            description: data.project.description,
+            owner: data.project.owner,
+            objType: 'project'
+          }
+          let index = state.rootFile.projects.findIndex((o) => o.projectId === project.projectId)
           if (index < 0) {
-            state.rootFile.projects.splice(0, 0, data.project)
+            state.rootFile.projects.splice(0, 0, project)
             index = 0
           } else {
-            state.rootFile.projects.splice(index, 1, data.project)
+            state.rootFile.projects.splice(index, 1, project)
           }
           projectService.saveProject(state.rootFile).then((rootFile) => {
             commit('rootFile', rootFile)
-            searchIndexService.addRecord('project', state.rootFile.projects[index]).then((record) => {
-              resolve(record)
+            searchIndexService.addRecord(state.rootFile.projects[index]).then((result) => {
+              console.log(result)
+              resolve(project)
             }).catch((error) => {
               reject(error)
             })
