@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const SEARCH_API_PATH = process.env.VUE_APP_API_RISIDIO + '/index'
+const SEARCH_API_PATH = process.env.VUE_APP_API_SEARCH
 
 /**
  *  The service is a client to the brightblock sever side grpc client.

@@ -73,7 +73,7 @@ export default {
         mintPrice: '100000',
         contractName: null,
         contractOwner: 'owner',
-        callBack: 'https://your-callback-url'
+        callBack: 'https://nongible.com/nft/v1/assets/'
       },
       // contractSourceDisplay: null,
       contractSource: `

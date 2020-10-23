@@ -2,6 +2,7 @@
 <div>
     <div class="px-5"><p class="text-sm">My Dashboard</p></div>
     <div class="px-5"><p class="text-sm"><b-icon icon="person-fill"></b-icon> Account</p></div>
+    <div class="px-5" v-if="showSysLink"><p class="text-sm"><router-link to="/my-app-settings"><b-icon icon="code"></b-icon> System Settings</router-link></p></div>
     <div class="px-5 pb-4 mb-4 border-bottom">
       <p class="text-sm"><b-icon icon="wallet2"></b-icon> Wallet</p>
       <div class="ml-4 d-flex justify-content-between">
@@ -58,6 +59,10 @@ export default {
     balance () {
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
       return (profile && profile.wallet) ? profile.wallet.balance : 0
+    },
+    showSysLink () {
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      return (profile) ? profile.superAdmin : false
     }
   }
 }

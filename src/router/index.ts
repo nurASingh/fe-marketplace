@@ -3,6 +3,7 @@ import VueRouter, { RouteConfig } from 'vue-router'
 import Homepage from '../views/Homepage.vue'
 import ApplicationAdministration from '../views/ApplicationAdministration.vue'
 import MyApplications from '../views/MyApplications.vue'
+import SystemSettings from '../views/SystemSettings.vue'
 import MyApplication from '../views/MyApplication.vue'
 import ConnectApplication from '../views/ConnectApplication.vue'
 import CustomiseContract from '../views/CustomiseContract.vue'
@@ -24,6 +25,11 @@ const routes: Array<RouteConfig> = [
     path: '/admin-app',
     name: 'admin-app',
     components: { default: ApplicationAdministration, header: MainNavbar, footer: MainFooter }
+  },
+  {
+    path: '/my-app-settings',
+    name: 'my-app-settings',
+    components: { default: SystemSettings, header: MainNavbar, footer: MainFooter }
   },
   {
     path: '/my-apps',
