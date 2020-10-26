@@ -8,28 +8,27 @@
         <div class="pl-4">
           <p class="text-light">My Application</p>
           <div class="row my-5">
-            <div class="col-3">
+            <div class="col-4">
               <img width="250px" height="250px" :src="project.imageUrl"/>
             </div>
-            <div class="col-9">
+            <div class="col-8">
               <p>App Name: {{project.title}}</p>
-              <p>Contract Name: {{project.contractName}}</p>
-              <p>Contract Id: {{project.contractAddress}}</p>
+              <p>Contract Id: <br/><span style="font-size: 12px;">{{project.projectId}}</span></p>
               <p>Owner: {{project.owner}}</p>
-              <p>{{project.description}}</p>
+              <p>Description: {{project.description}}</p>
               <p>
                 <a href="#" class="mr-3" @click="openApp(project)">edit</a>
               </p>
             </div>
           </div>
-          <div class="text-light" v-if="contractData">Status: <a :href="'https://testnet-explorer.blockstack.org/txid/' + contractData" _target="blank">{{contractData}}</a></div>
+          <div class="text-light" v-if="contractData">Explorer: <a :href="'https://testnet-explorer.blockstack.org/txid/' + project.projectId" target="_blank">{{project.projectId}}</a></div>
           <div v-else>
             <div class="mb-5">
               <h2>Deploy a contract</h2>
-              <h4>Contract Id: {{projectId}}</h4>
+              <h4>Contract Id: <br/>{{project.projectId}}</h4>
               <p>Click 'I need a contract' to customise a smart contract template and deploy to the Stacks blockchain.
                 If you have a contract which conforms to the interface click 'I have a contract'.</p>
-              <b-button @click="connectContract()" variant="info" class="mt-3 mr-3 btn-lg" style="text-transform: capitalize; font-size: 14px;">I Have a Contract</b-button>
+              <b-button :to="'/upload-contract/' + project.projectId" variant="info" class="mt-3 mr-3 btn-lg" style="text-transform: capitalize; font-size: 14px;">I Have a Contract</b-button>
               <b-button :to="'/customise-contract/' + project.projectId" variant="warning" class="mt-3 btn-lg" style="text-transform: capitalize; font-size: 14px;">I Need a Contract</b-button>
             </div>
           </div>
@@ -71,8 +70,6 @@ export default {
       dims: { width: 250, height: 250 },
       project: {
         imageUrl: require('@/assets/img/Group 15980.svg'),
-        contractName: '',
-        contractAddress: '',
         mintPrice: '',
         title: '',
         description: ''
@@ -87,19 +84,14 @@ export default {
         return
       }
       this.project = project
-      this.project.contractName = project.projectId.split('.')[1]
-      this.project.contractAddress = project.projectId.split('.')[0]
       this.lookupContract()
       this.loaded = true
     })
   },
   methods: {
     lookupContract: function () {
-      const data = {
-        contractId: this.projectId
-      }
-      this.$store.dispatch('stacksStore/lookupContract', data).then((contract) => {
-        this.contract = contract
+      this.$store.dispatch('stacksStore/lookupContractInfo', this.projectId).then((contract) => {
+        this.contract = contract.interface
       }).catch(() => {
         // this.$notify({ type: 'error', title: 'Error', text: error })
       })

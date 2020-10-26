@@ -1,7 +1,7 @@
 <template>
   <div :key="componentKey" id="app" v-if="loaded" :style="sectionDimensions">
     <div v-if="!adminPage">
-      <router-view @updateEventCode="updateEventCode" name="header" style="width: 100%; z-index: 200; position: absolute; top: 0;"/>
+      <router-view @updateEventCode="updateEventCode" name="header" style="width: 100%; z-index: 200; position: relative; top: 0px;"/>
     </div>
     <div v-else>
       <router-view v-if="showNavbar" @updateEventCode="updateEventCode" name="header" style="width: 100%; z-index: 200; position: absolute; top: 0;"/>
@@ -39,8 +39,9 @@ export default {
   mounted () {
     this.adminPage = this.$route.name.indexOf('-app') > -1
     const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
-    this.$store.dispatch('projectStore/fetchProjects', profile)
-    this.$store.dispatch('searchStore/findProjects')
+    this.$store.dispatch('stacksStore/fetchMacsWalletInfo')
+    this.$store.dispatch('projectStore/fetchMyProjects', profile)
+    this.$store.dispatch('projectStore/findProjects')
     if (profile.loggedIn && profile.environment !== 'localhost') {
       this.loaded = true
     } else {
@@ -85,7 +86,7 @@ export default {
       } else if (data.returnCode === 'stx-deploy-error') {
         this.$notify({ type: 'error', title: 'Deploy Details', text: 'We encountered an error deploying your contract.' })
       }
-      this.$store.dispatch('projectStore/fetchProjects', data.profile)
+      this.$store.dispatch('projectStore/fetchMyProjects', data.profile)
     }
   },
   computed: {

@@ -40,6 +40,7 @@
           </b-form>
         </div>
           <div class="col-8">
+            <h6>Template</h6>
             <standard-application-contract :contractSourceDisplay="contractSourceDisplay"/>
           </div>
         </div>
@@ -53,6 +54,7 @@ import { APP_CONSTANTS } from '@/app-constants'
 import StandardApplicationContract from '@/components/admin/StandardApplicationContract'
 import SideMenu from '@/components/admin/SideMenu'
 import TitleBar from '@/components/admin/TitleBar'
+import utils from '@/services/utils'
 
 export default {
   name: 'CustomiseContract',
@@ -65,20 +67,28 @@ export default {
     return {
       feeAmount: 3000,
       projectId: null,
+      project: null,
       showContract: false,
       loaded: false,
       nonce: 0,
       showStep2: false,
+      tokenUrl: null,
       params: {
         mintPrice: '100000',
         contractName: null,
         contractOwner: 'owner',
-        callBack: 'https://nongible.com/nft/v1/assets/'
+        callBack: 'https://mynftapp.com/nft/v1/assets/'
       },
       // contractSourceDisplay: null,
       contractSource: `
+;; nongible
 (define-data-var owner principal 'params.contractOwner)
+(define-non-fungible-token nongible-tokens (buff 32)) ;; identifier is 256-bit hash of image
+(define-data-var mint-price uint uparams.mintPrice)
+(define-data-var base-token-uri (buff 100) params.callBack)
+(define-map nongibles ((token-id (buff 32))) ((author principal) (date uint))) ;; extra info about token related to the nft-token
 
+;; ownable methods
 (define-read-only (get-owner)
     (var-get owner))
 
@@ -94,12 +104,7 @@ export default {
         (var-set owner new-owner)
         (ok true)))
 
-;; data structures
-(define-non-fungible-token tokens (buff 32)) ;; identifier is 256-bit hash of image
-(define-data-var mint-price uint uparams.mintPrice)
-(define-data-var base-token-uri (buff 100) params.callBack)
-(define-map token-author-map ((token-id (buff 32))) ((author principal) (date uint))) ;; extra info about token related to the nft-token
-
+;; nongible methods
 (define-public (update-base-token-uri (new-base-token-uri (buff 100)))
     (begin
         (asserts! (is-eq (var-get owner) tx-sender) (err 1))
@@ -122,14 +127,15 @@ export default {
     (concat (var-get base-token-uri) token-id))
 
 (define-read-only (get-token-info (token-id (buff 32)))
-    (map-get? token-author-map ((token-id token-id))))
+    (map-get? nongibles ((token-id token-id))))
 
-(define-public (create (token-id (buff 32)))
+(define-public (create-nongible (token-id (buff 32)))
     (begin
+        (asserts! (>= (stx-get-balance tx-sender) (var-get mint-price)) (err 2))
         (as-contract
             (stx-transfer? (var-get mint-price) tx-sender (var-get owner))) ;; transfer stx if there is enough to pay for mint, otherwith throws an error
-        (nft-mint? tokens token-id tx-sender) ;; fails if token has been minted before
-        (map-insert token-author-map ((token-id token-id)) ((author tx-sender) (date block-height)))
+        (nft-mint? nongible-tokens token-id tx-sender) ;; fails if token has been minted before
+        (map-insert nongibles ((token-id token-id)) ((author tx-sender) (date block-height)))
         (ok true)))
 `
     }
@@ -173,6 +179,7 @@ export default {
       let tokenUrl
       try {
         tokenUrl = new URL(this.params.callBack)
+        this.tokenUrl = tokenUrl
       } catch (e) {
         tokenUrl = ''
         result = false
@@ -195,17 +202,19 @@ export default {
       if (!this.validate()) {
         return
       }
+      // contractName = this.this.files[0].name.split(/\./)[1]
+      const projectPlus = this.project
       let source = this.contractSource.replaceAll('params.contractOwner', this.params.contractOwner)
       source = source.replaceAll('params.mintPrice', this.params.mintPrice)
-      source = source.replaceAll('params.callBack', this.params.callBack)
-      const data = {
-        contractName: this.params.contractName,
-        codeBody: source
-      }
-      data.fee = this.feeAmount
-      data.eventCode = 'connect-deploy-contract'
-      this.$emit('updateEventCode', data)
-      // this.$store.dispatch('authStore/deployContractBlockstack', data)
+      source = source.replaceAll('params.callBack', utils.stringToHex(this.params.callBack))
+      projectPlus.codeBody = source
+      this.$store.dispatch('stacksStore/deployContractRisidio', projectPlus).then((txData) => {
+        this.txData = txData
+        this.$bvModal.show('modal-1')
+      }).catch((error) => {
+        this.result = error
+        this.$notify({ type: 'error', title: 'Contracts', text: 'Error during deployment. ' + error })
+      })
     }
   },
   computed: {
@@ -217,7 +226,7 @@ export default {
       let contractSourceDisplay = this.contractSource.replaceAll('params.contractOwner', rep1)
       rep1 = '<span class="text-danger bg-white">' + this.params.mintPrice + '</span>'
       contractSourceDisplay = contractSourceDisplay.replaceAll('params.mintPrice', rep1)
-      rep1 = '<span class="text-danger bg-white">' + this.params.callBack + '</span>'
+      rep1 = '<span class="text-danger bg-white">' + utils.stringToHex(this.params.callBack) + '</span>'
       contractSourceDisplay = contractSourceDisplay.replaceAll('params.callBack', rep1)
       return contractSourceDisplay
     }

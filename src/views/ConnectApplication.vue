@@ -8,7 +8,7 @@
         <h1>Connect Your Own Application</h1>
         <p>About your application</p>
         <div class="row">
-          <div class="col-md-3 col-sm-12">
+          <div class="col-md-4 col-sm-12">
             <div class="mb-2">
               <div :style="bannerImage" v-if="files && files.length === 0" class="d-flex align-items-center flex-column m-2 p-2 bg-white border" style="width: 250px; height: 250px;">
                 <div class="mt-5 my-auto text-center">
@@ -22,7 +22,7 @@
               </div>
             </div>
           </div>
-          <div class="col-md-9 col-sm-12">
+          <div class="col-md-8 col-sm-12">
             <b-form>
               <div class="mb-2">
                 <div class="mb-2">Name</div>
@@ -39,20 +39,11 @@
                   class="mt-3"></b-input>
               </div>
               <div class="mb-2">
-                <div class="mb-2">Contract Address <a href="#" @click.prevent="useMyAddress()">(use my address)</a></div>
+                <div class="mb-2">Contract Id <a href="#" @click.prevent="useMyAddress()">(use my address)</a></div>
                 <b-input
-                  id="contractAddress"
-                  ref="contractAddress"
-                  v-model="project.contractAddress"
-                  class="mt-3"></b-input>
-              </div>
-
-              <div class="mt-4 mb-2">
-                <div class="mb-2">Contract Name</div>
-                <b-input
-                  id="contractName"
-                  ref="contractName"
-                  v-model="project.contractName"
+                  id="projectId"
+                  ref="projectId"
+                  v-model="project.projectId"
                   class="mt-3"></b-input>
               </div>
               <div class="mb-2" v-if="valid">
@@ -65,6 +56,14 @@
       </div>
     </div>
   </div>
+  <b-modal scrollable id="app-modal" title="Saving Application Details">
+    <div class="row">
+      <div class="col-12 my-1">
+        <p>Saving to your decentralised storage.</p>
+        <p>Won't be long.</p>
+      </div>
+    </div>
+  </b-modal>
 </div>
 </template>
 
@@ -91,8 +90,7 @@ export default {
       dims: { width: 250, height: 250 },
       project: {
         logo: require('@/assets/img/Group 15980.svg'),
-        contractName: '',
-        contractAddress: '',
+        projectId: null,
         mintPrice: '',
         title: '',
         description: ''
@@ -111,7 +109,13 @@ export default {
   },
   watch: {
     'project.title' (val) {
-      this.project.contractName = (val) ? val.toLowerCase().replaceAll(' ', '_') : ''
+      const contractName = (val) ? val.toLowerCase().replaceAll(' ', '_') : ''
+      if (!this.project.projectId) {
+        this.project.projectId = '.' + contractName
+      } else {
+        const contractAddr = this.project.projectId.split('.')[0]
+        this.project.projectId = contractAddr + '.' + contractName
+      }
     }
   },
   mounted () {
@@ -127,16 +131,23 @@ export default {
         this.project = project
         this.setImage(project.imageUrl)
         if (project.imageUrl) this.project.logo = project.imageUrl
-        this.project.contractName = project.projectId.split('.')[1]
-        this.project.contractAddress = project.projectId.split('.')[0]
         this.loaded = true
       })
     }
-    this.project.contractAddress = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
   },
   methods: {
     useMyAddress: function () {
-      this.project.contractAddress = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
+      const contractAddress = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
+      if (!this.project.projectId) {
+        this.project.projectId = contractAddress + '.'
+      } else if (this.project.projectId.indexOf('.') > -1) {
+        const contractName = this.project.projectId.split('.')[1]
+        if (contractName) {
+          this.project.projectId = contractAddress + '.' + contractName
+        }
+      } else {
+        this.project.projectId = contractAddress + this.project.projectId
+      }
     },
     setByEventLogo1 (data) {
       this.files = data.media
@@ -165,12 +176,8 @@ export default {
         this.$notify({ type: 'error', title: 'Application', text: 'Please enter the title of your application' })
         result = false
       }
-      if (!this.project.contractAddress) {
-        this.$notify({ type: 'error', title: 'Application', text: 'Please enter the contract address of your application' })
-        result = false
-      }
-      if (!this.project.contractName) {
-        this.$notify({ type: 'error', title: 'Application', text: 'Please enter the contract name of your application' })
+      if (!this.project.projectId || this.project.projectId.indexOf('.') === -1) {
+        this.$notify({ type: 'error', title: 'Application', text: 'Please enter the contract id is format << address.name >>' })
         result = false
       }
       if (!this.project.description) {
@@ -192,18 +199,15 @@ export default {
       if (this.files && this.files.length === 1) {
         imageData = utils.getBase64FromImageUrl(this.files[0].dataUrl)
       }
+      this.$bvModal.show('app-modal')
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
-      const data = {
-        contractAddress: this.project.contractAddress,
-        contractName: this.project.contractName,
-        owner: profile.username,
-        title: (this.project.title) ? this.project.title : 'my project',
-        description: this.project.description
-      }
-      this.$store.dispatch(APP_CONSTANTS.DISP_SAVE_PROJECT, { project: data, imageData: imageData }).then((project) => {
+      this.project.owner = profile.username
+      this.$store.dispatch(APP_CONSTANTS.DISP_SAVE_PROJECT, { project: this.project, imageData: imageData }).then((project) => {
         this.$router.push('/my-app/' + project.projectId)
+        this.$bvModal.hide('app-modal')
       }).catch((error) => {
         this.$notify({ type: 'error', title: 'Transfers', text: 'Error message: ' + error })
+        this.$bvModal.hide('app-modal')
       })
     }
   },
