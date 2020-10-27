@@ -1,6 +1,7 @@
 import axios from 'axios'
 
-const SEARCH_API_PATH = process.env.VUE_APP_API_RISIDIO + '/index'
+const SEARCH_API_PATH = process.env.VUE_APP_API_SEARCH
+const PROJECT_ROOT_PATH = process.env.VUE_APP_PROJECT_ROOT_PATH
 
 /**
  *  The service is a client to the brightblock sever side grpc client.
@@ -16,19 +17,19 @@ const searchIndexService = {
     })
   },
 
-  addRecord: function (project: any) {
+  addRecord: function (projectModel: any) {
     return new Promise(function (resolve, reject) {
-      const indexable: any = project
-      if (project.keywords && !Array.isArray(project.keywords)) {
-        indexable.keywords = ['digital', 'collectible', 'project']
+      const project: any = {
+        domain: projectModel.domain,
+        indexFiles: [{
+          indexFileName: PROJECT_ROOT_PATH,
+          indexObjType: 'project'
+        }],
+        owner: projectModel.owner,
+        projectId: projectModel.projectId,
+        storeageModel: 'gaia'
       }
-      if (!indexable.privacy) {
-        indexable.privacy = 'public'
-      }
-      if (!indexable.metaData) {
-        indexable.metaData = {}
-      }
-      axios.post(SEARCH_API_PATH + '/addRecord', indexable).then((result) => {
+      axios.post(SEARCH_API_PATH + '/register', project).then((result) => {
         resolve(result)
       })
         .catch((error) => {
@@ -70,7 +71,7 @@ const searchIndexService = {
   fetchAllNamesIndex: function () {
     return new Promise(function (resolve, reject) {
       axios.get(SEARCH_API_PATH + '/names/fetch').then((result) => {
-        resolve(result)
+        resolve(result.data.details)
       }).catch((error) => {
         reject(new Error('Unable index record: ' + error))
       })
@@ -79,28 +80,15 @@ const searchIndexService = {
   searchNamesIndex: function (term: string, query: string) {
     return new Promise(function (resolve, reject) {
       axios.get(SEARCH_API_PATH + '/names/query/' + term + '?q=' + query).then((result) => {
-        resolve(result)
-      }).catch((error) => {
-        reject(new Error('Unable index record: ' + error))
-      })
-    })
-  },
-  findByProjectId: function (projectId: string) {
-    return new Promise(function (resolve, reject) {
-      let url = SEARCH_API_PATH + '/findAll'
-      if (projectId) {
-        url = SEARCH_API_PATH + '/findByProject/' + projectId
-      }
-      axios.get(url).then((result) => {
         resolve(result.data.details)
       }).catch((error) => {
         reject(new Error('Unable index record: ' + error))
       })
     })
   },
-  findProjects: function () {
+  findAssets: function () {
     return new Promise(function (resolve, reject) {
-      const url = SEARCH_API_PATH + '/findByObject/project'
+      const url = SEARCH_API_PATH + '/findByObject/artwork'
       axios.get(url).then((result) => {
         resolve(result.data.details)
       }).catch((error) => {

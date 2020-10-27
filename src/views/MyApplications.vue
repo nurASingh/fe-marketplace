@@ -13,11 +13,19 @@
             </div>
             <div class="col-8">
               <p>App Name: <router-link :to="'/my-app/' + project.projectId">{{project.title}}</router-link></p>
-              <p>Contract Name: {{project.contractName}}</p>
-              <p>Contract Id: {{project.contractAddress}}</p>
+              <p>Contract Id: <br/><span style="font-size: 12px;">{{project.projectId}}</span></p>
               <p>Owner: {{project.owner}}</p>
-              <p>{{project.description}}</p>
-              <p>
+              <p>Description: {{project.description}}</p>
+              <div v-if="project.deployTx">
+                <div @click="showContractData = !showContractData"><span>Contract: <a :href="'https://testnet-explorer.blockstack.org/txid/' + project.projectId" target="_blank">{{project.deployTx}}</a></span></div>
+                <div v-if="showContractData">
+
+                  <pre class="source-code">{{project.codeBody}}</pre>
+                </div>
+                <router-link class="mr-3" :to="'/connect-app/' + project.projectId">edit</router-link>
+                <a href="#" class="" @click="deleteApp(project)">delete</a>
+              </div>
+              <p v-else>
                 <router-link class="mr-3" :to="'/connect-app/' + project.projectId">edit</router-link>
                 <router-link class="text-warning mr-3" :to="'/my-app/' + project.projectId">connect contract</router-link>
                 <a href="#" class="" @click="deleteApp(project)">delete</a>
@@ -44,7 +52,8 @@ export default {
   },
   data () {
     return {
-      loading: true
+      loading: true,
+      showContractData: false
     }
   },
   mounted () {
@@ -78,4 +87,9 @@ export default {
 </script>
 <style lang="scss">
 @import "@/assets/scss/custom.scss";
+.source-code {
+  background: #c3dee0;
+  border: 2pt solid #342343;
+  padding: 25px;
+}
 </style>

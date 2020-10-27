@@ -44,7 +44,7 @@ export default {
   },
   mounted () {
     this.loading = false
-    this.$store.dispatch('projectStore/fetchProjects')
+    this.$store.dispatch('projectStore/fetchMyProjects')
   },
   methods: {
     editProject (contractName) {

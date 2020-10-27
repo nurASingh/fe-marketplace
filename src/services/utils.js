@@ -23,6 +23,14 @@ const utils = {
     // const rawImage = dataURL.replace(/^data:image\/(png|jpg);base64,/, '')
     const mimeType = dataURL.substring(dataURL.indexOf(':') + 1, dataURL.indexOf(';')) // => image/png
     return { imageBuffer: imageBuffer, mimeType: mimeType }
+  },
+  stringToHex: function (str) {
+    const arr = []
+    for (let i = 0; i < str.length; i++) {
+      arr[i] = (str.charCodeAt(i).toString(16)).slice(-4)
+    }
+    // return '\\u' + arr.join('\\u')
+    return '0x' + arr.join('')
   }
 }
 export default utils

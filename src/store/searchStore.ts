@@ -38,10 +38,30 @@ const searchStore = {
     }
   },
   actions: {
-    findByProjectId ({ commit }: any, projectId: string) {
+    indexUsers ({ commit }: any, users: string) {
       return new Promise((resolve, reject) => {
-        searchIndexService.findByProjectId(projectId).then((resultSet) => {
-          commit('setSearchResults', resultSet)
+        searchIndexService.indexUsers(users).then((resultSet) => {
+          commit('setUsers', resultSet)
+          resolve(resultSet)
+        }).catch((error) => {
+          reject(new Error('Unable index record: ' + error))
+        })
+      })
+    },
+    clearAssets ({ commit }: any) {
+      return new Promise((resolve, reject) => {
+        searchIndexService.clearDappsIndex().then((resultSet) => {
+          commit('setArtworks', resultSet)
+          resolve(resultSet)
+        }).catch((error) => {
+          reject(new Error('Unable index record: ' + error))
+        })
+      })
+    },
+    clearUsers ({ commit }: any) {
+      return new Promise((resolve, reject) => {
+        searchIndexService.clearNamesIndex().then((resultSet) => {
+          commit('setUsers', resultSet)
           resolve(resultSet)
         }).catch((error) => {
           reject(new Error('Unable index record: ' + error))
@@ -58,10 +78,20 @@ const searchStore = {
         })
       })
     },
-    findProjects ({ commit }: any) {
+    findAssets ({ commit }: any) {
       return new Promise((resolve, reject) => {
-        searchIndexService.findProjects().then((resultSet) => {
-          commit('setProjects', resultSet)
+        searchIndexService.findAssets().then((resultSet) => {
+          commit('setArtworks', resultSet)
+          resolve(resultSet)
+        }).catch((error) => {
+          reject(new Error('Unable index record: ' + error))
+        })
+      })
+    },
+    findUsers ({ commit }: any) {
+      return new Promise((resolve, reject) => {
+        searchIndexService.fetchAllNamesIndex().then((resultSet) => {
+          commit('setUsers', resultSet)
           resolve(resultSet)
         }).catch((error) => {
           reject(new Error('Unable index record: ' + error))

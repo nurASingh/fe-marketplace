@@ -1,7 +1,10 @@
 import { UserSession } from 'blockstack'
 import moment from 'moment'
+import axios from 'axios'
 
-const projectRootFileName = 'projects_v001.json'
+const SEARCH_API_PATH = process.env.VUE_APP_API_SEARCH
+const PROJECT_ROOT_PATH = process.env.VUE_APP_PROJECT_ROOT_PATH
+
 const userSession = new UserSession()
 
 const getNewRootFile = function () {
@@ -22,29 +25,41 @@ const projectService = {
         return
       }
       const rootFile = getNewRootFile()
-      userSession.getFile(projectRootFileName, { decrypt: false }).then((file) => {
+      userSession.getFile(PROJECT_ROOT_PATH, { decrypt: false }).then((file) => {
         if (!file) {
-          userSession.putFile(projectRootFileName, JSON.stringify(rootFile), { encrypt: false })
+          userSession.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false })
           resolve(rootFile)
         } else {
           resolve(JSON.parse(file))
         }
       }).catch(() => {
-        userSession.putFile(projectRootFileName, JSON.stringify(rootFile), { encrypt: false })
+        userSession.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false })
         resolve(rootFile)
       })
     })
   },
-  fetchProjects: function (profile) {
+  fetchUserProjects: function (username) {
+    return new Promise((resolve) => {
+      userSession.getFile(PROJECT_ROOT_PATH, { username: username, decrypt: false }).then((file) => {
+        if (!file) {
+          resolve()
+        } else {
+          const rootFile = JSON.parse(file)
+          resolve(rootFile.projects)
+        }
+      })
+    })
+  },
+  fetchMyProjects: function (profile) {
     return new Promise((resolve) => {
       if (!profile.loggedIn) {
         resolve(getNewRootFile())
         return
       }
-      userSession.getFile(projectRootFileName, { decrypt: false }).then((file) => {
+      userSession.getFile(PROJECT_ROOT_PATH, { decrypt: false }).then((file) => {
         if (!file) {
           const rootFile = getNewRootFile()
-          userSession.putFile(projectRootFileName, JSON.stringify(rootFile), { encrypt: false })
+          userSession.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false })
           resolve(rootFile)
         } else {
           const rootFile = JSON.parse(file)
@@ -72,10 +87,19 @@ const projectService = {
       })
     })
   },
+  registerProject: function (project) {
+    return new Promise((resolve, reject) => {
+      axios.post(SEARCH_API_PATH + '/register', project).then((response) => {
+        resolve(response)
+      }).catch((error) => {
+        reject(error)
+      })
+    })
+  },
   saveProject: function (rootFile) {
     return new Promise((resolve) => {
       rootFile.updated = moment({}).valueOf()
-      userSession.putFile(projectRootFileName, JSON.stringify(rootFile), { encrypt: false }).then(() => {
+      userSession.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false }).then(() => {
         resolve(rootFile)
       })
     })

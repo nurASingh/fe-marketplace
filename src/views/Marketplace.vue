@@ -1,23 +1,25 @@
 <template>
-<div class="row">
-  <div class="col-3">
-    <h3>Projects</h3>
-    <div v-for="(result, index) in projects" :key="index">
-      <img width="150px" :src="result.assetUrl"/>
-      <div class="">
-        <!-- <router-link class="mr-3" to="/admin-app"><b-icon icon="eye"></b-icon></router-link> -->
-        <a href="#" @click.prevent="findByProjectId(result.projectId)">{{result.title}}</a>
+<div class="container mt-5">
+  <div class="row p-3">
+    <div class="col-3 border p-3">
+      <h3>Projects</h3>
+      <div v-for="(result, index) in projects" :key="index">
+        <img width="150px" :src="result.assetUrl"/>
+        <div class="">
+          <!-- <router-link class="mr-3" to="/admin-app"><b-icon icon="eye"></b-icon></router-link> -->
+          <a href="#" @click.prevent="findByProjectId(result.projectId)">{{result.title}}</a>
+        </div>
       </div>
     </div>
-  </div>
-  <div class="col-9">
-    <h1>Marketplace</h1>
-    <div class="row">
-      <div class="col-3" v-for="(result, index) in resultSet" :key="index">
-        <div v-if="result">
-          <router-link :to="'/assets/' + result.assetHash"><img width="100%" :src="result.assetUrl"/></router-link>
-          <div class="tagline"><span class="tagline1">{{result.title}}</span></div>
-          <div class="tagline">{{created(result.created)}}</div>
+    <div class="col-9 p-3 border">
+      <h1>Marketplace</h1>
+      <div class="row">
+        <div class="col-3" v-for="(result, index) in resultSet" :key="index">
+          <div v-if="result">
+            <router-link :to="'/assets/' + result.assetHash"><img width="100%" :src="result.assetUrl"/></router-link>
+            <div class="tagline"><span class="tagline1">{{result.title}}</span></div>
+            <div class="tagline">{{created(result.created)}}</div>
+          </div>
         </div>
       </div>
     </div>
