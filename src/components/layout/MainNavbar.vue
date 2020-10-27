@@ -227,11 +227,13 @@ export default {
 @import "@/assets/scss/custom.scss";
 
 /* NAVBAR PADDING AND WIDTH */
-
 nav.navbar {
   width: 100vw;
   padding-right: 0;
   padding-left: 0;
+  position: absolute!important;
+  top: 0;
+  left: 0;
 }
 
 /* NAV ITEMS STYLE */
