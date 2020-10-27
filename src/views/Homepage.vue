@@ -12,7 +12,7 @@
     </div>
   </div>
   <div class="d-flex justify-content-center main-search">
-    <div class="text-center no-wrap">
+    <div class="text-center no-wrap" style="width: 100%; max-width: 650px;">
       <b-input-group>
         <template v-slot:append>
           <a href="#"  @click.prevent="doSearch"><b-icon icon="search"/></a>
@@ -31,11 +31,11 @@
             <b-dropdown-item>On Sale</b-dropdown-item>
           </b-dropdown>
         </template>
-        <b-form-input v-model="query"  size="sm" style="width: 500px" class="mr-sm-2" placeholder=""></b-form-input>
+        <b-form-input v-model="query"  size="sm" class="mr-sm-2" placeholder=""></b-form-input>
       </b-input-group>
     </div>
   </div>
-  <div class="mt-5 d-flex justify-content-center main-search">
+  <div class="mt-5 d-flex justify-content-center main-search main-search__categories">
     <div><a class="mx-2" :class="isActive('discover')" href="#" @click.prevent="category = 'discover'">Discover</a></div>
     <div><a class="mx-2" :class="isActive('popular')" href="#" @click.prevent="category = 'popular'">Popular</a></div>
     <div><a class="mx-2" :class="isActive('collections')" href="#" @click.prevent="category = 'collections'">Collections</a></div>
@@ -279,5 +279,11 @@ export default {
   background: #50B1B5 0% 0% no-repeat padding-box;
   opacity: 0.95;
   color: #fff;
+}
+
+@media only screen and (max-width: 376px) {
+  .main-search__categories {
+    font-size: 12px;
+  }
 }
 </style>

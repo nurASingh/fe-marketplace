@@ -1,32 +1,70 @@
 <template>
 <div v-if="content">
-  <footer id="footer" class="text-white bg-secondary">
-    <div class="row text-center m-0 d-sm-flex d-none" style="height: 240px;">
-      <div class="col-lg-4 col-md-3 d-md-block d-none" style="height: 240px;">
-        <router-link to="/" class="pl-5 navbar-brand text-white" style="margin: 70px 0 0 0;"><img :src="logo" alt="risidio-logo" class="footer-logo"/></router-link>
+  <footer id="footer" class="text-white">
+    <div class="container">
+      <div class="row m-0 d-flex">
+        <div class="col-lg-5 col-12 d-flex flex-column justify-content-center align-items-lg-start align-items-center">
+            <router-link to="/" class="navbar-brand text-white"><img :src="logo" alt="risidio-logo" class="footer-logo"/></router-link>
+            <p class="footer__pitch">(Elevator Pitch here) The new digital marketplace for crypto collectibles assets. Buy, sell, etch… Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
+        </div>
+        <div class="col-lg-7 col-12 d-flex align-items-end columns3-content__container">
+            <div class="footer__column-content ml-lg-auto">
+              <div>Marketplace</div>
+              <div>Gallery</div>
+              <div>Collections</div>
+              <div>Artists</div>
+              <div>Applications</div>
+            </div>
+            <div class="footer__column-content">
+              <div>About</div>
+              <div>How it works</div>
+              <div>Payments Methods</div>
+              <div>Cryptocurrencies</div>
+              <div>FAQs</div>
+            </div>
+            <div class="footer__column-content">
+              <div>Risidio</div>
+              <div>Who we are</div>
+              <div>What we do</div>
+              <div>Work with Us</div>
+              <div>Get in Touch</div>
+            </div>
+        </div>
       </div>
-      <div class="col-lg-6 col-md-8 offset-lg-1 content-footer">
-        <div class="row text-left mt-5">
-          <div class="col-3" v-html="getContent('sitemap')">
-          </div>
-          <div class="col-3" v-html="getContent('products')">
-          </div>
-          <div class="col-3" v-html="getContent('joinus')">
-          </div>
-          <div class="col-3" v-html="getContent('contact')">
-          </div>
+      <div class="footer__divider"></div>
+      <div class="col-12 d-lg-flex d-none justify-content-between footer__bottom-row">
+        <div>
+          &copy; &nbsp; {{ year }} Risidio Ltd. All right reserved.
+        </div>
+        <div>
+          <a href="https://discord.gg/qvuxB9P"><i class="fab fa-discord"></i></a>
+          <a href="https://twitter.com/Risidio1"><i class="fab fa-twitter"></i></a>
+          <a href="https://www.instagram.com/risidio_official/"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.youtube.com/channel/UCrMDxxhMvpeyErw7m92IIXA/featured"><i class="fab fa-youtube"></i></a>
+        </div>
+        <div>
+          <span>Privacy Policy</span>
+          <span>Terms Of Use</span>
+        </div>
+      </div>
+      <!-- MOBILE DESIGN LAST ROW -->
+      <div class="col-12 d-flex d-lg-none flex-column align-items-center footer__bottom-row">
+        <div>
+          <a href="https://discord.gg/qvuxB9P"><i class="fab fa-discord"></i></a>
+          <a href="https://twitter.com/Risidio1"><i class="fab fa-twitter"></i></a>
+          <a href="https://www.instagram.com/risidio_official/"><i class="fab fa-instagram"></i></a>
+          <a href="https://www.youtube.com/channel/UCrMDxxhMvpeyErw7m92IIXA/featured"><i class="fab fa-youtube"></i></a>
+        </div>
+        <div>
+          &copy; &nbsp; {{ year }} Risidio Ltd. All right reserved.
+        </div>
+        <div>
+          <span>Privacy Policy</span>
+          <span>Terms Of Use</span>
         </div>
       </div>
     </div>
-    <div class="pt-3 px-4 justify-content-between d-sm-flex d-none" style="height: 40px; font-size: 0.6rem;">
-      <div>
-        &copy; &nbsp; {{ year }} Risidio Ltd. All right reserved.
-      </div>
-      <div>
-        Privacy Policy
-      </div>
-    </div>
-    <!-- MOBILE DESIGN !-->
+    <!-- MOBILE DESIGN
     <div class="row flex-flow-column justify-content-center text-center m-0 d-sm-none mobile-footer">
       <div class="col-12">
         <router-link to="/" class="navbar-brand text-white" style="margin: 60px 0 40px 0; height: auto;"><img :src="logo" alt="risidio-logo" class="footer-logo"/></router-link>
@@ -44,7 +82,7 @@
       <div class="col-12">
         &copy; &nbsp; {{ year }} Risidio Ltd. All right reserved.
       </div>
-    </div>
+    </div>!-->
   </footer>
 </div>
 </template>
@@ -82,26 +120,121 @@ export default {
 }
 </script>
 <style>
-.footer-container {
-  height: 280px;
-  background-color: #000;
+/* FOOTER STYLE */
+footer {
+  /*height: 440px;*/
+  background-color: #5154A1;
 }
 
-.footer-container h2 {
-  font-size: 17px;
-  font-weight: 200;
+footer .container {
+  padding-top: 90px;
+  padding-bottom: 50px;
 }
 
-.footer-container p {
-  font-size: 12px;font-weight: 700; padding: 5px 0 0 0; margin: 0;
-}
-
+/* FOOTER LOGO COLUMN */
 .footer-logo {
-  width: 255px;
-  height: 100px;
+  width: auto;
+  height: 70px;
+}
+
+footer .navbar-brand {
+  width: auto;
+  height: 80px;
+}
+
+.footer__pitch {
+  margin: 30px 0;
+  font-size: 12px;
+}
+
+/* FOOTER CONTENT COLUMN */
+.footer__column-content:not(:last-child) {
+  padding-right: 100px;
+}
+
+.footer__column-content {
+  font-size: 12px;
+}
+
+.footer__column-content div:first-child {
+  font-weight: 300;
+  color: #E3E3E3;
+  margin-bottom: 15px;
+}
+
+.footer__column-content div {
+  margin-bottom: 9px;
+}
+
+/* FOOTER DIVIDER AND BOTTOM ROW */
+.footer__divider {
+  margin: 60px 15px 50px;
+  border-top: 1px solid #E3E3E3;
+  opacity: 0.2;
+}
+
+.footer__bottom-row {
+  font-size: 12px;
+  font-weight: 300;
+}
+
+.footer__bottom-row a, .footer__bottom-row a:hover {
+  color: #fff;
+}
+
+.footer__bottom-row a:not(:last-child) {
+  margin-right: 15px;
+}
+
+.footer__bottom-row span:first-child {
+  margin-right: 40px;
 }
 
 /* FOOTER ON MOBILE */
+@media only screen and (max-width: 991px) {
+  footer .container {
+    padding-top: 60px;
+  }
+  .footer__pitch {
+    margin: 30px 0 60px;
+    text-align: center;
+  }
+  .columns3-content__container {
+    justify-content: center;
+  }
+  .footer__divider {
+    margin: 40px 15px;
+  }
+  .footer__bottom-row div:first-child {
+    margin-bottom: 40px;
+  }
+  .footer__bottom-row div:nth-child(2) {
+    margin-bottom: 20px;
+  }
+  .footer__bottom-row span:first-child {
+    margin-right: 49px;
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .footer__column-content:not(:last-child) {
+    padding-right: 50px;
+  }
+}
+
+@media only screen and (max-width: 400px) {
+  .footer__column-content:not(:last-child) {
+    padding-right: 30px;
+  }
+}
+
+@media only screen and (max-width: 359px) {
+  .footer__column-content {
+    font-size: 10px;
+  }
+}
+
+/* FOOTER ON MOBILE
 .mobile-footer p {
   width: 30%;
   margin: 0 auto !important;
@@ -144,29 +277,9 @@ export default {
   padding-bottom: 22px;
 }
 
-@media only screen and (max-width: 991px) {
-  .footer-logo {
-    width: 138px;
-    height: 55px;
-  }
-}
-
 @media only screen and (max-width: 768px) {
-  .content-footer {
+  .columns3-content__container {
     margin-left: 3rem;
-  }
-}
-
-@media only screen and (max-width: 575px) {
-  .footer-logo {
-    width: 200px;
-    height: auto;
-  }
-  .footer-container {
-    height: 395px;
-    display: flex;
-    flex-flow: column;
-    justify-content: space-between;
   }
 }
 
@@ -174,5 +287,5 @@ export default {
   .mobile-footer p {
     width: 33%;
   }
-}
+}*/
 </style>
