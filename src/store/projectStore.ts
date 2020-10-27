@@ -12,8 +12,8 @@ const readProjectFromGaia = function (resolve, reject, projectLookups, commit) {
     projectLookups.forEach((projectLookup) => {
       // the lookups are records stored centrally which allow the data to be pulled
       // from users gaia storage
-      projectService.fetchUserProjects(projectLookup.owner).then((projects) => {
-        commit('userProjects', { owner: projectLookup.owner, projects: projects })
+      projectService.fetchUserProjects(projectLookup.owner).then((connectedProjects) => {
+        commit('setConnectedProjects', { owner: projectLookup.owner, projects: connectedProjects })
       })
     })
     resolve()
@@ -26,27 +26,30 @@ const projectStore = {
   namespaced: true,
   state: {
     rootFile: null,
-    userProjects: null
+    connectedProjects: null
   },
   getters: {
     getProjects: (state: any) => {
       return (state.rootFile && state.rootFile.projects) ? state.rootFile.projects : []
+    },
+    getConnectedProjects: (state: any) => {
+      return state.connectedProjects || []
     }
   },
   mutations: {
     rootFile (state: any, rootFile: any) {
       state.rootFile = rootFile
     },
-    storeUserProjects (state: any, userProjects: any) {
-      state.userProjects = userProjects
+    setConnectedProjects (state: any, connectedProjects: any) {
+      state.connectedProjects = connectedProjects
     }
   },
   actions: {
     findProjects ({ commit }: any) {
       return new Promise((resolve, reject) => {
         const url = SEARCH_API_PATH + '/projectsAll'
-        axios.get(url).then((projectLookups) => {
-          readProjectFromGaia(resolve, reject, projectLookups, commit)
+        axios.get(url).then((response) => {
+          readProjectFromGaia(resolve, reject, response.data, commit)
         }).catch((error) => {
           reject(new Error('Unable find projects: ' + error))
         })
@@ -59,8 +62,8 @@ const projectStore = {
           return
         }
         const url = SEARCH_API_PATH + '/projectsByDomain/' + domain
-        axios.get(url).then((projectLookups) => {
-          readProjectFromGaia(resolve, reject, projectLookups, commit)
+        axios.get(url).then((response) => {
+          readProjectFromGaia(resolve, reject, response.data, commit)
         }).catch((error) => {
           reject(new Error('Unable index record: ' + error))
         })
@@ -73,8 +76,8 @@ const projectStore = {
           return
         }
         const url = SEARCH_API_PATH + '/projectsByDomain/' + owner
-        axios.get(url).then((projectLookups) => {
-          readProjectFromGaia(resolve, reject, projectLookups, commit)
+        axios.get(url).then((response) => {
+          readProjectFromGaia(resolve, reject, response.data, commit)
         }).catch((error) => {
           reject(new Error('Unable index record: ' + error))
         })
@@ -87,9 +90,11 @@ const projectStore = {
           return
         }
         const url = SEARCH_API_PATH + '/projectsByProjectId/' + projectId
-        axios.get(url).then((project) => {
-          const projectLookups = [project]
-          readProjectFromGaia(resolve, reject, projectLookups, commit)
+        axios.get(url).then((response) => {
+          if (response.data) {
+            const projectLookups = [response.data]
+            readProjectFromGaia(resolve, reject, projectLookups, commit)
+          }
         }).catch((error) => {
           reject(new Error('Unable index record: ' + error))
         })
@@ -103,7 +108,7 @@ const projectStore = {
           const profile = store.getters[APP_CONSTANTS.KEY_PROFILE]
           projectService.fetchMyProjects(profile).then((rootFile: any) => {
             rootFile.projects.forEach((project) => {
-              store.dispatch('stacksStore/lookupContractInfo', project.projectId)
+              store.dispatch('stacksStore/lookupContractInterface', project.projectId)
             })
             commit('rootFile', rootFile)
             resolve(rootFile)

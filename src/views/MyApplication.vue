@@ -90,7 +90,7 @@ export default {
   },
   methods: {
     lookupContract: function () {
-      this.$store.dispatch('stacksStore/lookupContractInfo', this.projectId).then((contract) => {
+      this.$store.dispatch('stacksStore/lookupContractInterface', this.projectId).then((contract) => {
         this.contract = contract.interface
       }).catch(() => {
         // this.$notify({ type: 'error', title: 'Error', text: error })
