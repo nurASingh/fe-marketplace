@@ -20,7 +20,7 @@
               <div>Addr: {{ stxAddress }}</div>
             </div>
             <div class="login-sidebar__item-group login-sidebar--border-bottom">
-              <div><router-link to="/app-admin"><i class="far fa-play-circle"></i> Connect Project</router-link></div>
+              <div><router-link to="/admin-app"><i class="far fa-play-circle"></i> Connect Project</router-link></div>
               <div><router-link to="/my-items"><i class="far fa-folder-open"></i> My Collectibles</router-link></div>
             </div>
             <div class="login-sidebar__item-group"><span @click="logout()"><i class="fas fa-sign-out-alt"></i> Logout</span></div>
@@ -106,7 +106,7 @@
               <div>Addr: {{ stxAddress }}</div>
             </div>
             <div class="login-sidebar__item-group login-sidebar--border-bottom">
-              <div><router-link to="/app-admin"><i class="far fa-play-circle"></i> Connect Project</router-link></div>
+              <div><router-link to="/admin-app"><i class="far fa-play-circle"></i> Connect Project</router-link></div>
               <div><router-link to="/my-items"><i class="far fa-folder-open"></i> My Collectibles</router-link></div>
             </div>
             <div class="login-sidebar__item-group"><span @click="logout()"><i class="fas fa-sign-out-alt"></i> Logout</span></div>
