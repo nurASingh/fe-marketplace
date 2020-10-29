@@ -26,11 +26,19 @@ const projectStore = {
   namespaced: true,
   state: {
     rootFile: null,
-    connectedProjects: null
+    connectedProjects: null,
+    appmapContractId: 'ST1ESYCGJB5Z5NBHS39XPC70PGC14WAQK5XXNQYDW.appmap'
   },
   getters: {
     getProjects: (state: any) => {
       return (state.rootFile && state.rootFile.projects) ? state.rootFile.projects : []
+    },
+    getAppmapContractId: (state: any) => {
+      return state.appmapContractId
+    },
+    getAppmapTxId: (state: any) => {
+      if (!state.rootFile || !state.rootFile.appmap) return
+      return state.rootFile.appmap.txId
     },
     getConnectedProjects: (state: any) => {
       return state.connectedProjects || []
@@ -42,6 +50,15 @@ const projectStore = {
     },
     setConnectedProjects (state: any, connectedProjects: any) {
       state.connectedProjects = connectedProjects
+    },
+    addContractData (state, data) {
+      const index = state.rootFile.projects.findIndex((o) => o.projectId === data.projectId)
+      if (index > -1) {
+        const project = state.rootFile.projects[index]
+        project.info = data.info
+        project.interface = data.interface
+        state.rootFile.projects.splice(index, 1, project)
+      }
     }
   },
   actions: {
@@ -134,23 +151,33 @@ const projectStore = {
         }
       })
     },
-    updateProjectId ({ state, commit }: any, data: any) {
+    updateProject ({ state, commit }: any, data: any) {
       return new Promise((resolve, reject) => {
-        if (state.rootFile) {
-          const index = state.rootFile.projects.findIndex((o) => o.projectId === data.project.projectId)
+        if (!state.rootFile) reject(new Error('application not initialised?'))
+        if (data.contractId.indexOf('appmap') > -1) {
+          state.rootFile.appmap = {
+            contractId: data.contractId,
+            txId: data.txId
+          }
+          projectService.saveProject(state.rootFile).then((rootFile) => {
+            commit('rootFile', rootFile)
+            resolve(state.rootFile.appmap)
+          })
+        } else {
+          const index = state.rootFile.projects.findIndex((o) => o.projectId === data.projectId)
           if (index > -1) {
-            searchIndexService.removeRecord('project', data.project.projectId).then(() => {
-              data.project.projectId = data.newProjectId
-              state.rootFile.projects.splice(index, 1, data.project)
-              projectService.saveProject(state.rootFile).then((rootFile) => {
-                commit('rootFile', rootFile)
-                searchIndexService.addRecord(data.project).then(() => {
-                  resolve(data.project)
-                }).catch((error) => {
-                  reject(error)
-                })
-              })
+            const project = state.rootFile.projects[index]
+            project.projectId = data.contractId
+            project.txId = data.txId
+            searchIndexService.removeRecord('project', data.projectId)
+            state.rootFile.projects.splice(index, 1, project)
+            projectService.saveProject(state.rootFile).then((rootFile) => {
+              commit('rootFile', rootFile)
+              searchIndexService.addRecord(project)
+              resolve(project)
             })
+          } else {
+            reject(new Error('project not initialised?'))
           }
         }
       })

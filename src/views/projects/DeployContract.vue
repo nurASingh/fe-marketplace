@@ -8,7 +8,7 @@
         <div class="col-12">
           <h1>Upload Contract</h1>
           <p style="font-size: 10px;">Contract id: {{projectId}} <router-link class="mr-3" :to="'/connect-app/' + projectId"><b-icon icon="pencil"/></router-link></p>
-            <upload-contract-form :project="project"/>
+            <deploy-contract-from-file :project="project"/>
         </div>
       </div>
     </div>
@@ -17,14 +17,14 @@
 </template>
 
 <script>
-import UploadContractForm from '@/components/admin/UploadContractForm'
+import DeployContractFromFile from '@/components/admin/DeployContractFromFile'
 import SideMenu from '@/components/admin/SideMenu'
 import TitleBar from '@/components/admin/TitleBar'
 
 export default {
-  name: 'UploadContract',
+  name: 'DeployContract',
   components: {
-    UploadContractForm,
+    DeployContractFromFile,
     SideMenu,
     TitleBar
   },

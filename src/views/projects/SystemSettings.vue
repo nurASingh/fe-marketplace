@@ -1,19 +1,27 @@
 <template>
 <div class="row">
   <side-menu class="col-3 mr-0 pr-0 pt-5"/>
-  <div class="col-9 pt-5 admin-app" @click="$emit('toggle-off-navbar')">
-    <title-bar class="container mt-3" v-on="$listeners"/>
-    <b-tabs content-class="text-dark">
-      <b-tab class="container mt-3" title="API Settings" active>
+  <div class="col-9 pt-5 admin-app">
+    <title-bar class="container" v-on="$listeners"/>
+    <div class="container" @click="$emit('toggle-off-navbar')">
+    <b-tabs
+      nav-class="font-weight-bold text-uppercase text-info"
+      nav-wrapper-class="font-weight-bold text-uppercase bg-info text-info"
+      active-nav-item-class="font-weight-bold text-uppercase text-info"
+      active-tab-class="text-info"
+      content-class="mt-3 px-3 pt-5"
+      >
+      <b-tab title="API Settings" active>
         <api-settings/>
       </b-tab>
-      <b-tab class="container mt-3" title="Contract" >
-        <upload-contract-form :project="project"/>
+      <b-tab title="Contract">
+        <app-contract-settings/>
       </b-tab>
-      <b-tab class="container mt-3" title="Search Settings">
+      <b-tab title="Search Settings">
         <search-settings/>
       </b-tab>
     </b-tabs>
+    </div>
   </div>
 </div>
 </template>
@@ -21,7 +29,7 @@
 <script>
 import SideMenu from '@/components/admin/SideMenu'
 import TitleBar from '@/components/admin/TitleBar'
-import UploadContractForm from '@/components/admin/UploadContractForm'
+import AppContractSettings from '@/components/admin/system/AppContractSettings'
 import ApiSettings from '@/components/admin/system/ApiSettings'
 import SearchSettings from '@/components/admin/system/SearchSettings'
 
@@ -30,16 +38,13 @@ export default {
   components: {
     SideMenu,
     TitleBar,
-    UploadContractForm,
+    AppContractSettings,
     SearchSettings,
     ApiSettings
   },
   data () {
     return {
-      showNavbar: false,
-      project: {
-        projectId: 'ST1ESYCGJB5Z5NBHS39XPC70PGC14WAQK5XXNQYDW.replacewithfilename'
-      }
+      showNavbar: false
     }
   },
   mounted () {
@@ -52,9 +57,6 @@ export default {
   }
 }
 </script>
-<style lang="scss" >
+<style lang="scss">
 @import "@/assets/scss/custom.scss";
-.nav-link {
-    color: #000 !important;
-}
 </style>

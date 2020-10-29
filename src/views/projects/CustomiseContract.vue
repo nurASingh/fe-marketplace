@@ -4,15 +4,18 @@
   <div class="col-9 pt-5 admin-app" v-if="loaded">
     <title-bar class="container" v-on="$listeners"/>
     <div class="container" @click="$emit('toggle-off-navbar')">
+      <h1>Deploy Contract</h1>
+      <p class="mb-4">Contract id: {{projectId}} <router-link class="mr-3" :to="'/connect-app/' + projectId"><b-icon icon="pencil"/></router-link></p>
       <div class="row">
         <div class="col-4">
-          <h1>Deploy Contract</h1>
-          <p style="font-size: 10px;">Contract id: {{projectId}} <router-link class="mr-3" :to="'/connect-app/' + projectId"><b-icon icon="pencil"/></router-link></p>
           <b-form>
-            <div class="mt-5">
-                <div class="mb-2">
-                  <div class="mb-2">Contract Owner <a href="#" @click.prevent="useMyAddress()">(use my address)</a></div>
-                  <b-input v-model="params.contractOwner"></b-input>
+            <div class="">
+              <div class="">
+                <div class="mb-2 d-flex justify-content-between">
+                  <div>Contract Owner</div>
+                  <div><a href="#" class="mr-1" @click.prevent="useMyAddress()">mine</a> <a class="text-info" href="#" @click.prevent="useMacsAddress()">macs</a></div>
+                </div>
+                <b-input v-model="params.contractOwner"></b-input>
                 </div>
                 <div class="mb-2">
                   <div class="mb-2">Mint Price (micro stacks)</div>
@@ -46,6 +49,21 @@
         </div>
     </div>
   </div>
+  <b-modal scrollable id="modal-1" title="Contract Deployed">
+    <div class="row" v-if="deployedProject">
+      <div class="col-12 my-1">
+        <div class="mb-3">Deployed {{deployedProject.projectId}}</div>
+        <div class="mb-3">Tx: {{deployedProject.txId}}</div>
+      </div>
+    </div>
+  </b-modal>
+  <b-modal id="modal-err" title="Contract Not Deployed">
+    <div class="row">
+      <div class="col-12 my-1">
+        <div class="mb-3">Error: {{result}}</div>
+      </div>
+    </div>
+  </b-modal>
 </div>
 </template>
 
@@ -73,11 +91,12 @@ export default {
       nonce: 0,
       showStep2: false,
       tokenUrl: null,
+      deployedProject: null,
       params: {
         mintPrice: '100000',
         contractName: null,
-        contractOwner: 'owner',
-        callBack: 'https://mynftapp.com/nft/v1/assets/'
+        contractOwner: 'stacks-address',
+        callBack: 'https://loopbomb.risidio.com/nft/v1/assets/'
       },
       // contractSourceDisplay: null,
       contractSource: `
@@ -165,6 +184,10 @@ export default {
     useMyAddress: function () {
       this.params.contractOwner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
     },
+    useMacsAddress: function () {
+      const mac = this.$store.getters[APP_CONSTANTS.KEY_MACS_WALLET]
+      this.params.contractOwner = (mac && mac.keyInfo && mac.keyInfo.address) ? mac.keyInfo.address : ''
+    },
     validate: function () {
       let result = true
       const mp = Number(this.params.mintPrice)
@@ -208,12 +231,12 @@ export default {
       source = source.replaceAll('params.mintPrice', this.params.mintPrice)
       source = source.replaceAll('params.callBack', utils.stringToHex(this.params.callBack))
       projectPlus.codeBody = source
-      this.$store.dispatch('stacksStore/deployContractRisidio', projectPlus).then((txData) => {
-        this.txData = txData
+      this.$store.dispatch('stacksStore/deployProjectContract', projectPlus).then((project) => {
+        this.deployedProject = project
         this.$bvModal.show('modal-1')
       }).catch((error) => {
         this.result = error
-        this.$notify({ type: 'error', title: 'Contracts', text: 'Error during deployment. ' + error })
+        this.$bvModal.show('modal-err')
       })
     }
   },

@@ -59,6 +59,12 @@ const getAmountStx = function (amountMicroStx) {
     return 0
   }
 }
+const postDeploy = function (resolve, dispatch, projectId, contractId, txId) {
+  store.dispatch('projectStore/updateProject', { projectId: projectId, contractId: contractId, txId: txId }).then((project) => {
+    dispatch('fetchMacsWalletInfo')
+    resolve(project)
+  })
+}
 const resolveError = function (reject, error) {
   if (!error) {
     reject('Error happened')
@@ -91,6 +97,7 @@ const stacksStore = {
   namespaced: true,
   state: {
     provider: 'risidio',
+    appmap: null,
     result: null,
     contracts: [],
     appName: 'Risidio Mesh',
@@ -99,13 +106,10 @@ const stacksStore = {
   },
   getters: {
     getMacsWallet: state => {
-      return state.wallet
+      return state.macsWallet
     },
-    getContractData: state => projectId => {
-      const index = state.contracts.findIndex((o) => o.projectId === projectId)
-      if (index > -1) {
-        return state.contracts[index]
-      }
+    getAppmap: state => projectId => {
+      return state.appmap
     }
   },
   mutations: {
@@ -115,13 +119,8 @@ const stacksStore = {
     setResult (state, result) {
       state.result = result
     },
-    addContractData (state, contract) {
-      const index = state.contracts.findIndex((o) => o.contract_id === contract.contract_id)
-      if (index > -1) {
-        state.contracts.splice(index, 1, contract)
-      } else {
-        state.contracts.splice(0, 0, contract)
-      }
+    setAppmap (state, appmap) {
+      state.appmap = appmap
     }
   },
   actions: {
@@ -245,12 +244,31 @@ const stacksStore = {
         })
       })
     },
+    appmapLookup ({ getters }, data) {
+      return new Promise((resolve, reject) => {
+        const appmapContractId = store.getters['projectStore/getAppmapContractId']
+        const contractAddress = appmapContractId.split('.')[0]
+        const contractName = appmapContractId.split('.')[1]
+        let useApi = STACKS_API + '/v2/map_entry/' + contractAddress + '/' + contractName + '/app-map'
+        axios.post(useApi).then((response) => {
+          resolve(response.data)
+        }).catch(() => {
+          useApi = STACKS_API + '/v2/map_entry/' + contractAddress + '/' + contractName + '/app-map'
+          axios.post(useApi).then((response) => {
+            resolve(response.data)
+          }).catch((error) => {
+            console.log('Error broadcasting tx.. ', error)
+            resolveError(reject, error)
+          })
+        })
+      })
+    },
     lookupContractInterface ({ commit }, projectId) {
       return new Promise((resolve, reject) => {
         const contractAddress = projectId.split('.')[0]
         const contractName = projectId.split('.')[1]
         axios.get(STACKS_API + '/v2/contracts/interface/' + contractAddress + '/' + contractName + '?proof=0').then(response => {
-          commit('addContractData', { projectId: projectId, interface: response.data })
+          store.commit('projectStore/addContractData', { projectId: projectId, interface: response.data })
           resolve({ projectId: projectId, interface: response.data })
         }).catch((error) => {
           resolveError(reject, error)
@@ -261,14 +279,14 @@ const stacksStore = {
       return new Promise((resolve, reject) => {
         const address = STACKS_API.replace('20443', '3999')
         axios.get(address + '/extended/v1/contract/' + projectId + '?proof=0').then(response => {
-          commit('addContractData', { projectId: projectId, interface: response.data })
+          store.commit('projectStore/addContractData', { projectId: projectId, info: response.data })
           resolve({ projectId: projectId, interface: response.data })
         }).catch((error) => {
           resolveError(reject, error)
         })
       })
     },
-    deployContractRisidio ({ state, dispatch }, project) {
+    deployProjectContract ({ state, dispatch }, project) {
       return new Promise((resolve, reject) => {
         network.coreApiUrl = 'http://localhost:20443'
         const sender = state.macsWallet
@@ -288,17 +306,11 @@ const stacksStore = {
             'Content-Type': 'application/octet-stream'
           }
           axios.post(MESH_API + '/v2/broadcast', txdata, { headers: headers }).then(response => {
-            project.deployTx = response.data
-            store.dispatch('projectStore/updateProjectId', { project: project, newProjectId: contractId })
-            dispatch('fetchMacsWalletInfo')
-            resolve(txOptions)
+            postDeploy(resolve, dispatch, project.projectId, contractId, response.data)
           }).catch(() => {
             const useApi = STACKS_API + '/v2/transactions'
             axios.post(useApi, txdata, { headers: { 'Content-Type': 'application/octet-stream' } }).then(response => {
-              project.deployTx = response.data
-              store.dispatch('projectStore/updateProjectId', { project: project, newProjectId: contractId })
-              dispatch('fetchMacsWalletInfo')
-              resolve(txOptions)
+              postDeploy(resolve, dispatch, project.projectId, contractId, response.data)
             }).catch((error) => {
               console.log('Error broadcasting tx.. ', error)
               resolveError(reject, error)

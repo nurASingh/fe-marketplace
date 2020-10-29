@@ -15,20 +15,19 @@
               <p>App Name: <router-link :to="'/my-app/' + project.projectId">{{project.title}}</router-link></p>
               <p>Contract Id: <br/><span style="font-size: 12px;">{{project.projectId}}</span></p>
               <p>Owner: {{project.owner}}</p>
+              <p>TxId: {{project.txId}}</p>
               <p>Description: {{project.description}}</p>
-              <div v-if="project.deployTx">
+              <div v-if="project.txId">
                 <div @click="showContractData = !showContractData"><span>Contract: <a :href="'https://testnet-explorer.blockstack.org/txid/' + project.projectId" target="_blank">{{project.deployTx}}</a></span></div>
                 <div v-if="showContractData">
 
                   <pre class="source-code">{{project.codeBody}}</pre>
                 </div>
-                <router-link class="mr-3" :to="'/connect-app/' + project.projectId">edit</router-link>
-                <a href="#" class="" @click="deleteApp(project)">delete</a>
+                <router-link class="mr-3" :to="'/my-app/' + project.projectId">open</router-link>
               </div>
               <p v-else>
-                <router-link class="mr-3" :to="'/connect-app/' + project.projectId">edit</router-link>
+                <router-link class="mr-3" :to="'/my-app/' + project.projectId">open</router-link>
                 <router-link class="text-warning mr-3" :to="'/my-app/' + project.projectId">connect contract</router-link>
-                <a href="#" class="" @click="deleteApp(project)">delete</a>
               </p>
             </div>
           </div>
@@ -64,6 +63,9 @@ export default {
       this.$store.dispatch('projectStore/deleteProject', project.projectId).then((results) => {
         this.results = results
       })
+    },
+    deployed (project) {
+      return project.info || project.interface
     },
     openApp (project) {
       if (project.projectId) {

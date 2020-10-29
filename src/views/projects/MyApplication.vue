@@ -18,10 +18,13 @@
               <p>Description: {{project.description}}</p>
               <p>
                 <a href="#" class="mr-3" @click="openApp(project)">edit</a>
+                <a v-if="!project.txId" href="#" class="" @click="deleteApp(project)">delete</a>
               </p>
             </div>
           </div>
-          <div class="text-light" v-if="contractData">Explorer: <a :href="'https://testnet-explorer.blockstack.org/txid/' + project.projectId" target="_blank">{{project.projectId}}</a></div>
+          <div class="text-light" v-if="project.txId">
+            Explorer: <a :href="'https://testnet-explorer.blockstack.org/txid/' + project.projectId" target="_blank">{{project.projectId}}</a>
+          </div>
           <div v-else>
             <div class="mb-5">
               <h2>Deploy a contract</h2>
@@ -56,7 +59,7 @@ import TitleBar from '@/components/admin/TitleBar'
 import { APP_CONSTANTS } from '@/app-constants'
 
 export default {
-  name: 'ConnectApplication',
+  name: 'MyApplication',
   components: {
     SideMenu,
     TitleBar
@@ -78,13 +81,15 @@ export default {
   },
   mounted () {
     this.projectId = this.$route.params.projectId
+    const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
     this.$store.dispatch('projectStore/findProjectByProjectId', this.projectId).then((project) => {
-      if (!project) {
-        this.$router.push('/404')
-        return
-      }
       this.project = project
+    })
+    this.$store.dispatch('stacksStore/appmapLookup', { owner: profile.username, projectId: this.projectId }).then((record) => {
+      this.record = record
       this.lookupContract()
+      this.loaded = true
+    }).catch(() => {
       this.loaded = true
     })
   },
@@ -109,10 +114,6 @@ export default {
     }
   },
   computed: {
-    contractData () {
-      const contractData = this.$store.getters[APP_CONSTANTS.KEY_CONTRACT_DATA](this.projectId)
-      return contractData
-    }
   }
 }
 </script>

@@ -264,6 +264,10 @@ nav.navbar {
 }
 
 /* NAV LOGIN */
+.nav-link {
+  color: #fff !important;
+}
+
 nav.navbar-expand-xl .navbar_login {
   padding-right: 40px;
 }

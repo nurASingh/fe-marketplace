@@ -31,13 +31,17 @@
     <pre class="mt-3 mb-0">{{ result }}</pre>
   </div>
   <b-modal scrollable id="modal-1" title="Contract Deployed">
-    <div class="row" v-if="txData">
+    <div class="row" v-if="deployedProject">
       <div class="col-12 my-1">
-        <div class="mb-3">Deployed {{txData.contractName}}</div>
-        <div class="mb-3">Tx: {{txData.result}}</div>
+        <div class="mb-3">Deployed {{deployedProject.projectId}}</div>
+        <div class="mb-3">Tx: {{deployedProject.txId}}</div>
       </div>
-      <div class="text-center col-12 my-1">
-        <div class="mb-3"><router-link to="/tx-history">Tx is stored via Gaia</router-link></div>
+    </div>
+  </b-modal>
+  <b-modal id="modal-err" title="Contract Not Deployed">
+    <div class="row">
+      <div class="col-12 my-1">
+        <div class="mb-3">Error: {{result}}</div>
       </div>
     </div>
   </b-modal>
@@ -48,7 +52,7 @@
 import MediaFilesUpload from '@/components/utils/MediaFilesUpload'
 
 export default {
-  name: 'UploadContractForm',
+  name: 'DeployContractFromFile',
   components: {
     MediaFilesUpload
   },
@@ -63,6 +67,7 @@ export default {
       loading: true,
       parentalError: null,
       result: null,
+      deployedProject: null,
       contentModel1: {
         title: 'Browse computer for contract to deploy',
         errorMessage: 'A file is required.',
@@ -97,12 +102,13 @@ export default {
       // contractName = this.this.files[0].name.split(/\./)[1]
       const projectPlus = this.project
       projectPlus.codeBody = this.plainFile()
-      this.$store.dispatch('stacksStore/deployContractRisidio', projectPlus).then((txData) => {
-        this.txData = txData
+      this.$store.dispatch('stacksStore/deployProjectContract', projectPlus).then((project) => {
+        this.deployedProject = project
         this.$bvModal.show('modal-1')
       }).catch((error) => {
-        // this.result = error
-        this.$notify({ type: 'error', title: 'Contracts', text: error })
+        this.result = error
+        this.$bvModal.show('modal-err')
+        // this.$notify({ type: 'error', title: 'Contracts', text: error })
       })
     },
     validate: function (project, file) {

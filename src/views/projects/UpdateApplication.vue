@@ -24,27 +24,28 @@
           </div>
           <div class="col-md-8 col-sm-12">
             <b-form>
-              <div class="mb-2">
-                <div class="mb-2">Name</div>
+              <div class="mb-4">
+                <div class="">Name</div>
                 <b-input
                   id="title"
                   v-model="project.title"
-                  class="mt-3"></b-input>
+                  ></b-input>
               </div>
-              <div class="mt-3 mb-2">
-                <div class="mb-2">Description</div>
+              <div class="mb-4">
+                <div class="">Description</div>
                 <b-input
                   ref="description"
                   v-model="project.description"
-                  class="mt-3"></b-input>
+                  ></b-input>
               </div>
-              <div class="mb-2">
-                <div class="mb-2">Contract Id <a href="#" @click.prevent="useMyAddress()">(use my address)</a></div>
+              <div class="mb-4">
+                <div class="">Contract Id <a v-if="!project.txId" href="#" @click.prevent="useMyAddress()">(use my address)</a></div>
                 <b-input
                   id="projectId"
                   ref="projectId"
+                  readonly="(project.txId) ? true : false"
                   v-model="project.projectId"
-                  class="mt-3"></b-input>
+                  ></b-input>
               </div>
               <div class="mb-2" v-if="valid">
                 <b-button variant="info" class="mt-3 mr-3 btn-lg" style="text-transform: capitalize; font-size: 14px;" @click.prevent="saveApplication()">Save Application</b-button>
@@ -75,7 +76,7 @@ import TitleBar from '@/components/admin/TitleBar'
 import AppLogoUpload from '@/components/utils/AppLogoUpload'
 
 export default {
-  name: 'ConnectApplication',
+  name: 'UpdateApplication',
   components: {
     AppLogoUpload,
     SideMenu,
