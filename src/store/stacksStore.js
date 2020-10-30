@@ -9,7 +9,6 @@ import {
 import axios from 'axios'
 import BigNum from 'bn.js'
 
-let STX_PAYMENT_ADDRESS = process.env.VUE_APP_STACKS_PAYMENT_ADDRESS
 let STX_CONTRACT_ADDRESS = process.env.VUE_APP_STACKS_CONTRACT_ADDRESS
 let STX_CONTRACT_NAME = process.env.VUE_APP_STACKS_CONTRACT_NAME
 const network = new StacksTestnet()
@@ -35,17 +34,32 @@ const getStacksAccount = function (appPrivateKey) {
 const setAddresses = function () {
   const config = store.getters[APP_CONSTANTS.KEY_CONFIGURATION]
   if (config && config.addresses) {
-    STX_PAYMENT_ADDRESS = config.addresses.stxPaymentAddress
     STX_CONTRACT_ADDRESS = config.addresses.stxContractAddress
     STX_CONTRACT_NAME = config.addresses.stxContractName
   }
 }
 
-function unwrapStrings (tuple) {
+function unwrapStrings (tuple, type) {
   const names = tuple.match(/0x\w+/g) || []
-  const name = Buffer.from(names[0].substring(2), 'hex').toString()
+  let name
+  if (!type) {
+    name = Buffer.from(names[0].substring(2), 'hex').toString()
+  } else {
+    // name = new Uint32Array(Buffer.from(names[0].substring(2), 'hex'))
+    name = Buffer.from(names[0].substring(2), 'hex')
+    name = new Float64Array(name)
+  }
   return name
 }
+/**
+function DoubleToIEEE(f) {
+  var buf = new ArrayBuffer(8);
+  var float = new Float64Array(buf);
+  var uint = new Uint32Array(buf);
+  float[0] = f;
+  return uint;
+}
+**/
 
 const getAmountStx = function (amountMicroStx) {
   try {
@@ -93,11 +107,23 @@ const resolveError = function (reject, error) {
     reject(error)
   }
 }
+const resolveReadOnly = function (resolve, reject, functionName, response) {
+  if (!response.data.okay) {
+    reject(new Error('not okay'))
+  } else {
+    if (functionName === 'get-mint-price') {
+      const res = getAmountStx(parseInt(response.data.result, 16))
+      resolve(res)
+    } else {
+      const res = unwrapStrings(response.data.result, 'uint')
+      resolve(res)
+    }
+  }
+}
 const stacksStore = {
   namespaced: true,
   state: {
     provider: 'risidio',
-    appmap: null,
     result: null,
     contracts: [],
     appName: 'Risidio Mesh',
@@ -107,9 +133,6 @@ const stacksStore = {
   getters: {
     getMacsWallet: state => {
       return state.macsWallet
-    },
-    getAppmap: state => {
-      return state.appmap
     }
   },
   mutations: {
@@ -118,9 +141,6 @@ const stacksStore = {
     },
     setResult (state, result) {
       state.result = result
-    },
-    setAppmap (state, appmap) {
-      state.appmap = appmap
     }
   },
   actions: {
@@ -209,58 +229,37 @@ const stacksStore = {
         })
       })
     },
-    callContractRisidioReadOnly ({ commit }, data) {
+    callContractReadOnly ({ state }, data) {
       return new Promise((resolve, reject) => {
-        setAddresses()
-        const path = '/v2/contracts/call-read/' + STX_CONTRACT_ADDRESS + '/' + STX_CONTRACT_NAME + '/' + data.functionName
+        setAddresses(state)
+        let contractAddress = STX_CONTRACT_ADDRESS
+        let contractName = STX_CONTRACT_NAME
+        if (data.contractId) {
+          contractAddress = data.contractId.split('.')[0]
+          contractName = data.contractId.split('.')[1]
+        }
+        const path = '/v2/contracts/call-read/' + contractAddress + '/' + contractName + '/' + data.functionName
         const txoptions = {
           path: path,
           httpMethod: 'POST',
           postData: {
             arguments: (data.functionArgs) ? data.functionArgs : [],
-            sender: STX_PAYMENT_ADDRESS
+            sender: contractAddress
           }
         }
+        const headers = {
+          'Content-Type': 'application/json'
+        }
         axios.post(MESH_API + '/v2/accounts', txoptions).then(response => {
-          if (!response.data.okay) {
-            reject(new Error('not okay'))
-          } else {
-            data.senderKey = null
-            if (data.functionName === 'get-mint-price') {
-              const res = getAmountStx(parseInt(response.data.result, 16))
-              // const res = unwrapStrings(response.data.result) // response.data.result.substring(0)
-              data.result = res
-              commit('setResult', data.result)
-            } else {
-              const res = unwrapStrings(response.data.result) // response.data.result.substring(2)
-              // data.result = Buffer.from(res, 'hex').toString()
-              commit('setResult', response.data.result)
-              data.result = res
-            }
-            resolve(data)
-          }
-        }).catch((error) => {
-          resolveError(reject, error)
-        })
-      })
-    },
-    appmapLookup ({ commit }) {
-      return new Promise((resolve, reject) => {
-        const appmapContractId = store.getters['projectStore/getAppmapContractId']
-        const contractAddress = appmapContractId.split('.')[0]
-        const contractName = appmapContractId.split('.')[1]
-        let useApi = STACKS_API + '/v2/map_entry/' + contractAddress + '/' + contractName + '/app-map'
-        axios.post(useApi).then((response) => {
-          commit('setResult', response.data)
-          resolve(response.data)
+          resolveReadOnly(resolve, reject, data.functionName, response)
         }).catch(() => {
-          useApi = STACKS_API + '/v2/map_entry/' + contractAddress + '/' + contractName + '/app-map'
-          axios.post(useApi).then((response) => {
-            resolve(response.data)
+          axios.post(STACKS_API + path, txoptions.postData, { headers: headers }).then(response => {
+            resolveReadOnly(resolve, reject, data.functionName, response)
           }).catch((error) => {
-            console.log('Error broadcasting tx.. ', error)
             resolveError(reject, error)
           })
+        }).catch((error) => {
+          resolveError(reject, error)
         })
       })
     },

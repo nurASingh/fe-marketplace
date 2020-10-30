@@ -8,19 +8,11 @@ const projectStore = {
   namespaced: true,
   state: {
     rootFile: null,
-    connectedProjects: null,
-    appmapContractId: 'ST1ESYCGJB5Z5NBHS39XPC70PGC14WAQK5XXNQYDW.appmap'
+    connectedProjects: null
   },
   getters: {
     getProjects: (state: any) => {
       return (state.rootFile && state.rootFile.projects) ? state.rootFile.projects : []
-    },
-    getAppmapContractId: (state: any) => {
-      return state.appmapContractId
-    },
-    getAppmapTxId: (state: any) => {
-      if (!state.rootFile || !state.rootFile.appmap) return
-      return state.rootFile.appmap.txId
     },
     getConnectedProjects: (state: any) => {
       return state.connectedProjects || []
