@@ -3,24 +3,6 @@ import searchIndexService from '@/services/searchIndexService'
 import store from '.'
 import { APP_CONSTANTS } from '@/app-constants'
 import moment from 'moment'
-import axios from 'axios'
-
-const SEARCH_API_PATH = process.env.VUE_APP_API_SEARCH
-
-const readProjectFromGaia = function (resolve, reject, projectLookups, commit) {
-  try {
-    projectLookups.forEach((projectLookup) => {
-      // the lookups are records stored centrally which allow the data to be pulled
-      // from users gaia storage
-      projectService.fetchUserProjects(projectLookup.owner).then((connectedProjects) => {
-        commit('setConnectedProjects', { owner: projectLookup.owner, projects: connectedProjects })
-      })
-    })
-    resolve()
-  } catch {
-    reject(new Error('Unable to fetch project from users gaia storage.' + JSON.stringify(projectLookups)))
-  }
-}
 
 const projectStore = {
   namespaced: true,
@@ -62,61 +44,6 @@ const projectStore = {
     }
   },
   actions: {
-    findProjects ({ commit }: any) {
-      return new Promise((resolve, reject) => {
-        const url = SEARCH_API_PATH + '/projectsAll'
-        axios.get(url).then((response) => {
-          readProjectFromGaia(resolve, reject, response.data, commit)
-        }).catch((error) => {
-          reject(new Error('Unable find projects: ' + error))
-        })
-      })
-    },
-    findProjectsByDomain: function ({ commit }: any, domain: string) {
-      return new Promise(function (resolve, reject) {
-        if (!domain) {
-          reject(new Error('No domain'))
-          return
-        }
-        const url = SEARCH_API_PATH + '/projectsByDomain/' + domain
-        axios.get(url).then((response) => {
-          readProjectFromGaia(resolve, reject, response.data, commit)
-        }).catch((error) => {
-          reject(new Error('Unable index record: ' + error))
-        })
-      })
-    },
-    findProjectsByOwner: function ({ commit }: any, owner: string) {
-      return new Promise(function (resolve, reject) {
-        if (!owner) {
-          reject(new Error('No owner'))
-          return
-        }
-        const url = SEARCH_API_PATH + '/projectsByDomain/' + owner
-        axios.get(url).then((response) => {
-          readProjectFromGaia(resolve, reject, response.data, commit)
-        }).catch((error) => {
-          reject(new Error('Unable index record: ' + error))
-        })
-      })
-    },
-    findProjectsByProjectId ({ commit }: any, projectId: string) {
-      return new Promise((resolve, reject) => {
-        if (!projectId) {
-          reject(new Error('No domain'))
-          return
-        }
-        const url = SEARCH_API_PATH + '/projectsByProjectId/' + projectId
-        axios.get(url).then((response) => {
-          if (response.data) {
-            const projectLookups = [response.data]
-            readProjectFromGaia(resolve, reject, projectLookups, commit)
-          }
-        }).catch((error) => {
-          reject(new Error('Unable index record: ' + error))
-        })
-      })
-    },
     fetchMyProjects ({ state, commit }: any, forced: boolean) {
       return new Promise(resolve => {
         if (state.rootFile && !forced) {

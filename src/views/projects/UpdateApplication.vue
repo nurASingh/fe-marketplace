@@ -43,7 +43,7 @@
                 <b-input
                   id="projectId"
                   ref="projectId"
-                  readonly="(project.txId) ? true : false"
+                  :readonly="project.txId"
                   v-model="project.projectId"
                   ></b-input>
               </div>

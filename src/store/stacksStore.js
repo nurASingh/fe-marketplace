@@ -108,7 +108,7 @@ const stacksStore = {
     getMacsWallet: state => {
       return state.macsWallet
     },
-    getAppmap: state => projectId => {
+    getAppmap: state => {
       return state.appmap
     }
   },
@@ -244,13 +244,14 @@ const stacksStore = {
         })
       })
     },
-    appmapLookup ({ getters }, data) {
+    appmapLookup ({ commit }) {
       return new Promise((resolve, reject) => {
         const appmapContractId = store.getters['projectStore/getAppmapContractId']
         const contractAddress = appmapContractId.split('.')[0]
         const contractName = appmapContractId.split('.')[1]
         let useApi = STACKS_API + '/v2/map_entry/' + contractAddress + '/' + contractName + '/app-map'
         axios.post(useApi).then((response) => {
+          commit('setResult', response.data)
           resolve(response.data)
         }).catch(() => {
           useApi = STACKS_API + '/v2/map_entry/' + contractAddress + '/' + contractName + '/app-map'
@@ -269,6 +270,7 @@ const stacksStore = {
         const contractName = projectId.split('.')[1]
         axios.get(STACKS_API + '/v2/contracts/interface/' + contractAddress + '/' + contractName + '?proof=0').then(response => {
           store.commit('projectStore/addContractData', { projectId: projectId, interface: response.data })
+          commit('setResult', { projectId: projectId, interface: response.data })
           resolve({ projectId: projectId, interface: response.data })
         }).catch((error) => {
           resolveError(reject, error)
@@ -280,6 +282,7 @@ const stacksStore = {
         const address = STACKS_API.replace('20443', '3999')
         axios.get(address + '/extended/v1/contract/' + projectId + '?proof=0').then(response => {
           store.commit('projectStore/addContractData', { projectId: projectId, info: response.data })
+          commit('setResult', { projectId: projectId, info: response.data })
           resolve({ projectId: projectId, interface: response.data })
         }).catch((error) => {
           resolveError(reject, error)

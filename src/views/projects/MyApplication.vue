@@ -56,7 +56,6 @@
 <script>
 import SideMenu from '@/components/admin/SideMenu'
 import TitleBar from '@/components/admin/TitleBar'
-import { APP_CONSTANTS } from '@/app-constants'
 
 export default {
   name: 'MyApplication',
@@ -81,15 +80,9 @@ export default {
   },
   mounted () {
     this.projectId = this.$route.params.projectId
-    const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
     this.$store.dispatch('projectStore/findProjectByProjectId', this.projectId).then((project) => {
       this.project = project
-    })
-    this.$store.dispatch('stacksStore/appmapLookup', { owner: profile.username, projectId: this.projectId }).then((record) => {
-      this.record = record
       this.lookupContract()
-      this.loaded = true
-    }).catch(() => {
       this.loaded = true
     })
   },

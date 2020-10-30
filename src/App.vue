@@ -41,7 +41,7 @@ export default {
     const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
     this.$store.dispatch('stacksStore/fetchMacsWalletInfo')
     this.$store.dispatch('projectStore/fetchMyProjects', profile)
-    this.$store.dispatch('projectStore/findProjects')
+    this.$store.dispatch('applicationStore/findApplications')
     if (profile.loggedIn && profile.environment !== 'localhost') {
       this.loaded = true
     } else {
