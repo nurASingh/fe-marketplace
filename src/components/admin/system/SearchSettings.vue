@@ -3,7 +3,7 @@
   <div class="mb-4">
     <div class="d-flex justify-content-between">
       <div>
-        <a class="mx-2" href="#" @click.prevent="findProjects">projects</a>
+        <a class="mx-2" href="#" @click.prevent="findApplications">projects</a>
         <a class="mx-2" href="#" @click.prevent="findAssets">assets</a>
         <a class="mx-2" href="#" @click.prevent="findUsers">users</a>
       </div>
@@ -128,10 +128,10 @@ export default {
         this.searchType = 'users'
       })
     },
-    findProjects () {
-      this.$store.dispatch('projectStore/findProjects').then((results) => {
+    findApplications () {
+      this.$store.dispatch('applicationStore/findApplications').then((results) => {
         this.searchResults = results
-        this.searchType = 'projects'
+        this.searchType = 'applications'
       })
     },
     findAssets () {

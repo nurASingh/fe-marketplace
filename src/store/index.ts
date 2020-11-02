@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue'
 import Vuex from 'vuex'
+import applicationStore from './applicationStore'
 import contentStore from './contentStore'
 import searchStore from './searchStore'
 import stacksStore from './stacksStore'
@@ -10,6 +11,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
+    applicationStore,
     contentStore,
     searchStore,
     projectStore,

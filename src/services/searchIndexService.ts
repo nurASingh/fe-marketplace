@@ -1,7 +1,6 @@
 import axios from 'axios'
 
 const SEARCH_API_PATH = process.env.VUE_APP_API_SEARCH
-const PROJECT_ROOT_PATH = process.env.VUE_APP_PROJECT_ROOT_PATH
 
 /**
  *  The service is a client to the brightblock sever side grpc client.
@@ -19,6 +18,7 @@ const searchIndexService = {
 
   addRecord: function (projectModel: any) {
     return new Promise(function (resolve, reject) {
+      /**
       const project: any = {
         domain: projectModel.domain,
         indexFiles: [{
@@ -29,7 +29,8 @@ const searchIndexService = {
         projectId: projectModel.projectId,
         storeageModel: 'gaia'
       }
-      axios.post(SEARCH_API_PATH + '/register', project).then((result) => {
+      **/
+      axios.post(SEARCH_API_PATH + '/addRecord', projectModel).then((result) => {
         resolve(result)
       })
         .catch((error) => {
