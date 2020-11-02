@@ -40,7 +40,9 @@ export default {
     this.adminPage = this.$route.name.indexOf('-app') > -1
     const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
     this.$store.dispatch('stacksStore/fetchMacsWalletInfo')
-    this.$store.dispatch('projectStore/fetchMyProjects', profile)
+    this.$store.dispatch('projectStore/fetchMyProjects', profile).catch((err) => {
+      console.log(err)
+    })
     this.$store.dispatch('applicationStore/lookupApplications')
     if (profile.loggedIn && profile.environment !== 'localhost') {
       this.loaded = true

@@ -1,5 +1,4 @@
 import projectService from '@/services/projectService.js'
-import searchIndexService from '@/services/searchIndexService'
 import store from '.'
 import { APP_CONSTANTS } from '@/app-constants'
 import moment from 'moment'
@@ -12,7 +11,18 @@ const projectStore = {
   },
   getters: {
     getProjects: (state: any) => {
-      return (state.rootFile && state.rootFile.projects) ? state.rootFile.projects : []
+      if (state.rootFile) {
+        return (state.rootFile && state.rootFile.projects) ? state.rootFile.projects : []
+      }
+      return []
+    },
+    getProject: (state: any) => projectId => {
+      if (state.rootFile) {
+        const index = state.rootFile.projects.findIndex((o) => o.projectId === projectId)
+        if (index > -1) {
+          return state.rootFile.projects[index]
+        }
+      }
     },
     getConnectedProjects: (state: any) => {
       return state.connectedProjects || []
@@ -36,18 +46,28 @@ const projectStore = {
     }
   },
   actions: {
-    fetchMyProjects ({ state, commit }: any, forced: boolean) {
-      return new Promise(resolve => {
+    fetchMyProjects ({ dispatch, state, commit }: any, forced: boolean) {
+      return new Promise((resolve, reject) => {
         if (state.rootFile && !forced) {
           resolve(state.rootFile)
         } else {
           const profile = store.getters[APP_CONSTANTS.KEY_PROFILE]
           projectService.fetchMyProjects(profile).then((rootFile: any) => {
             rootFile.projects.forEach((project) => {
-              store.dispatch('stacksStore/lookupContractInterface', project.projectId)
+              store.dispatch('stacksStore/lookupContractInterface', project.projectId).then((intface) => {
+                if (intface) {
+                  commit('addContractData', { projectId: project.projectId, interface: intface })
+                }
+              }).catch((error) => {
+                project.txId = null
+                dispatch('updateProject', project)
+                reject(error)
+              })
             })
             commit('rootFile', rootFile)
             resolve(rootFile)
+          }).catch((err) => {
+            reject(err)
           })
         }
       })
@@ -73,7 +93,7 @@ const projectStore = {
     updateProject ({ state, commit }: any, data: any) {
       return new Promise((resolve, reject) => {
         if (!state.rootFile) reject(new Error('application not initialised?'))
-        if (data.contractId.indexOf('appmap') > -1) {
+        if (data.contractId && data.contractId.indexOf('appmap') > -1) {
           state.rootFile.appmap = {
             contractId: data.contractId,
             txId: data.txId
@@ -86,13 +106,13 @@ const projectStore = {
           const index = state.rootFile.projects.findIndex((o) => o.projectId === data.projectId)
           if (index > -1) {
             const project = state.rootFile.projects[index]
-            project.projectId = data.contractId
+            project.projectId = (data.contractId) ? data.contractId : project.projectId
             project.txId = data.txId
-            searchIndexService.removeRecord('project', data.projectId)
+            // searchIndexService.removeRecord('project', data.projectId)
             state.rootFile.projects.splice(index, 1, project)
             projectService.saveProject(state.rootFile).then((rootFile) => {
               commit('rootFile', rootFile)
-              searchIndexService.addRecord(project)
+              // searchIndexService.addRecord(project)
               resolve(project)
             })
           } else {
@@ -112,13 +132,9 @@ const projectStore = {
           const index = state.rootFile.projects.findIndex((o) => o.projectId === projectId)
           if (index > -1) {
             state.rootFile.projects.splice(index, 1)
-            searchIndexService.removeRecord('project', projectId).then(() => {
-              projectService.saveProject(state.rootFile).then((rootFile) => {
-                commit('rootFile', rootFile)
-                resolve(true)
-              }).catch(() => {
-                resolve(false)
-              })
+            projectService.saveProject(state.rootFile).then((rootFile) => {
+              commit('rootFile', rootFile)
+              resolve(true)
             }).catch(() => {
               resolve(false)
             })
@@ -180,6 +196,7 @@ const projectStore = {
           }
           projectService.saveProject(state.rootFile).then((rootFile) => {
             commit('rootFile', rootFile)
+            /**
             searchIndexService.addRecord(state.rootFile.projects[index]).then((result) => {
               console.log(result)
               resolve(project)
@@ -187,6 +204,7 @@ const projectStore = {
               console.log(error)
               resolve(project)
             })
+            **/
           }).catch((error) => {
             console.log(error)
             reject(error)

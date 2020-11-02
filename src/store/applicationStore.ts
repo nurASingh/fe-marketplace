@@ -6,7 +6,6 @@ import {
 } from '@blockstack/stacks-transactions'
 
 const SEARCH_API_PATH = process.env.VUE_APP_API_SEARCH
-
 const readProjectFromGaia = function (resolve, reject, projectLookups, commit) {
   try {
     projectLookups.forEach((projectLookup) => {
@@ -27,6 +26,7 @@ const applicationStore = {
     appmap: {
       apps: []
     },
+    appCounter: 0,
     connectedProjects: null,
     appmapContractId: 'ST1ESYCGJB5Z5NBHS39XPC70PGC14WAQK5XXNQYDW.appmap'
   },
@@ -39,11 +39,20 @@ const applicationStore = {
     },
     getAppmapContractId: (state: any) => {
       return state.appmapContractId
+    },
+    getAppmapProject: (state: any) => projectId => {
+      const index = state.appmap.apps.findIndex((o) => o.projectId === projectId)
+      if (index > -1) {
+        return state.appmap.apps[index]
+      }
     }
   },
   mutations: {
     rootFile (state: any, rootFile: any) {
       state.rootFile = rootFile
+    },
+    setAppCounter (state, appCounter) {
+      state.appCounter = appCounter
     },
     setAppmap (state, appmap) {
       state.appmap = appmap
@@ -53,10 +62,11 @@ const applicationStore = {
     }
   },
   actions: {
-    lookupApplications ({ state, dispatch }: any) {
+    lookupApplications ({ state, commit, dispatch }: any) {
       return new Promise((resolve, reject) => {
         store.dispatch('stacksStore/callContractReadOnly', { contractId: state.appmapContractId, functionName: 'get-app-counter' }).then((data) => {
           const appCounter = data
+          commit('setAppCounter', appCounter)
           for (let i = 0; i < appCounter; i++) {
             dispatch('lookupApplicationByIndex', appCounter)
           }

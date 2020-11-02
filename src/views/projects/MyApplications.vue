@@ -18,16 +18,10 @@
               <p>TxId: {{project.txId}}</p>
               <p>Description: {{project.description}}</p>
               <div v-if="project.txId">
-                <div @click="showContractData = !showContractData"><span>Contract: <a :href="'https://testnet-explorer.blockstack.org/txid/' + project.projectId" target="_blank">{{project.deployTx}}</a></span></div>
-                <div v-if="showContractData">
-
-                  <pre class="source-code">{{project.codeBody}}</pre>
-                </div>
-                <router-link class="mr-3" :to="'/my-app/' + project.projectId">open</router-link>
+                <div><span>Contract: Deployed</span></div>
               </div>
-              <p v-else>
+              <p>
                 <router-link class="mr-3" :to="'/my-app/' + project.projectId">open</router-link>
-                <router-link class="text-warning mr-3" :to="'/my-app/' + project.projectId">connect contract</router-link>
               </p>
             </div>
           </div>

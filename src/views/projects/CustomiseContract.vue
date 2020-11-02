@@ -92,6 +92,7 @@ export default {
       showStep2: false,
       tokenUrl: null,
       deployedProject: null,
+      result: null,
       params: {
         mintPrice: '100000',
         contractName: null,

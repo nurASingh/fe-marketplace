@@ -5,9 +5,11 @@ import {
   makeContractCall,
   broadcastTransaction,
   makeContractDeploy
+  // deserializeCV
 } from '@blockstack/stacks-transactions'
 import axios from 'axios'
 import BigNum from 'bn.js'
+// import { Result } from '@blockstack/clarity-cli'
 
 let STX_CONTRACT_ADDRESS = process.env.VUE_APP_STACKS_CONTRACT_ADDRESS
 let STX_CONTRACT_NAME = process.env.VUE_APP_STACKS_CONTRACT_NAME
@@ -41,15 +43,29 @@ const setAddresses = function () {
 
 function unwrapStrings (tuple, type) {
   const names = tuple.match(/0x\w+/g) || []
-  let name
   if (!type) {
-    name = Buffer.from(names[0].substring(2), 'hex').toString()
+    return Buffer.from('0x' + names[0].substring(2), 'hex').toString()
   } else {
-    // name = new Uint32Array(Buffer.from(names[0].substring(2), 'hex'))
-    name = Buffer.from(names[0].substring(2), 'hex')
-    name = new Float64Array(name)
+    console.log(tuple)
+    const part1 = tuple.substring(4)
+    const resultData = parseInt('0x' + part1)
+    // const resultData = Result.unwrapInt(names[0])
+    // return Buffer.from(names[0].substring(2), 'hex')
+    // const resultData = deserializeCV(Buffer.from(names[0].substring(2), 'hex'))
+    // const resultData = resultValue as UIntCV
+    return resultData
+    // name = new Uint8Array(Buffer.from(names[0].substring(2), 'hex'))
+    // const buffer1 = Buffer.from(name)
+    // let val = buffer1.readUInt32LE(0)
+    // if (val) val++
+    // name = Buffer.from(names[0].substring(2), 'hex')
+    // const length = name.length
+    // const buffer = Buffer.from(name)
+    // const result = buffer.readUIntBE(0, length)
+    // return result
+    // name = new Float64Array(name)
   }
-  return name
+  // return name
 }
 /**
 function DoubleToIEEE(f) {
@@ -99,7 +115,11 @@ const resolveError = function (reject, error) {
         reject(new Error(error.response.data.message))
       }
     } else {
-      reject(new Error(error.response))
+      if (error.response && error.response.data) {
+        reject(new Error(error.response.data))
+      } else {
+        reject(new Error('no error.response.data'))
+      }
     }
   } else if (error.message) {
     reject(error.message)
@@ -109,12 +129,13 @@ const resolveError = function (reject, error) {
 }
 const resolveReadOnly = function (resolve, reject, functionName, response) {
   if (!response.data.okay) {
-    reject(new Error('not okay'))
+    reject(new Error(response.data.cause))
   } else {
     if (functionName === 'get-mint-price') {
       const res = getAmountStx(parseInt(response.data.result, 16))
       resolve(res)
     } else {
+      console.log(response)
       const res = unwrapStrings(response.data.result, 'uint')
       resolve(res)
     }
@@ -178,9 +199,9 @@ const stacksStore = {
         if (!data.senderKey) {
           data.senderKey = profile.senderKey
         }
-        let nonce = new BigNum(state.wallet.nonce)
+        let nonce = new BigNum(state.macsWallet.nonce)
         if (data && data.action === 'inc-nonce') {
-          nonce = new BigNum(state.wallet.nonce + 1)
+          nonce = new BigNum(state.macsWallet.nonce + 1)
         }
         // 5000 000 000 000 000
         const txOptions = {
@@ -189,7 +210,7 @@ const stacksStore = {
           functionName: data.functionName,
           functionArgs: (data.functionArgs) ? data.functionArgs : [],
           fee: new BigNum(1800),
-          senderKey: state.wallet.keyInfo.privateKey,
+          senderKey: state.macsWallet.keyInfo.privateKey,
           nonce: new BigNum(nonce),
           validateWithAbi: false,
           network
@@ -231,7 +252,10 @@ const stacksStore = {
     },
     callContractReadOnly ({ state }, data) {
       return new Promise((resolve, reject) => {
-        setAddresses(state)
+        setAddresses()
+        if (state) {
+          console.log(state)
+        }
         let contractAddress = STX_CONTRACT_ADDRESS
         let contractName = STX_CONTRACT_NAME
         if (data.contractId) {
@@ -250,16 +274,14 @@ const stacksStore = {
         const headers = {
           'Content-Type': 'application/json'
         }
-        axios.post(MESH_API + '/v2/accounts', txoptions).then(response => {
+        axios.post(STACKS_API + path, txoptions.postData, { headers: headers }).then(response => {
           resolveReadOnly(resolve, reject, data.functionName, response)
-        }).catch(() => {
-          axios.post(STACKS_API + path, txoptions.postData, { headers: headers }).then(response => {
+        }).catch((error) => {
+          axios.post(MESH_API + '/v2/accounts', txoptions).then(response => {
             resolveReadOnly(resolve, reject, data.functionName, response)
-          }).catch((error) => {
+          }).catch(() => {
             resolveError(reject, error)
           })
-        }).catch((error) => {
-          resolveError(reject, error)
         })
       })
     },

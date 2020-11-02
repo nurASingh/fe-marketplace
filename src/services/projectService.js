@@ -51,7 +51,7 @@ const projectService = {
     })
   },
   fetchMyProjects: function (profile) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       if (!profile.loggedIn) {
         resolve(getNewRootFile())
         return
@@ -65,6 +65,8 @@ const projectService = {
           const rootFile = JSON.parse(file)
           resolve(rootFile)
         }
+      }).catch(() => {
+        reject(new Error('Failed to fetch - logged in?'))
       })
     })
   },
