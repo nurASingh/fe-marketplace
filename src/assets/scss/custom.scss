@@ -9,108 +9,126 @@ $font-dir: "/fonts/";
   src: url("/fonts/Montserrat-Black.ttf") format("truetype");
   font-style: normal;
   font-weight: normal;
+  font-display: swap;
 }
 @font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-BlackItalic.ttf") format("truetype");
   font-style: italic;
   font-weight: normal;
+  font-display: swap;
 }
 @font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-Bold.ttf") format("truetype");
   font-style: normal;
   font-weight: 700;
+  font-display: swap;
 }
 @font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-BoldItalic.ttf") format("truetype");
   font-style: italic;
   font-weight: 700;
+  font-display: swap;
 }
 @font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-ExtraBold.ttf") format("truetype");
   font-style: normal;
   font-weight: 800;
+  font-display: swap;
 }
 @font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-ExtraBoldItalic.ttf") format("truetype");
   font-style: italic;
   font-weight: 800;
+  font-display: swap;
 }
 @font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-ExtraLight.ttf") format("truetype");
   font-style: normal;
   font-weight: 200;
+  font-display: swap;
 }
 @font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-ExtraLightItalic.ttf") format("truetype");
   font-style: italic;
   font-weight: 200;
+  font-display: swap;
 }
 @font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-Italic.ttf") format("truetype");
   font-style: italic;
   font-weight: 500;
+  font-display: swap;
 }
 @font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-Light.ttf") format("truetype");
   font-style: normal;
   font-weight: 300;
+  font-display: swap;
 }
 @font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-LightItalic.ttf") format("truetype");
   font-style: italic;
   font-weight: 300;
+  font-display: swap;
 }
 @font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-Medium.ttf") format("truetype");
   font-style: normal;
   font-weight: 500;
+  font-display: swap;
 }
 @font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-MediumItalic.ttf") format("truetype");
   font-style: italic;
   font-weight: 500;
+  font-display: swap;
 }
 @font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-Regular.ttf") format("truetype");
   font-style: normal;
   font-weight: 400;
+  font-display: swap;
 }
 @font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-SemiBold.ttf") format("truetype");
   font-style: normal;
   font-weight: 600;
+  font-display: swap;
 }
 @font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-SemiBoldItalic.ttf") format("truetype");
   font-style: italic;
   font-weight: 600;
+  font-display: swap;
 }
 @font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-Thin.ttf") format("truetype");
   font-style: normal;
   font-weight: 100;
+  font-display: swap;
 }
 @font-face {
   font-family: "Montserrat";
   src: url("/fonts/Montserrat-ThinItalic.ttf") format("truetype");
   font-style: italic;
   font-weight: 100;
+  font-display: swap;
 }
 
 body {
@@ -142,25 +160,49 @@ body {
 }
 
 .dropdown-menu {
+  color: #000;
   min-width: 10rem;
-  padding: 0.5rem 0;
-  margin: 0.125rem 0 0;
-  font-size: 1rem;
-  color: #707070;
   text-align: left;
   list-style: none;
-  background-color: #fff;
   background-clip: padding-box;
   border: 1px solid rgba(0, 0, 0, 0.15);
-  border-radius: 0.25rem;
+  background-color: #FFFFFF;
+  box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.161);
+  border-radius: 17px;
+  padding: 20px;
+  font-size: 12px;
+  margin-top: 16px;
 }
+.dropdown .dropdown-menu {
+  -webkit-transition: all 0.5s;
+  -moz-transition: all 0.5s;
+  -ms-transition: all 0.5s;
+  -o-transition: all 0.5s;
+  transition: all 0.5s;
 
+  max-height: 0;
+  display: block;
+  overflow: hidden;
+  opacity: 0;
+}
+.dropdown.show .dropdown-menu {
+  max-height: 300px;
+  opacity: 1;
+}
 .dropdown-menu-wide ul {
   min-width: 25rem !important;
 }
-
 .dropdown-item {
-  color: #212121 !important;
+  color: #000;
+  font-weight: 600;
+}
+.dropdown-item:hover, .dropdown-item:focus {
+  text-decoration: none;
+  color: $info !important;
+  background-color: #fff;
+}
+.dropdown-toggle::after {
+  color: $info;
 }
 
 h1 {
@@ -203,7 +245,7 @@ p {
   font-weight: 200;
   letter-spacing: 0px;
   color: #FFFFFF;
-  text-shadow: 0px 3px 6px #00000029;
+  text-shadow: 0px 3px 6px rgba(0, 0, 0, 0.161);
   opacity: 1;
 }
 .text-font1 {
@@ -231,22 +273,24 @@ p {
   background-color: #111111;
 }
 button {
-  // background: rgb(255, 255, 255, .2) 0% 0% no-repeat padding-box;
-  color: $info;
+  width: 177px;
+  height: 43px;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: capitalize;
+  border-radius: 22px;
   border: none;
-  padding: 10px;
-}
-button:hover {
-  color: white 0% 0% no-repeat padding-box;
 }
 button:focus {
   outline: none;
 }
-.vueperslides__arrows button:hover {
-  background: transparent;
+.button-primary {
+  color: #fff;
+  background: $info;
 }
-.vueperslides__arrow--prev {
-  left: -6em !important;
+.button-secondary {
+  color: $info;
+  background: rgba(250, 250, 250, 0.2);
 }
 a {
   text-decoration: none;
@@ -280,14 +324,14 @@ a:focus {
   color: $info;
 }
 .btn-services {
-  background: #d1ebeb 0% 0% no-repeat padding-box;
+  background: #d1ebeb;
   border-radius: 22px;
   opacity: 1;
   width: 177px;
   height: 43px;
 }
 .btn-services:hover {
-  background: $info 0% 0% no-repeat padding-box;
+  background: $info;
 }
 .btn-services:hover a {
   color: #d1ebeb !important;

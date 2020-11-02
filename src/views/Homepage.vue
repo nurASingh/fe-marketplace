@@ -1,49 +1,53 @@
 <template>
-<div v-if="content" >
+<div v-if="content" id="homepage">
   <div :style="bannerImage" class="pt-5 d-flex align-items-center flex-column">
     <div class="my-auto text-white text-center">
-        <prismic-rich-text
+        <prismic-rich-text class="title-container"
           :field="content.header"
         />
         <div>
-          <b-button class="mr-3"><span v-html="content.header_buttons[0].button1[0].text"></span></b-button>
-          <b-button class="ml-3"><span v-html="content.header_buttons[0].button2[0].text"></span></b-button>
+          <button class="mr-3 button-primary"><span v-html="content.header_buttons[0].button1[0].text"></span></button>
+          <button class="ml-3 button-secondary"><span v-html="content.header_buttons[0].button2[0].text"></span></button>
         </div>
     </div>
   </div>
-  <div class="d-flex justify-content-center main-search">
-    <div class="text-center no-wrap" style="width: 100%; max-width: 650px;">
-      <b-input-group>
-        <template v-slot:append>
-          <a href="#"  @click.prevent="doSearch"><b-icon icon="search"/></a>
-        </template>
-        <template v-slot:prepend>
-          <b-dropdown caret>
-            <!-- Using 'button-content' slot -->
-            <template v-slot:button-content>
-              <span>Search by</span>
-            </template>
-            <b-dropdown-item></b-dropdown-item>
-            <b-dropdown-item>Application</b-dropdown-item>
-            <b-dropdown-item>Artist</b-dropdown-item>
-            <b-dropdown-item>Collection</b-dropdown-item>
-            <b-dropdown-item>On Auction</b-dropdown-item>
-            <b-dropdown-item>On Sale</b-dropdown-item>
-          </b-dropdown>
-        </template>
-        <b-form-input v-model="query"  size="sm" class="mr-sm-2" placeholder=""></b-form-input>
-      </b-input-group>
-    </div>
-  </div>
-  <div class="mt-5 d-flex justify-content-center main-search main-search__categories">
-    <div><a class="mx-2" :class="isActive('discover')" href="#" @click.prevent="category = 'discover'">Discover</a></div>
-    <div><a class="mx-2" :class="isActive('popular')" href="#" @click.prevent="category = 'popular'">Popular</a></div>
-    <div><a class="mx-2" :class="isActive('collections')" href="#" @click.prevent="category = 'collections'">Collections</a></div>
-    <div><a class="mx-2" :class="isActive('artists')" href="#" @click.prevent="category = 'artists'">Artists</a></div>
-    <div><a class="mx-2" :class="isActive('applications')" href="#" @click.prevent="category = 'applications'">Applications</a></div>
-  </div>
 
   <div class="container" v-if="content" :key="componentKey">
+    <div class="d-flex justify-content-center main-search">
+      <div class="text-center no-wrap main-search--border">
+        <b-input-group>
+          <template v-slot:append>
+            <a href="#"  @click.prevent="doSearch"><b-icon icon="search"/></a>
+          </template>
+          <template v-slot:prepend>
+            <b-dropdown caret>
+              <!-- Using 'button-content' slot -->
+              <template v-slot:button-content>
+                <span>Search by</span>
+              </template>
+              <div class="dropdown__whitespace"></div>
+              <div class="dropdown__filler"></div>
+              <div class="dropdown__items">
+                <b-dropdown-item></b-dropdown-item>
+                <b-dropdown-item>Application</b-dropdown-item>
+                <b-dropdown-item>Artist</b-dropdown-item>
+                <b-dropdown-item>Collection</b-dropdown-item>
+                <b-dropdown-item>On Auction</b-dropdown-item>
+                <b-dropdown-item>On Sale</b-dropdown-item>
+              </div>
+            </b-dropdown>
+          </template>
+          <b-form-input v-model="query"  size="sm" class="mr-sm-2" placeholder="Looking for something in particular?"></b-form-input>
+        </b-input-group>
+      </div>
+    </div>
+    <div class="mt-5 d-flex justify-content-center main-search main-search__categories">
+      <div><a class="mx-2" :class="isActive('discover')" href="#" @click.prevent="category = 'discover'">Discover</a></div>
+      <div><a class="mx-2" :class="isActive('popular')" href="#" @click.prevent="category = 'popular'">Popular</a></div>
+      <div><a class="mx-2" :class="isActive('collections')" href="#" @click.prevent="category = 'collections'">Collections</a></div>
+      <div><a class="mx-2" :class="isActive('artists')" href="#" @click.prevent="category = 'artists'">Artists</a></div>
+      <div><a class="mx-2" :class="isActive('applications')" href="#" @click.prevent="category = 'applications'">Applications</a></div>
+    </div>
     <div class="row mb-4">
       <div v-for="(item, index) in block1Items" :key="index" class="col-md-3 col-sm-4 col-xs-6" >
         <div @mouseleave="hoverOut()" @mouseover="hoverIn(index)" class="mb-4">
@@ -210,7 +214,7 @@ export default {
       return {
         'z-index': -1,
         padding: '0 0 0 0',
-        height: '378px',
+        height: '465px',
         width: '100%',
         'background-repeat': 'no-repeat',
         'background-image': `url(${content.image.url})`,
@@ -263,26 +267,142 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 @import "@/assets/scss/custom.scss";
-.main-search {
-  position: relative;
-  top: -100px;
-}
-.desc-text {
-  position: absolute;;
-  width: 256px;
-  bottom: 23px;
-  background: $success;
-  padding: 5px;
-  height: 56px;
-  background: #50B1B5 0% 0% no-repeat padding-box;
-  opacity: 0.95;
-  color: #fff;
+
+#homepage {
+
+  & .main-search {
+    margin-top: -28.5px;
+    z-index: 2;
+  }
+  & .main-search--border {
+    width: 100%;
+    max-width: 800px;
+  }
+  & .input-group {
+    background: #FFFFFF;
+    border: 1px solid #F5F5F5;
+    border-radius: 36px;
+    align-items: center;
+    height: 57px;
+    box-shadow: 0px 3px 6px #00000029;
+  }
+  & .input-group input {
+    font-size: 11px;
+    font-weight: 300;
+    color: #000;
+    height: 26px;
+    padding: 0.25rem 25px;
+    border-left: 1px solid #E5E5E5;
+    border-top: none;
+    border-right: none;
+    border-bottom: none;
+    z-index: 2;
+  }
+  & .input-group input:focus {
+    box-shadow: none;
+  }
+  & .main-search .btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    color: #000;
+    text-transform: none;
+    background: transparent;
+    border: none;
+    padding-left: 30px;
+    padding-right: 30px;
+    z-index: 2;
+  }
+  & .main-search .btn:focus {
+    box-shadow: none;
+  }
+  & .main-search .btn.dropdown-toggle::after {
+    font-size: 16px;
+  }
+  & .input-group .dropdown-menu {
+    width: 177px;
+    margin: 0;
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    position: absolute;
+    top: -7px !important;
+    left: 0;
+    z-index: 1;
+  }
+  & .input-group .dropdown-menu .dropdown__whitespace {
+    height: 30px;
+    border: none;
+    background: transparent;
+  }
+  & .input-group .dropdown-menu .dropdown__filler {
+    height: 27px;
+    border: none;
+    border-left: 1px solid #F5F5F5;
+    background: #fff;
+  }
+  & .input-group .dropdown-menu .dropdown__items {
+    padding: 0 0 20px;
+    border-top: none;
+    border-bottom: 1px solid #F5F5F5;
+    border-right: 1px solid #F5F5F5;
+    border-left: 1px solid #F5F5F5;
+    border-radius: 0 0 26px 26px;
+    background: #fff;
+    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.161);
+  }
+  & .input-group .dropdown-menu.show {
+    transform: none !important;
+  }
+  & .input-group .dropdown-item {
+    padding: 0 30px;
+  }
+  & .input-group li:not(:last-child) .dropdown-item {
+    margin-bottom: 15px;
+  }
+  & .input-group li:first-child .dropdown-item {
+    border-top: 1px solid #F5F5F5;
+    padding-top: 18px;
+  }
+  & .input-group-append svg {
+    font-size: 20px;
+    font-weight: bold;
+    color: #50B1B5;
+    margin-right: 22px;
+    margin-left: 1px;
+  }
+  & .desc-text {
+    position: absolute;;
+    width: 256px;
+    bottom: 23px;
+    background: $success;
+    padding: 5px;
+    height: 56px;
+    background: #50B1B5;
+    opacity: 0.95;
+    color: #fff;
+  }
+
+  & .title-container h1, .title-container h2 {
+    font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+  }
+  & .title-container h1 {
+    margin-bottom: 24px;
+  }
+  & .title-container h2 {
+    margin-bottom: 38px;
+  }
+
 }
 
 @media only screen and (max-width: 376px) {
-  .main-search__categories {
+  #homepage .main-search__categories {
     font-size: 12px;
   }
 }

@@ -292,51 +292,16 @@ nav a.navbar-brand {
 }
 
 /* DROPDOWN MENUS */
-nav .dropdown-menu {
-  background: #FFFFFF;
-  box-shadow: 0px 3px 6px #00000029;
-  border-radius: 17px;
-  padding: 20px;
-  font-size: 12px;
-  margin-top: 16px;
-}
-.dropdown .dropdown-menu {
-    -webkit-transition: all 0.5s;
-    -moz-transition: all 0.5s;
-    -ms-transition: all 0.5s;
-    -o-transition: all 0.5s;
-    transition: all 0.5s;
-
-    max-height: 0;
-    display: block;
-    overflow: hidden;
-    opacity: 0;
-}
-.dropdown.show .dropdown-menu {
-    max-height: 300px;
-    opacity: 1;
-}
-.dropdown-menu li:first-child a {
+nav .dropdown-menu li:first-child a {
   font-weight: 300;
 }
-.dropdown-menu li a {
-  color: #000 !important;
-}
-.navbar-nav .dropdown-item:hover, .dropdown-item:focus {
-    text-decoration: none;
-    color: $info !important;
-    background-color: #fff;
-}
-.dropdown-toggle::after {
-  color: $info;
-}
-.navbar__gallery-item .dropdown-menu li:not(:last-child) {
+nav .navbar__gallery-item .dropdown-menu li:not(:last-child) {
   margin-bottom: 15px;
 }
-.navbar__applications-item .dropdown-menu li:first-child {
+nav .navbar__applications-item .dropdown-menu li:first-child {
   margin-bottom: 30px;
 }
-.navbar__applications-item .dropdown-menu li:not(:last-child):not(:first-child) {
+nav .navbar__applications-item .dropdown-menu li:not(:last-child):not(:first-child) {
   margin-bottom: 15px;
 }
 
@@ -412,6 +377,10 @@ nav .navbar-toggler {
     width: 100%;
     display: flex;
     flex-flow: column;
+    -webkit-transition: height 0.5s ease-out;
+    -moz-transition: height 0.5s ease-out;
+    -ms-transition: height 0.5s ease-out;
+    -o-transition: height 0.5s ease-out;
     transition: height 0.5s ease-out;
   }
 
