@@ -135,10 +135,9 @@ export default {
   methods: {
     logout () {
       // this.$emit('updateEventCode', { eventCode: 'connect-logout' })
-      this.$store.dispatch('authStore/startLogout').then((profile) => {
+      this.$store.dispatch('authStore/startLogout').then(() => {
         localStorage.clear()
         sessionStorage.clear()
-        this.$emit('paymentEvent', { returnCode: 'connect-logout-success', profile: profile })
       })
     },
     startLogin () {

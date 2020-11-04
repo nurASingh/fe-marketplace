@@ -18,9 +18,9 @@ function __build() {
 
 rm -rf $PATH_DEPLOY/*
  
-BUILD_PATH=../fe-lsat
-__build
-cp $BUILD_PATH/dist/lsat-entry*.js $PATH_DEPLOY/.
+# BUILD_PATH=../fe-lsat
+# __build
+# cp $BUILD_PATH/dist/lsat-entry*.js $PATH_DEPLOY/.
 
 BUILD_PATH=./
 __build

@@ -149,14 +149,14 @@ const authHeaders = function () {
   if (userSession.isUserSignedIn()) {
     const account = userSession.loadUserData()
     if (account) {
-      const authResponseToken = account.authResponseToken
-      const decodedToken = decodeToken(authResponseToken)
-      publicKey = decodedToken.payload.public_keys[0]
+      // const authResponseToken = account.authResponseToken
+      // const decodedToken = decodeToken(authResponseToken)
+      // publicKey = decodedToken.payload.public_keys[0]
       token = 'v1:' + account.authResponseToken
     }
   }
   const headers = {
-    IdentityAddress: publicKey,
+    IdentityAddress: null,
     'Content-Type': 'application/json',
     Authorization: 'Bearer ' + token
   }

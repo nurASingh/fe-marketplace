@@ -8,11 +8,19 @@
         <div class="col-12">
           <h1>Upload Contract</h1>
           <p style="font-size: 10px;">Contract id: {{projectId}} <router-link class="mr-3" :to="'/connect-app/' + projectId"><b-icon icon="pencil"/></router-link></p>
-            <deploy-contract-from-file :project="project"/>
+            <deploy-contract-from-file :project="project" @deployed="deployed"/>
         </div>
       </div>
     </div>
   </div>
+  <b-modal scrollable id="modal-1" title="Contract Deployed">
+    <div class="row" v-if="deployedProject">
+      <div class="col-12 my-1">
+        <div class="mb-3">Deployed {{deployedProject.projectId}}</div>
+        <div class="mb-3">Tx: {{deployedProject.txId}}</div>
+      </div>
+    </div>
+  </b-modal>
 </div>
 </template>
 
@@ -31,6 +39,7 @@ export default {
   data () {
     return {
       loaded: false,
+      deployedProject: null,
       project: null
     }
   },
@@ -46,6 +55,10 @@ export default {
     })
   },
   methods: {
+    deployed: function (data) {
+      this.deployedProject = data.project
+      this.$bvModal.show('modal-1')
+    }
   },
   computed: {
   }

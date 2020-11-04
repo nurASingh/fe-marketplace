@@ -113,19 +113,19 @@ export default {
       // const functionArgs = [cvOwner, cvProjId] // , cvProjId] // , intCV(0x00)]
       // const functionArgs = ClarityValue[bufferCV(Buffer.from('somestring'))]
       // const functionArgs = utils.getClarityValueArray([cvOwner, cvProjId, intCV(0x00)]) // [cvOwner, cvProjId, intCV(0x00)]
-      const functionArgs = [owner, this.projectId, '0x00']
+      const functionArgs = [bufferCV(Buffer.from(owner)), bufferCV(Buffer.from(this.projectId)), intCV(0)]
       const data = {
         contractAddress: appmapContractId.split('.')[0],
         contractName: appmapContractId.split('.')[1],
-        functionName: 'add-app',
+        functionName: 'register-app',
         functionArgs: functionArgs,
-        eventCode: 'connect-application',
-        senderKey: '4790db90a48e51bdbbc62a37fdc535719c22e195dc1aa6e1725b30bffc569ce501'
+        eventCode: 'connect-application'
       }
       data.provider = provider
       this.connectApplication(data) // $emit('updateEventCode', data)
     },
     connectApplication (data) {
+      /**
       const bufArr = []
       for (let i = 0; i < data.functionArgs.length; i++) {
         const element = data.functionArgs[i]
@@ -136,6 +136,7 @@ export default {
         }
       }
       data.functionArgs = bufArr
+      **/
       const method = (data.provider === 'risidio') ? 'stacksStore/callContractRisidio' : 'stacksStore/callContractBlockstack'
       this.$store.dispatch(method, data).then((result) => {
         this.result = result

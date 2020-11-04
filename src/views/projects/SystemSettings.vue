@@ -11,11 +11,11 @@
       active-tab-class="text-info"
       content-class="mt-3 px-3 pt-5"
       >
-      <b-tab title="API Settings" active>
-        <api-settings/>
+      <b-tab title="App Registry" active>
+        <app-registry/>
       </b-tab>
-      <b-tab title="Contract">
-        <app-contract-settings/>
+      <b-tab title="API Settings">
+        <api-settings/>
       </b-tab>
       <b-tab title="Search Settings">
         <search-settings/>
@@ -29,7 +29,7 @@
 <script>
 import SideMenu from '@/components/admin/SideMenu'
 import TitleBar from '@/components/admin/TitleBar'
-import AppContractSettings from '@/components/admin/system/AppContractSettings'
+import AppRegistry from '@/components/admin/system/AppRegistry'
 import ApiSettings from '@/components/admin/system/ApiSettings'
 import SearchSettings from '@/components/admin/system/SearchSettings'
 
@@ -38,7 +38,7 @@ export default {
   components: {
     SideMenu,
     TitleBar,
-    AppContractSettings,
+    AppRegistry,
     SearchSettings,
     ApiSettings
   },

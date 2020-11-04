@@ -41,6 +41,19 @@ const utils = {
       arr[i] = (str.charCodeAt(i).toString(16)).slice(-4)
     }
     return '0x' + arr.join('')
+  },
+  toObjectApplication: function (o) {
+    const td = new TextDecoder('utf-8')
+    return {
+      owner: td.decode(o.value.data.owner.buffer),
+      contractId: td.decode(o.value.data['app-contract-id'].buffer),
+      status: o.value.data.status.value,
+      storageModel: o.value.data['storage-model'].value
+    }
+  },
+  toObjectString: function (o, key) {
+    const td = new TextDecoder('utf-8')
+    return td.decode(o.buffer)
   }
 }
 export default utils

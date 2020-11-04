@@ -3,7 +3,9 @@ import { APP_CONSTANTS } from '@/app-constants'
 import {
   makeContractCall,
   broadcastTransaction,
-  makeContractDeploy
+  makeContractDeploy,
+  callReadOnlyFunction,
+  deserializeCV
 } from '@stacks/transactions'
 import { openContractCall } from '@stacks/connect'
 import {
@@ -11,6 +13,7 @@ import {
 } from '@stacks/network'
 import axios from 'axios'
 import BigNum from 'bn.js'
+import { BufferReader } from '@blockstack/stacks-transactions/lib/bufferReader'
 
 let STX_CONTRACT_ADDRESS = process.env.VUE_APP_STACKS_CONTRACT_ADDRESS
 let STX_CONTRACT_NAME = process.env.VUE_APP_STACKS_CONTRACT_NAME
@@ -133,13 +136,20 @@ const resolveReadOnly = function (resolve, reject, functionName, response) {
   if (!response.data.okay) {
     reject(new Error(response.data.cause))
   } else {
-    if (functionName === 'get-mint-price') {
-      const res = getAmountStx(parseInt(response.data.result, 16))
-      resolve(res)
+    const resp = Buffer.from(response.data.result.slice(2), 'hex')
+    const br = new BufferReader(resp)
+    const debr = deserializeCV(br)
+    if (debr) {
+      resolve(debr)
     } else {
-      console.log(response)
-      const res = unwrapStrings(response.data.result, 'uint')
-      resolve(res)
+      if (functionName === 'get-mint-price') {
+        const res = getAmountStx(parseInt(response.data.result, 16))
+        resolve(res)
+      } else {
+        console.log(response)
+        const res = unwrapStrings(response.data.result, 'uint')
+        resolve(res)
+      }
     }
   }
 }
@@ -150,7 +160,7 @@ const stacksStore = {
     result: null,
     contracts: [],
     appName: 'Risidio Mesh',
-    appLogo: '/img/logo/Risidio_logo_256x256.png',
+    appLogo: '/img/Group 15980.svg',
     macsWallet: mac
   },
   getters: {
@@ -201,6 +211,7 @@ const stacksStore = {
         const contractAddress = (data.contractAddress) ? data.contractAddress : STX_CONTRACT_ADDRESS
         const contractName = (data.contractName) ? data.contractName : STX_CONTRACT_NAME
         const nonce = new BigNum(state.macsWallet.nonce)
+        network.coreApiUrl = STACKS_API
         const txoptions: any = {
           contractAddress: contractAddress,
           contractName: contractName,
@@ -286,6 +297,27 @@ const stacksStore = {
         })
       })
     },
+    callContractBlockstackReadOnly ({ state }, data) {
+      return new Promise((resolve, reject) => {
+        let contractAddress = STX_CONTRACT_ADDRESS
+        let contractName = STX_CONTRACT_NAME
+        if (data.contractId) {
+          contractAddress = data.contractId.split('.')[0]
+          contractName = data.contractId.split('.')[1]
+        }
+        callReadOnlyFunction({
+          contractAddress: contractAddress,
+          contractName: contractName,
+          functionName: data.functionName,
+          functionArgs: (data.functionArgs) ? data.functionArgs : [],
+          senderAddress: state.macsWallet.keyInfo.address
+        }).then((result) => {
+          resolve(result)
+        }).catch((error) => {
+          reject(error)
+        })
+      })
+    },
     callContractReadOnly ({ state }, data) {
       return new Promise((resolve, reject) => {
         setAddresses()
@@ -312,10 +344,10 @@ const stacksStore = {
         }
         axios.post(STACKS_API + path, txoptions.postData, { headers: headers }).then(response => {
           resolveReadOnly(resolve, reject, data.functionName, response)
-        }).catch((error) => {
+        }).catch(() => {
           axios.post(MESH_API + '/v2/accounts', txoptions).then(response => {
             resolveReadOnly(resolve, reject, data.functionName, response)
-          }).catch(() => {
+          }).catch((error) => {
             resolveError(reject, error)
           })
         })

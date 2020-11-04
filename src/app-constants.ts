@@ -4,6 +4,7 @@ export const APP_CONSTANTS = {
   KEY_SECTION_HEIGHT: 'getSectionHeight',
   KEY_SECTION_WIDTH: 'getSectionWidth',
   KEY_APP_MAP: 'applicationStore/getAppmap',
+  KEY_APP_MAP_COUNTER: 'applicationStore/getAppmapCounter',
   KEY_APP_MAP_TX_ID: 'applicationStore/getAppmapTxId',
   KEY_APP_MAP_PROJECT: 'applicationStore/getAppmapProject',
   KEY_APP_MAP_CONTRACT_ID: 'applicationStore/getAppmapContractId',
