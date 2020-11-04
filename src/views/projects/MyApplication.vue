@@ -17,11 +17,18 @@
               <p>Owner: {{project.owner}}</p>
               <p>Description: {{project.description}}</p>
               <p>TxId: {{project.txId}}</p>
-              <p>
-                <a href="#" class="mr-3" @click.prevent="openApp(project)">edit</a>
-                <a v-if="!project.txId" href="#" class="" @click.prevent="deleteApp(project)">delete</a>
-                <a v-if="project.txId && !appmapProject" href="#" class="" @click.prevent="connectApp(project)">connect app</a>
-              </p>
+              <a href="#" class="mr-3" @click.prevent="openApp(project)">edit</a>
+              <a v-if="!project.txId" href="#" class="" @click.prevent="deleteApp(project)">delete</a>
+              <div v-if="project.txId">
+                <div v-if="appmapProject">
+                  {{appmapProject}}
+                </div>
+                <div v-else>
+                  connect app:
+                  <a href="#" class="mr-3" @click.prevent="connectApp('risidio')">risidio</a>
+                  <a href="#" class="" @click.prevent="connectApp('stacks')">stacks</a>
+                </div>
+              </div>
             </div>
           </div>
           <div class="text-light" v-if="appmapProject">
@@ -47,14 +54,10 @@
       </div>
     </div>
   </div>
-  <b-modal scrollable id="contract-modal" title="Looking for contract">
+  <b-modal scrollable id="app-modal" title="Connecting Contract">
     <div class="row">
       <div class="col-12 my-1">
-        <p>If you've deployed your contract using <a :href="openContractUrl()" target="_blank">explorer</a> check it has the correct contract Id.
-        You can edit the contract id on the <router-link :to="'/connect-app/' + project.projectId">in project details</router-link></p>
-      </div>
-      <div class="col-12 my-1">
-        <p>Looking for contract: {{projectId}}</p>
+        <p>{{result}}</p>
       </div>
     </div>
   </b-modal>
@@ -63,12 +66,12 @@
 
 <script>
 import SideMenu from '@/components/admin/SideMenu'
-// import utils from '@/services/utils'
 import TitleBar from '@/components/admin/TitleBar'
 import { APP_CONSTANTS } from '@/app-constants'
 import {
+  intCV,
   bufferCV
-} from '@blockstack/stacks-transactions'
+} from '@stacks/transactions'
 
 const STACKS_API = process.env.VUE_APP_API_STACKS
 
@@ -81,6 +84,7 @@ export default {
   data () {
     return {
       loading: true,
+      result: null,
       useDefaultLogo: false,
       projectId: null,
       loaded: false,
@@ -99,24 +103,57 @@ export default {
     **/
   },
   methods: {
-    connectApp: function () {
+    connectApp: function (provider) {
       const appmapContractId = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_CONTRACT_ID]
       const owner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].username
-      const cvOwner = bufferCV(owner) // (Buffer.from(owner, 'hex'))
+      // const cvOwner = bufferCVFromString(owner) // (Buffer.from(owner, 'hex'))
       // const cvProjId = bufferCVFromString(this.projectId) // bufferCV(Buffer.from(utils.stringToHex(this.projectId)))
-      // , intCV(0x00)
+      // const storage = intCV(0x00)
+
       // const functionArgs = [cvOwner, cvProjId] // , cvProjId] // , intCV(0x00)]
-      const args = [bufferCV(Buffer.from('815'))]
-      // const functionArgs = [cvOwner] // , cvProjId] // , intCV(0x00)]
+      // const functionArgs = ClarityValue[bufferCV(Buffer.from('somestring'))]
+      // const functionArgs = utils.getClarityValueArray([cvOwner, cvProjId, intCV(0x00)]) // [cvOwner, cvProjId, intCV(0x00)]
+      const functionArgs = [owner, this.projectId, '0x00']
       const data = {
         contractAddress: appmapContractId.split('.')[0],
         contractName: appmapContractId.split('.')[1],
         functionName: 'add-app',
-        functionArgs: args,
-        eventCode: 'connect-application'
+        functionArgs: functionArgs,
+        eventCode: 'connect-application',
+        senderKey: '4790db90a48e51bdbbc62a37fdc535719c22e195dc1aa6e1725b30bffc569ce501'
       }
-      this.$emit('updateEventCode', data)
+      data.provider = provider
+      this.connectApplication(data) // $emit('updateEventCode', data)
     },
+    connectApplication (data) {
+      const bufArr = []
+      for (let i = 0; i < data.functionArgs.length; i++) {
+        const element = data.functionArgs[i]
+        if (element.startsWith('0x')) {
+          bufArr.push(intCV(element))
+        } else {
+          bufArr.push(bufferCV(Buffer.from(element)))
+        }
+      }
+      data.functionArgs = bufArr
+      const method = (data.provider === 'risidio') ? 'stacksStore/callContractRisidio' : 'stacksStore/callContractBlockstack'
+      this.$store.dispatch(method, data).then((result) => {
+        this.result = result
+        this.$bvModal.show('app-modal')
+      }).catch((error) => {
+        this.result = error
+        this.$bvModal.show('app-modal')
+      })
+    },
+    /**
+    connectApplication (data) {
+      this.$store.dispatch('stacksStore/callContractRisidio', data).then((result) => {
+        console.log(result)
+      }).catch((result) => {
+        console.log(result)
+      })
+    },
+    **/
     openContractUrl () {
       if (this.projectId) {
         return STACKS_API + '/v2/contracts/source/' + this.projectId.split('.')[0] + '/' + this.projectId.split('.')[1] + '?proof=0'

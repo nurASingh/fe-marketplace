@@ -3,7 +3,7 @@ import axios from 'axios'
 import store from '.'
 import {
   uintCV
-} from '@blockstack/stacks-transactions'
+} from '@stacks/transactions'
 
 const SEARCH_API_PATH = process.env.VUE_APP_API_SEARCH
 const readProjectFromGaia = function (resolve, reject, projectLookups, commit) {

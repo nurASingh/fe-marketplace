@@ -8,7 +8,6 @@
     </div>
     <router-view @updateEventCode="updateEventCode" @toggle-on-navbar="toggleOnNavbar" @toggle-off-navbar="toggleOffNavbar"/>
     <router-view name="footer" :class="(adminPage) ? 'app-footer' : ''"/>
-    <lsat-entry :paymentConfig="configuration" @paymentEvent="paymentEvent"></lsat-entry>
     <notifications :duration="10000" classes="r-notifs" position="bottom right" width="30%"/>
   </div>
 </template>
@@ -39,9 +38,11 @@ export default {
   mounted () {
     this.adminPage = this.$route.name.indexOf('-app') > -1
     const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
-    this.$store.dispatch('stacksStore/fetchMacsWalletInfo')
-    this.$store.dispatch('projectStore/fetchMyProjects', profile).catch((err) => {
-      console.log(err)
+    this.$store.dispatch('authStore/fetchMyAccount').then((profile) => {
+      this.$store.dispatch('stacksStore/fetchMacsWalletInfo')
+      this.$store.dispatch('projectStore/fetchMyProjects', profile).catch((err) => {
+        console.log(err)
+      })
     })
     this.$store.dispatch('applicationStore/lookupApplications')
     if (profile.loggedIn && profile.environment !== 'localhost') {
@@ -75,31 +76,10 @@ export default {
       this.$store.commit(APP_CONSTANTS.SET_EVENT_CODE, data)
       this.data = data
       this.componentKey += 1
-    },
-    paymentEvent: function (eventData) {
-      const data = eventData.detail[0]
-      if (data.returnCode === 'connect-login-session' ||
-          data.returnCode === 'connect-login-start' ||
-          data.returnCode === 'connect-logout-success') {
-        this.$store.commit('myProfile', data.profile)
-      } else if (data.returnCode === 'stx-deploy-confirmed') {
-        this.$store.dispatch('projectStore/saveContractToGaia', data)
-        this.$notify({ type: 'success', title: 'Deploy Details', text: 'Sent your contract to the Stacks 2.0 blockchain - should be deployed shortly.' })
-      } else if (data.returnCode === 'stx-deploy-error') {
-        this.$notify({ type: 'error', title: 'Deploy Details', text: 'We encountered an error deploying your contract.' })
-      }
-      this.$store.dispatch('projectStore/fetchMyProjects', data.profile)
     }
   },
   computed: {
-    configuration () {
-      const eventCode = this.$store.getters[APP_CONSTANTS.KEY_EVENT_CODE]
-      const configuration = { provider: 'risidio', opcode: eventCode, data: this.data }
-      window.risidioPaymentConfig = JSON.stringify(configuration)
-      return configuration || {}
-    },
     sectionDimensions () {
-      // const height = this.$store.getters['searchStore/getResultSet']
       return 'min-height: 100vh; width: auto;'
     }
   }
