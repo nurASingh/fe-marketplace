@@ -139,7 +139,6 @@ body {
   height: 100%;
   background-color: #fff;
   color: #000;
-  font-size: 1rem;
 }
 
 .no-scroll {
@@ -206,23 +205,23 @@ body {
 }
 
 h1 {
-  font-size: 24px;
-  font-weight: 700;
+  font-size: 40px;
+  font-weight: 200;
   letter-spacing: 0px;
   text-transform: capitalize;
   opacity: 1;
 }
 h2 {
   font-size: 17px;
-  font-weight: 200;
+  font-weight: 400;
   letter-spacing: 0px;
   text-transform: capitalize;
   opacity: 1;
   white-space: normal;
 }
 h3 {
-  font-size: 17px;
-  font-weight: 700;
+  font-size: 16px;
+  font-weight: 500;
   letter-spacing: 0px;
   opacity: 1;
 }
@@ -234,7 +233,7 @@ h4 {
 }
 p {
   text-align: left;
-  font-size: 18px;
+  font-size: 12px;
   font-weight: 300;
   letter-spacing: 0px;
   opacity: 1;

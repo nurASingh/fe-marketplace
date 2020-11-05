@@ -41,34 +41,46 @@
         </b-input-group>
       </div>
     </div>
-    <div class="mt-5 d-flex justify-content-center main-search main-search__categories">
-      <div><a class="mx-2" :class="isActive('discover')" href="#" @click.prevent="category = 'discover'">Discover</a></div>
-      <div><a class="mx-2" :class="isActive('popular')" href="#" @click.prevent="category = 'popular'">Popular</a></div>
-      <div><a class="mx-2" :class="isActive('collections')" href="#" @click.prevent="category = 'collections'">Collections</a></div>
-      <div><a class="mx-2" :class="isActive('artists')" href="#" @click.prevent="category = 'artists'">Artists</a></div>
-      <div><a class="mx-2" :class="isActive('applications')" href="#" @click.prevent="category = 'applications'">Applications</a></div>
+    <div class="d-flex justify-content-center homepage__categories">
+      <div :class="isActive('discover')"><a href="#" @click.prevent="category = 'discover'">Discover</a></div>
+      <div :class="isActive('popular')"><a href="#" @click.prevent="category = 'popular'">Popular</a></div>
+      <div :class="isActive('collections')"><a href="#" @click.prevent="category = 'collections'">Collections</a></div>
+      <div :class="isActive('artists')"><a href="#" @click.prevent="category = 'artists'">Artists</a></div>
+      <div :class="isActive('applications')"><a href="#" @click.prevent="category = 'applications'">Applications</a></div>
     </div>
     <div class="row mb-4">
-      <div v-for="(item, index) in block1Items" :key="index" class="col-md-3 col-sm-4 col-xs-6" >
-        <div @mouseleave="hoverOut()" @mouseover="hoverIn(index)" class="mb-4">
-          <img width="100%" :src="item.b1_image1.url"/>
-          <div class="desc-text" v-if="dHover[index]" v-html="item.b1_text1[0].text"></div>
+      <div v-for="(item, index) in block1Items" :key="index" class="col-lg-3 col-md-4 col-xs-6" >
+        <!--<div @mouseleave="hoverOut()" @mouseover="hoverIn(index)" class="mb-4">-->
+          <div class="mb-4 homepage__items">
+            <img width="100%" :src="item.b1_image1.url"/>
+            <!--<div class="homepage__items--description" v-if="dHover[index]" v-html="item.b1_text1[0].text"></div>-->
+            <div class="homepage__items--overlay">
+              <a href="#" class="homepage__items--like-btn"><b-icon icon="heart"></b-icon></a>
+              <div class="homepage__items--description">
+                <div class="d-flex justify-content-between">
+                  <div class="homepage__items--title">Block 1 Item 1</div>
+                  <div class="homepage__items--amount">Σ 0.5</div>
+                </div>
+                <div class="d-flex justify-content-between">
+                  <div class="homepage__items--by">By <span class="homepage__items--artist">Alice</span></div>
+                  <div class="homepage__items--price">£1.50</div>
+                </div>
+              </div>
+            </div>
         </div>
       </div>
     </div>
   </div>
-  <div class="d-flex justify-content-center my-5">
-    <div class="text-center no-wrap">
-      <b-button>See more collectables</b-button>
-    </div>
+  <div class="d-flex justify-content-center homepage__categories--more-button">
+    <button class="button-primary">See more collectables</button>
   </div>
-
-  <div class="container d-flex justify-content-between my-5">
-    <div class="text-center no-wrap">&nbsp;</div>
-    <div class="text-center no-wrap">
-      <h1>Featured Applications</h1>
+  <div class="container"><div class="homepage__divider"></div></div>
+  <div class="container d-flex justify-content-between homepage__applications">
+    <div class="homepage__applications--whitespace d-lg-block d-none"></div>
+    <div>
+      <h3>Featured Applications</h3>
     </div>
-    <div class="text-right no-wrap">
+    <div class="homepage__applications--view-all">
       <a class="text-info">View all applications <b-icon icon="caret-right-fill"/></a>
     </div>
   </div>
@@ -108,32 +120,39 @@
     </div>
   </div>
 -->
-
-  <div class="container d-flex justify-content-between my-5">
-    <div class="text-center no-wrap">&nbsp;</div>
-    <div class="text-center no-wrap">
-      <h1>Featured Artists</h1>
+<div class="container"><div class="homepage__divider"></div></div>
+  <div class="container d-flex justify-content-between mb-5 homepage__collections">
+    <div class="homepage__collections--whitespace d-lg-block d-none"></div>
+    <div>
+      <h3>Featured Collections</h3>
     </div>
-    <div class="text-right no-wrap">
+    <div class="homepage__collections--view-all">
       <a class="text-info">View all artists <b-icon icon="caret-right-fill"/></a>
     </div>
   </div>
   <div class="container my-5" v-if="content">
     <div class="row">
       <div v-for="(item, index3) in block1Items" :key="index3" class="col-md-3 col-sm-6 col-xs-12" >
-        <div class="mb-4" v-if="index3 < 4">
+        <div class="mb-4 homepage__items" v-if="index3 < 4">
           <img width="100%" :src="item.b1_image1.url"/>
-          <div class="desc-text" v-html="item.b1_text1[0].text"></div>
+          <div class="homepage__items--overlay">
+              <div class="homepage__items--description">
+                <div class="homepage__items--title">Collection Name</div>
+                <div class="homepage__items--by">by <span class="homepage__items--artist">Collector Username</span></div>
+              </div>
+            </div>
         </div>
       </div>
     </div>
   </div>
 
-  <div class="pt-5 d-flex align-items-center flex-column mx-5" style="height: 70vh; border-top: 1pt solid #d3e7e8;">
-    <div class="my-auto text-dark text-center">
-      <prismic-rich-text
-        :field="content.info"
-      />
+  <div class="container flex-column align-items-center homepage__marketplace-section">
+    <div class="row">
+      <div class="col-12 text-center">
+        <prismic-rich-text
+          :field="content.info"
+        />
+      </div>
     </div>
   </div>
   <!-- trading section with background -->
@@ -197,7 +216,7 @@ export default {
     },
     isActive (category) {
       if (this.category === category) {
-        return 'text-success'
+        return 'active'
       }
       return ''
     },
@@ -236,8 +255,6 @@ export default {
         padding: '0 0 0 0',
         height: '378px',
         width: '100%',
-        position: 'relative',
-        top: '-78px',
         'background-repeat': 'no-repeat',
         'background-image': `url(${content.trading[0].trading_image.url})`,
         'background-position': 'center center',
@@ -272,6 +289,7 @@ export default {
 
 #homepage {
 
+  /* MAIN SEARCH BAR */
   & .main-search {
     margin-top: -28.5px;
     z-index: 2;
@@ -280,6 +298,8 @@ export default {
     width: 100%;
     max-width: 800px;
   }
+
+  /* MAIN SEARCH BAR -- INPUT */
   & .input-group {
     background: #FFFFFF;
     border: 1px solid #F5F5F5;
@@ -303,6 +323,8 @@ export default {
   & .input-group input:focus {
     box-shadow: none;
   }
+
+  /* MAIN SEARCH BAR -- BTN */
   & .main-search .btn {
     display: flex;
     align-items: center;
@@ -323,6 +345,8 @@ export default {
   & .main-search .btn.dropdown-toggle::after {
     font-size: 16px;
   }
+
+  /* MAIN SEARCH BAR -- DROPDOWN MENU */
   & .input-group .dropdown-menu {
     width: 177px;
     margin: 0;
@@ -355,7 +379,7 @@ export default {
     border-left: 1px solid #F5F5F5;
     border-radius: 0 0 26px 26px;
     background: #fff;
-    box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.161);
+    box-shadow: 0px 3px 6px -1px rgba(0, 0, 0, 0.161);
   }
   & .input-group .dropdown-menu.show {
     transform: none !important;
@@ -370,6 +394,8 @@ export default {
     border-top: 1px solid #F5F5F5;
     padding-top: 18px;
   }
+
+  /* MAIN SEARCH BAR -- LOOP ICON */
   & .input-group-append svg {
     font-size: 20px;
     font-weight: bold;
@@ -377,18 +403,149 @@ export default {
     margin-right: 22px;
     margin-left: 1px;
   }
-  & .desc-text {
-    position: absolute;;
-    width: 256px;
-    bottom: 23px;
-    background: $success;
-    padding: 5px;
-    height: 56px;
-    background: #50B1B5;
-    opacity: 0.95;
-    color: #fff;
+
+  /* CATEGORIES BUTTONS */
+  & .homepage__categories {
+    border-bottom: 1px solid #E3E3E3;
+    margin: 42px 0;
+  }
+  & .homepage__categories a {
+    font-size: 12px;
+    font-weight: 700;
+    color: #000;
+  }
+  & .homepage__categories a {
+    margin: 0 20px;
+  }
+  & .homepage__categories .active a {
+    color: #50B1B5;
+  }
+  & .homepage__categories div {
+    padding-bottom: 14.5px;
+  }
+  & .homepage__categories .active {
+    border-bottom: 2px solid #50B1B5;
+  }
+  & .homepage__categories--more-button {
+    margin-top: 38px;
   }
 
+  & .homepage__divider {
+    margin: 50px 0;
+    border-bottom: 1px solid #E3E3E3;
+  }
+
+  /* ITEMS STYLE */
+  & .homepage__items {
+    position: relative;
+    width: 100%;
+  }
+
+  & .homepage__items--overlay {
+    display: flex;
+    align-items: flex-end;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    bottom: 0;
+    cursor: pointer;
+  }
+
+  & .homepage__items--description {
+    width: 100%;
+    padding: 11px 18px;
+    color: #fff;
+    text-shadow: 0px 3px 6px #00000029;
+    background: $info;
+    opacity: 0;
+    transition: opacity ease 0.3s;
+  }
+
+  & .homepage__items--overlay:hover .homepage__items--description {
+    opacity: 0.95;
+  }
+
+  & .homepage__items--title {
+    font-size: 14px;
+    font-weight: 400;
+  }
+
+  & .homepage__items--amount {
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  & .homepage__items--by {
+    font-size: 10px;
+    font-weight: 300;
+  }
+
+  & .homepage__items--artist {
+    font-size: 10px;
+    font-weight: 700;
+  }
+
+  & .homepage__items--price {
+    font-size: 9px;
+    font-weight: 400;
+  }
+
+  & .homepage__items--like-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #FFFFFF;
+    font-size: 13px;
+    background-color: $info;
+    padding: 10px 13px;
+    border-radius: 50%;
+    z-index: 3;
+  }
+
+  /* APPLICATION SECTION */
+  & .homepage__applications {
+    margin-bottom: 42px;
+  }
+
+  & .homepage__applications a {
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  & .homepage__applications--view-all {
+    align-self: center;
+  }
+
+  & .homepage__applications--whitespace {
+    width: 121.45px;
+    visibility: hidden;
+  }
+
+  /* COLLECTIONS SECTION */
+  & .homepage__collections {
+    margin-bottom: 42px;
+  }
+
+  & .homepage__collections a {
+    font-size: 11px;
+    font-weight: 700;
+  }
+
+  & .homepage__collections--view-all {
+    align-self: center;
+  }
+
+  & .homepage__collections--whitespace {
+    width: 90.29px;
+    visibility: hidden;
+  }
+
+  /* MARKETPLACE SECTION */
+  & .homepage__marketplace-section {
+    padding: 120px 0;
+  }
+
+  /* MIKE'S STYLE */
   & .title-container h1, .title-container h2 {
     font-family: 'Montserrat', Arial, Helvetica, sans-serif;
   }
@@ -401,9 +558,18 @@ export default {
 
 }
 
-@media only screen and (max-width: 376px) {
-  #homepage .main-search__categories {
-    font-size: 12px;
+/* MOBILE DESIGN */
+@media only screen and (max-width: 499px) {
+  #homepage .homepage__categories a {
+    font-size: 10px;
+    margin: 0 10px;
+  }
+}
+
+@media only screen and (max-width: 359px) {
+  #homepage .homepage__categories a {
+    font-size: 10px;
+    margin: 0 7px;
   }
 }
 </style>

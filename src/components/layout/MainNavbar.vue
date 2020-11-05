@@ -348,6 +348,7 @@ nav .navbar__applications-item .dropdown-menu li:not(:last-child):not(:first-chi
 nav .navbar-toggler {
   border: none;
   margin-left: auto;
+  width: auto;
 }
 
 @media only screen and (max-width: 1199px) {
