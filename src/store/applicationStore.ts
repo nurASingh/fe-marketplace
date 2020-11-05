@@ -43,7 +43,7 @@ const applicationStore = {
       return state.appCounter
     },
     getAppmapProject: (state: any) => projectId => {
-      const index = state.appmap.apps.findIndex((o) => o.projectId === projectId)
+      const index = state.appmap.apps.findIndex((o) => o.contractId === projectId)
       if (index > -1) {
         return state.appmap.apps[index]
       }
@@ -114,7 +114,7 @@ const applicationStore = {
           functionArgs: []
         }
         store.dispatch('stacksStore/callContractReadOnly', config).then((response) => {
-          const baseTokenUri = utils.toObjectString(response, 'base-token-uri')
+          const baseTokenUri = utils.toObjectString(response)
           application.baseTokenUri = baseTokenUri
           commit('addAppToAppmap', application)
           resolve(application)

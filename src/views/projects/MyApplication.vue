@@ -17,11 +17,9 @@
               <p>Owner: {{project.owner}}</p>
               <p>Description: {{project.description}}</p>
               <p>TxId: {{project.txId}}</p>
-              <a href="#" class="mr-3" @click.prevent="openApp(project)">edit</a>
-              <a v-if="!project.txId" href="#" class="" @click.prevent="deleteApp(project)">delete</a>
               <div v-if="project.txId">
-                <div v-if="appmapProject">
-                  {{appmapProject}}
+                <div class="text-light" v-if="appmapProject">
+                  Application registered (id={{appmapProject.appCounter}})
                 </div>
                 <div v-else>
                   connect app:
@@ -30,9 +28,8 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="text-light" v-if="appmapProject">
-            Connected to appmap {{appmapProject}}
+            <a href="#" class="mr-3" @click.prevent="openApp(project)">edit</a>
+            <a v-if="!project.txId" href="#" class="" @click.prevent="deleteApp(project)">delete</a>
           </div>
           <div class="text-light" v-if="project.txId">
             Explorer: <a :href="openContractUrl()" target="_blank">{{project.projectId}}</a>
