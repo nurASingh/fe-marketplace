@@ -196,6 +196,7 @@ const projectStore = {
           }
           projectService.saveProject(state.rootFile).then((rootFile) => {
             commit('rootFile', rootFile)
+            resolve(project)
             /**
             searchIndexService.addRecord(state.rootFile.projects[index]).then((result) => {
               console.log(result)

@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue'
 import Vuex from 'vuex'
+import authStore from './authStore'
 import applicationStore from './applicationStore'
 import contentStore from './contentStore'
 import searchStore from './searchStore'
@@ -11,6 +12,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   modules: {
+    authStore,
     applicationStore,
     contentStore,
     searchStore,
@@ -31,19 +33,6 @@ export default new Vuex.Store({
     }
   },
   getters: {
-    getProfile: state => {
-      if (window.location.href.startsWith('http://localhost')) {
-        return {
-          loggedIn: true,
-          environment: 'localhost',
-          username: 'harold',
-          stxAddress: '1234567890',
-          superAdmin: true
-        }
-      } else {
-        return state.myProfile
-      }
-    },
     getEventCode: state => {
       return state.eventCode
     },

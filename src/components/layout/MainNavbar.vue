@@ -134,10 +134,20 @@ export default {
   },
   methods: {
     logout () {
-      this.$emit('updateEventCode', { eventCode: 'connect-logout' })
+      // this.$emit('updateEventCode', { eventCode: 'connect-logout' })
+      this.$store.dispatch('authStore/startLogout').then(() => {
+        localStorage.clear()
+        sessionStorage.clear()
+      })
     },
     startLogin () {
-      this.$emit('updateEventCode', { eventCode: 'connect-login' })
+      // this.$emit('updateEventCode', { eventCode: 'connect-login' })
+      const myProfile = this.$store.getters['authStore/getMyProfile']
+      if (myProfile.loggedIn) {
+        this.$emit('connect-login', myProfile)
+      } else {
+        this.$store.dispatch('authStore/startLogin')
+      }
     },
     mobileMenuExpandClass () {
       const element = document.getElementById('navbar')

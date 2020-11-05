@@ -1,4 +1,8 @@
 import dataUriToBuffer from 'data-uri-to-buffer'
+import {
+  ClarityValue
+} from '@stacks/transactions'
+
 const utils = {
   fetchBase64FromImageUrl: function (url, document) {
     return new Promise((resolve) => {
@@ -6,8 +10,8 @@ const utils = {
       img.setAttribute('crossOrigin', 'anonymous')
       img.onload = function () {
         const canvas = document.createElement('canvas')
-        canvas.width = this.width
-        canvas.height = this.height
+        canvas.width = img.width
+        canvas.height = img.height
         const ctx = canvas.getContext('2d')
         ctx.drawImage(this, 0, 0)
         const dataURL = canvas.toDataURL('image/png')
@@ -17,6 +21,13 @@ const utils = {
       }
       img.src = url
     })
+  },
+  getClarityValueArray: function (functionArgs) {
+    const clarityValueArgs: ClarityValue[] = new Array(functionArgs.length)
+    for (let i = 0; i < functionArgs.length; i++) {
+      clarityValueArgs[i] = functionArgs[i]
+    }
+    return clarityValueArgs
   },
   getBase64FromImageUrl: function (dataURL) {
     const imageBuffer = dataUriToBuffer(dataURL)
@@ -29,8 +40,20 @@ const utils = {
     for (let i = 0; i < str.length; i++) {
       arr[i] = (str.charCodeAt(i).toString(16)).slice(-4)
     }
-    // return '\\u' + arr.join('\\u')
     return '0x' + arr.join('')
+  },
+  toObjectApplication: function (o) {
+    const td = new TextDecoder('utf-8')
+    return {
+      owner: td.decode(o.value.data.owner.buffer),
+      contractId: td.decode(o.value.data['app-contract-id'].buffer),
+      status: o.value.data.status.value,
+      storageModel: o.value.data['storage-model'].value
+    }
+  },
+  toObjectString: function (o) {
+    const td = new TextDecoder('utf-8')
+    return td.decode(o.buffer)
   }
 }
 export default utils

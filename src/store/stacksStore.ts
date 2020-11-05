@@ -1,24 +1,29 @@
 import store from '@/store'
 import { APP_CONSTANTS } from '@/app-constants'
 import {
-  StacksTestnet,
   makeContractCall,
   broadcastTransaction,
-  makeContractDeploy
-  // deserializeCV
-} from '@blockstack/stacks-transactions'
+  makeContractDeploy,
+  callReadOnlyFunction,
+  deserializeCV
+} from '@stacks/transactions'
+import { openContractCall } from '@stacks/connect'
+import {
+  StacksTestnet
+} from '@stacks/network'
 import axios from 'axios'
 import BigNum from 'bn.js'
-// import { Result } from '@blockstack/clarity-cli'
+import { BufferReader } from '@blockstack/stacks-transactions/lib/bufferReader'
 
 let STX_CONTRACT_ADDRESS = process.env.VUE_APP_STACKS_CONTRACT_ADDRESS
 let STX_CONTRACT_NAME = process.env.VUE_APP_STACKS_CONTRACT_NAME
-const network = new StacksTestnet()
 const mac = JSON.parse(process.env.VUE_APP_WALLET_MAC || '')
 const precision = 1000000
 
 const STACKS_API = process.env.VUE_APP_API_STACKS
 const MESH_API = process.env.VUE_APP_API_MESH
+const network = new StacksTestnet()
+network.coreApiUrl = STACKS_API
 
 /**
 const getStacksAccount = function (appPrivateKey) {
@@ -131,13 +136,20 @@ const resolveReadOnly = function (resolve, reject, functionName, response) {
   if (!response.data.okay) {
     reject(new Error(response.data.cause))
   } else {
-    if (functionName === 'get-mint-price') {
-      const res = getAmountStx(parseInt(response.data.result, 16))
-      resolve(res)
+    const resp = Buffer.from(response.data.result.slice(2), 'hex')
+    const br = new BufferReader(resp)
+    const debr = deserializeCV(br)
+    if (debr) {
+      resolve(debr)
     } else {
-      console.log(response)
-      const res = unwrapStrings(response.data.result, 'uint')
-      resolve(res)
+      if (functionName === 'get-mint-price') {
+        const res = getAmountStx(parseInt(response.data.result, 16))
+        resolve(res)
+      } else {
+        console.log(response)
+        const res = unwrapStrings(response.data.result, 'uint')
+        resolve(res)
+      }
     }
   }
 }
@@ -148,7 +160,7 @@ const stacksStore = {
     result: null,
     contracts: [],
     appName: 'Risidio Mesh',
-    appLogo: '/img/logo/Risidio_logo_256x256.png',
+    appLogo: '/img/Group 15980.svg',
     macsWallet: mac
   },
   getters: {
@@ -192,6 +204,42 @@ const stacksStore = {
         })
       })
     },
+    callContractBlockstack ({ state }, data) {
+      // see https://docs.blockstack.org/smart-contracts/signing-transactions
+      // Blocked a frame with origin "https://loopbomb.risidio.com" from accessing a cross-origin frame.
+      return new Promise((resolve, reject) => {
+        const contractAddress = (data.contractAddress) ? data.contractAddress : STX_CONTRACT_ADDRESS
+        const contractName = (data.contractName) ? data.contractName : STX_CONTRACT_NAME
+        const nonce = new BigNum(state.macsWallet.nonce)
+        network.coreApiUrl = STACKS_API
+        const txoptions: any = {
+          contractAddress: contractAddress,
+          contractName: contractName,
+          functionName: data.functionName,
+          functionArgs: (data.functionArgs) ? data.functionArgs : [],
+          fee: new BigNum(1800),
+          senderKey: state.macsWallet.keyInfo.privateKey,
+          nonce: new BigNum(nonce),
+          validateWithAbi: false,
+          network: network,
+          appDetails: {
+            name: state.appName,
+            icon: state.appLogo
+          },
+          finished: response => {
+            const result = {
+              txId: response.data,
+              network: 15,
+              tokenId: Math.floor(Math.random() * Math.floor(1000000000))
+            }
+            resolve(result)
+          }
+        }
+        openContractCall(txoptions).catch((error) => {
+          reject(error)
+        })
+      })
+    },
     callContractRisidio ({ state, commit }, data) {
       return new Promise((resolve, reject) => {
         setAddresses()
@@ -203,10 +251,9 @@ const stacksStore = {
         if (data && data.action === 'inc-nonce') {
           nonce = new BigNum(state.macsWallet.nonce + 1)
         }
-        // 5000 000 000 000 000
         const txOptions = {
-          contractAddress: STX_CONTRACT_ADDRESS,
-          contractName: STX_CONTRACT_NAME,
+          contractAddress: (data.contractAddress) ? data.contractAddress : STX_CONTRACT_ADDRESS,
+          contractName: (data.contractName) ? data.contractName : STX_CONTRACT_NAME,
           functionName: data.functionName,
           functionArgs: (data.functionArgs) ? data.functionArgs : [],
           fee: new BigNum(1800),
@@ -250,6 +297,27 @@ const stacksStore = {
         })
       })
     },
+    callContractBlockstackReadOnly ({ state }, data) {
+      return new Promise((resolve, reject) => {
+        let contractAddress = STX_CONTRACT_ADDRESS
+        let contractName = STX_CONTRACT_NAME
+        if (data.contractId) {
+          contractAddress = data.contractId.split('.')[0]
+          contractName = data.contractId.split('.')[1]
+        }
+        callReadOnlyFunction({
+          contractAddress: contractAddress,
+          contractName: contractName,
+          functionName: data.functionName,
+          functionArgs: (data.functionArgs) ? data.functionArgs : [],
+          senderAddress: state.macsWallet.keyInfo.address
+        }).then((result) => {
+          resolve(result)
+        }).catch((error) => {
+          reject(error)
+        })
+      })
+    },
     callContractReadOnly ({ state }, data) {
       return new Promise((resolve, reject) => {
         setAddresses()
@@ -276,10 +344,10 @@ const stacksStore = {
         }
         axios.post(STACKS_API + path, txoptions.postData, { headers: headers }).then(response => {
           resolveReadOnly(resolve, reject, data.functionName, response)
-        }).catch((error) => {
+        }).catch(() => {
           axios.post(MESH_API + '/v2/accounts', txoptions).then(response => {
             resolveReadOnly(resolve, reject, data.functionName, response)
-          }).catch(() => {
+          }).catch((error) => {
             resolveError(reject, error)
           })
         })
@@ -312,7 +380,6 @@ const stacksStore = {
     },
     deployProjectContract ({ state, dispatch }, project) {
       return new Promise((resolve, reject) => {
-        network.coreApiUrl = 'http://localhost:20443'
         const sender = state.macsWallet
         const contractName = project.projectId.split('.')[1]
         const contractId = mac.keyInfo.address + '.' + contractName

@@ -30,14 +30,6 @@
     </b-form>
     <pre class="mt-3 mb-0">{{ result }}</pre>
   </div>
-  <b-modal scrollable id="modal-1" title="Contract Deployed">
-    <div class="row" v-if="deployedProject">
-      <div class="col-12 my-1">
-        <div class="mb-3">Deployed {{deployedProject.projectId}}</div>
-        <div class="mb-3">Tx: {{deployedProject.txId}}</div>
-      </div>
-    </div>
-  </b-modal>
   <b-modal id="modal-err" title="Contract Not Deployed">
     <div class="row">
       <div class="col-12 my-1">
@@ -67,7 +59,6 @@ export default {
       loading: true,
       parentalError: null,
       result: null,
-      deployedProject: null,
       contentModel1: {
         title: 'Browse computer for contract to deploy',
         errorMessage: 'A file is required.',
@@ -103,10 +94,10 @@ export default {
       const projectPlus = this.project
       projectPlus.codeBody = this.plainFile()
       this.$store.dispatch('stacksStore/deployProjectContract', projectPlus).then((project) => {
-        this.deployedProject = project
-        this.$bvModal.show('modal-1')
+        this.$emit('deployed', { error: false, project: project })
       }).catch((error) => {
         this.result = error
+        // this.$emit('deployed', { error: true, reason: error })
         this.$bvModal.show('modal-err')
         // this.$notify({ type: 'error', title: 'Contracts', text: error })
       })
