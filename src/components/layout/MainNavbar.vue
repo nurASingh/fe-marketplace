@@ -8,6 +8,8 @@
     <span> </span>
     <span> </span>
   </b-navbar-toggle>
+        <div v-if="avatar" v-b-toggle.login-sidebar class="navbar__account"><span v-html="avatar"></span></div>
+        <div v-else        v-b-toggle.login-sidebar class="navbar__account"><span><b-icon style="width: 30px; height: 30px;" class="text-info" icon="person-fill"/></span></div>
 
   <b-navbar-nav class="navbar_login d-xl-none">
     <b-nav-item v-if="loggedIn">
