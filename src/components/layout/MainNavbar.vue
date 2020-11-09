@@ -8,10 +8,14 @@
     <span> </span>
     <span> </span>
   </b-navbar-toggle>
+  <b-navbar-nav class="navbar_login d-md-block d-xl-none">
+  <div v-if="avatar" v-b-toggle.login-sidebar class="navbar__account"><span class="text-info" v-html="avatar"></span></div>
+  <div v-else        v-b-toggle.login-sidebar class="navbar__account"><span><b-icon style="width: 30px; height: 30px;" class="text-info" icon="person-fill"/></span></div>
+  </b-navbar-nav>
 
   <b-navbar-nav class="navbar_login d-xl-none">
     <b-nav-item v-if="loggedIn">
-        <div v-b-toggle.login-sidebar class="navbar__account"><span v-html="avatar"></span><span class="text-info navbar__account--text">Account</span></div>
+        <div v-b-toggle.login-sidebar class="navbar__account text-info"><span class="text-info" v-html="avatar"></span><span class="text-info navbar__account--text">Account</span></div>
         <b-sidebar id="login-sidebar" right bg-variant="white" width="232px">
           <div class="">
             <div class="login-sidebar__username login-sidebar--border-bottom"><div>Hi, <span class="text-info">{{ username }}</span></div></div>
@@ -93,21 +97,20 @@
         <b-dropdown-item><span @click="logout()"><i class="fas fa-sign-out-alt"></i> Logout</span></b-dropdown-item>
       </b-nav-item-dropdown>-->
     </b-navbar-nav>
-    <b-navbar-nav class="navbar_login d-flex">
-      <b-nav-item class="navbar_login--loogedin" v-if="loggedIn">
-          <div v-b-toggle.login-sidebar class="navbar__account"><span v-html="avatar"></span><span class="text-info navbar__account--text">Account</span></div>
-          <b-sidebar id="login-sidebar" right bg-variant="white" width="232px">
-            <div class="">
-              <div class="login-sidebar__username login-sidebar--border-bottom"><div>Hi, <span class="text-info">{{ username }}</span></div></div>
-              <div class="login-sidebar__item-group login-sidebar--border-bottom">
-                <div>Balance: {{ balance }}</div>
-                <div>Addr: {{ stxAddress }}</div>
-              </div>
-              <div class="login-sidebar__item-group login-sidebar--border-bottom">
-                <div><router-link to="/admin-app"><i class="far fa-play-circle"></i> Connect Project</router-link></div>
-                <div><router-link to="/my-items"><i class="far fa-folder-open"></i> My Collectibles</router-link></div>
-              </div>
-              <div class="login-sidebar__item-group"><span @click="logout()"><i class="fas fa-sign-out-alt"></i>Logout</span></div>
+  <b-navbar-nav class="navbar_login d-flex">
+    <b-nav-item class="navbar_login--loogedin" v-if="loggedIn">
+        <div v-if="avatar" v-b-toggle.login-sidebar class="navbar__account"><span v-html="avatar"></span><span class="text-info navbar__account--text">Account</span></div>
+        <div v-else        v-b-toggle.login-sidebar class="navbar__account"><span><b-icon icon="person-fill"/></span><span class="text-info navbar__account--text">Account</span></div>
+        <b-sidebar id="login-sidebar" right bg-variant="white" width="232px">
+          <div class="">
+            <div class="login-sidebar__username login-sidebar--border-bottom"><div>Hi, <span class="text-info">{{ username }}</span></div></div>
+            <div class="login-sidebar__item-group login-sidebar--border-bottom">
+              <div>Balance: {{ balance }}</div>
+              <div>Addr: {{ stxAddress }}</div>
+            </div>
+            <div class="login-sidebar__item-group login-sidebar--border-bottom">
+              <div><router-link to="/admin-app"><i class="far fa-play-circle"></i> Connect Project</router-link></div>
+              <div><router-link to="/my-items"><i class="far fa-folder-open"></i> My Collectibles</router-link></div>
             </div>
           </b-sidebar>
         </b-nav-item>
@@ -217,12 +220,9 @@ export default {
             profile.avatarUrl +
             '"/>'
           )
-        } else {
-          return '<img style="width: 30px; height: 30px; border-radius: 20px;" src="/img/default-avatar.png"/>'
         }
-      } else {
-        return '<img style="width: 30px; height: 30px; border-radius: 20px;" src="/img/default-avatar.png"/>'
       }
+      return null
     },
     loggedIn () {
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
