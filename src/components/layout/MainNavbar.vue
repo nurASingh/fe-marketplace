@@ -8,12 +8,14 @@
     <span> </span>
     <span> </span>
   </b-navbar-toggle>
-        <div v-if="avatar" v-b-toggle.login-sidebar class="navbar__account"><span v-html="avatar"></span></div>
-        <div v-else        v-b-toggle.login-sidebar class="navbar__account"><span><b-icon style="width: 30px; height: 30px;" class="text-info" icon="person-fill"/></span></div>
+  <b-navbar-nav class="navbar_login d-md-block d-xl-none">
+  <div v-if="avatar" v-b-toggle.login-sidebar class="navbar__account"><span class="text-info" v-html="avatar"></span></div>
+  <div v-else        v-b-toggle.login-sidebar class="navbar__account"><span><b-icon style="width: 30px; height: 30px;" class="text-info" icon="person-fill"/></span></div>
+  </b-navbar-nav>
 
   <b-navbar-nav class="navbar_login d-xl-none">
     <b-nav-item v-if="loggedIn">
-        <div v-b-toggle.login-sidebar class="navbar__account"><span v-html="avatar"></span><span class="text-info navbar__account--text">Account</span></div>
+        <div v-b-toggle.login-sidebar class="navbar__account text-info"><span class="text-info" v-html="avatar"></span><span class="text-info navbar__account--text">Account</span></div>
         <b-sidebar id="login-sidebar" right bg-variant="white" width="232px">
           <div class="">
             <div class="login-sidebar__username login-sidebar--border-bottom"><div>Hi, <span class="text-info">{{ username }}</span></div></div>
