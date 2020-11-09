@@ -499,7 +499,6 @@ export default {
     background-color: $info;
     padding: 10px 13px;
     border-radius: 50%;
-    z-index: 3;
   }
 
   /* APPLICATION SECTION */

@@ -27,7 +27,6 @@
           </div>
         </b-sidebar>
       </b-nav-item>
-      <b-nav-item @click.prevent="startLogin()" href="#" v-else>Login</b-nav-item>
   </b-navbar-nav>
 
   <b-collapse id="nav-collapse" is-nav>
@@ -94,27 +93,27 @@
         <b-dropdown-item><span @click="logout()"><i class="fas fa-sign-out-alt"></i> Logout</span></b-dropdown-item>
       </b-nav-item-dropdown>-->
     </b-navbar-nav>
+    <b-navbar-nav class="navbar_login d-flex">
+      <b-nav-item class="navbar_login--loogedin" v-if="loggedIn">
+          <div v-b-toggle.login-sidebar class="navbar__account"><span v-html="avatar"></span><span class="text-info navbar__account--text">Account</span></div>
+          <b-sidebar id="login-sidebar" right bg-variant="white" width="232px">
+            <div class="">
+              <div class="login-sidebar__username login-sidebar--border-bottom"><div>Hi, <span class="text-info">{{ username }}</span></div></div>
+              <div class="login-sidebar__item-group login-sidebar--border-bottom">
+                <div>Balance: {{ balance }}</div>
+                <div>Addr: {{ stxAddress }}</div>
+              </div>
+              <div class="login-sidebar__item-group login-sidebar--border-bottom">
+                <div><router-link to="/admin-app"><i class="far fa-play-circle"></i> Connect Project</router-link></div>
+                <div><router-link to="/my-items"><i class="far fa-folder-open"></i> My Collectibles</router-link></div>
+              </div>
+              <div class="login-sidebar__item-group"><span @click="logout()"><i class="fas fa-sign-out-alt"></i>Logout</span></div>
+            </div>
+          </b-sidebar>
+        </b-nav-item>
+        <b-nav-item @click.prevent="startLogin()" href="#" v-else><button class="login-button button-secondary">Login</button></b-nav-item>
+    </b-navbar-nav>
   </b-collapse>
-  <b-navbar-nav class="navbar_login d-xl-flex d-none">
-    <b-nav-item v-if="loggedIn">
-        <div v-b-toggle.login-sidebar class="navbar__account"><span v-html="avatar"></span><span class="text-info navbar__account--text">Account</span></div>
-        <b-sidebar id="login-sidebar" right bg-variant="white" width="232px">
-          <div class="">
-            <div class="login-sidebar__username login-sidebar--border-bottom"><div>Hi, <span class="text-info">{{ username }}</span></div></div>
-            <div class="login-sidebar__item-group login-sidebar--border-bottom">
-              <div>Balance: {{ balance }}</div>
-              <div>Addr: {{ stxAddress }}</div>
-            </div>
-            <div class="login-sidebar__item-group login-sidebar--border-bottom">
-              <div><router-link to="/admin-app"><i class="far fa-play-circle"></i> Connect Project</router-link></div>
-              <div><router-link to="/my-items"><i class="far fa-folder-open"></i> My Collectibles</router-link></div>
-            </div>
-            <div class="login-sidebar__item-group"><span @click="logout()"><i class="fas fa-sign-out-alt"></i> Logout</span></div>
-          </div>
-        </b-sidebar>
-      </b-nav-item>
-      <b-nav-item @click.prevent="startLogin()" href="#" v-else>Login</b-nav-item>
-  </b-navbar-nav>
 </b-navbar>
 </div>
 </template>
@@ -239,20 +238,21 @@ export default {
 /* NAVBAR PADDING AND WIDTH */
 nav.navbar {
   width: 100vw;
-  padding-right: 0;
-  padding-left: 0;
+  padding-right: 50px;
+  padding-left: 50px;
   position: absolute!important;
   top: 0;
   left: 0;
 }
 
 /* NAV ITEMS STYLE */
-#nav-collapse ul.navbar-nav:first-child {
+nav ul {
   font-size: 12px;
+}
+#nav-collapse ul.navbar-nav:first-child {
   font-weight: 600;
 }
 #nav-collapse ul.navbar-nav:last-child {
-  font-size: 12px;
   font-weight: 300;
 }
 .navbar-nav .nav-item:not(:last-child) {
@@ -272,20 +272,23 @@ nav.navbar {
 .navbar__account:focus {
   outline: none;
 }
-
-/* NAV LOGIN */
-.nav-link {
+nav .nav-link {
   color: #fff !important;
 }
 
-nav.navbar-expand-xl .navbar_login {
-  padding-right: 40px;
+/* NAV LOGIN */
+nav .login-button {
+  width: 97px;
+  margin-left: 40px;
+  font-size: 12px;
 }
 
-nav.navbar-expand-xl .navbar_login .nav-link {
-  padding: 0;
+nav .navbar__account {
   margin-left: 30px;
-  font-size: 12px;
+}
+
+nav .navbar_login .nav-link {
+  padding: 0;
 }
 
 .v-nav-user {
@@ -298,7 +301,6 @@ nav.navbar-expand-xl .navbar_login .nav-link {
 nav a.navbar-brand {
   height: 80px;
   width: auto;
-  padding-left: 40px;
 }
 
 /* DROPDOWN MENUS */
@@ -364,11 +366,28 @@ nav .navbar-toggler {
 @media only screen and (max-width: 1199px) {
 
   /* MOBILE NAVBAR LOGIN */
-  nav.navbar-expand-xl .navbar_login .nav-link {
+  nav .login-button {
+    width: 100%;
+    margin-left: 0px;
+    font-size: 14px;
+  }
+  nav .navbar-collapse .navbar_login {
+    margin: auto 0 0;
+  }
+
+  nav .navbar__account {
+    margin-left: 0;
+  }
+
+  nav .navbar_login--loogedin {
+    display: none;
+  }
+
+  nav .navbar_login .nav-link {
     margin-left: 20px;
   }
 
-  nav.navbar-expand-xl .navbar_login .navbar__account--text {
+  nav .navbar_login .navbar__account--text {
     display: none;
   }
 
@@ -403,7 +422,7 @@ nav .navbar-toggler {
 
   #nav-collapse .navbar-nav {
     width: 100%;
-    padding: 0 40px;
+    padding: 0 50px;
   }
 
   #nav-collapse .navbar-nav:first-child {
@@ -446,14 +465,12 @@ nav .navbar-toggler {
 
 }
 
-/* MOBILE NAVBAR PADDING */
+/* MOBILE NAVBAR PADDING & MARGIN */
 @media only screen and (max-width: 576px) {
-  nav a.navbar-brand {
-    padding-left: 20px;
-  }
 
-  nav.navbar-expand-xl .navbar_login {
+  nav.navbar {
     padding-right: 20px;
+    padding-left: 20px;
   }
 
   #nav-collapse .navbar-nav {
