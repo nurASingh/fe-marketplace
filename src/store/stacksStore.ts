@@ -240,7 +240,7 @@ const stacksStore = {
         })
       })
     },
-    callContractRisidio ({ state, commit }, data) {
+    callContractRisidio ({ state, dispatch, commit }, data) {
       return new Promise((resolve, reject) => {
         setAddresses()
         const profile = store.getters['authStore/getMyProfile']
@@ -280,6 +280,7 @@ const stacksStore = {
                 network: 15,
                 tokenId: Math.floor(Math.random() * Math.floor(1000000000))
               }
+              dispatch('fetchMacsWalletInfo')
               resolve(result)
             }).catch(() => {
               const macsWallet = state.macsWallet
@@ -288,6 +289,7 @@ const stacksStore = {
                 macsWallet.nonce = response.data.nonce
                 macsWallet.balance = getAmountStx(parseInt(response.data.balance, 16))
                 commit('setMacsWallet', macsWallet)
+                dispatch('fetchMacsWalletInfo')
                 resolve(macsWallet)
               }).catch((error) => {
                 resolveError(reject, error)
@@ -318,7 +320,7 @@ const stacksStore = {
         })
       })
     },
-    callContractReadOnly ({ state }, data) {
+    callContractReadOnly ({ state, dispatch }, data) {
       return new Promise((resolve, reject) => {
         setAddresses()
         if (state) {
@@ -343,9 +345,11 @@ const stacksStore = {
           'Content-Type': 'application/json'
         }
         axios.post(STACKS_API + path, txoptions.postData, { headers: headers }).then(response => {
+          dispatch('fetchMacsWalletInfo')
           resolveReadOnly(resolve, reject, data.functionName, response)
         }).catch(() => {
           axios.post(MESH_API + '/v2/accounts', txoptions).then(response => {
+            dispatch('fetchMacsWalletInfo')
             resolveReadOnly(resolve, reject, data.functionName, response)
           }).catch((error) => {
             resolveError(reject, error)
