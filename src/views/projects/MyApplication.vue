@@ -47,6 +47,15 @@
               <b-button :to="'/customise-contract/' + project.projectId" variant="warning" class="mt-3 btn-lg" style="text-transform: capitalize; font-size: 14px;">I Need a Contract</b-button>
             </div>
           </div>
+          <div class="text-light" v-if="appmapProject">
+            <div>{{appmapProject.baseTokenUri}}
+              <div v-for="(asset, index) in appmapProject.assets" :key="index">
+                <pre>Owner: {{asset.owner}}</pre>
+                <pre>Asset hash: {{asset.assetHash}}</pre>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </div>

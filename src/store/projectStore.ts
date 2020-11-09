@@ -176,7 +176,7 @@ const projectStore = {
           !data.project.owner ||
           !data.project.title ||
           !data.project.description) {
-          reject(new Error('Bad project data'))
+          reject(new Error('Unable to save your app - check the contract id is in the format "stx_address.app_name"'))
           return
         }
         const contractName = data.project.projectId.split('.')[1]

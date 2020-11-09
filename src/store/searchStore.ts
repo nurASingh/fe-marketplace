@@ -109,7 +109,7 @@ const searchStore = {
             reject(new Error('Unable index record: ' + error))
           })
         } else {
-          return store.dispatch('searchStore/findByProjectId')
+          return store.dispatch('searchStore/findAssets')
         }
       })
     }

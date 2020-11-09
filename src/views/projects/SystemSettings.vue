@@ -17,8 +17,11 @@
       <b-tab title="API Settings">
         <api-settings/>
       </b-tab>
-      <b-tab title="Search Settings">
+      <b-tab title="Searching">
         <search-settings/>
+      </b-tab>
+      <b-tab title="Indexing">
+        <index-settings/>
       </b-tab>
     </b-tabs>
     </div>
@@ -32,6 +35,7 @@ import TitleBar from '@/components/admin/TitleBar'
 import AppRegistry from '@/components/admin/system/AppRegistry'
 import ApiSettings from '@/components/admin/system/ApiSettings'
 import SearchSettings from '@/components/admin/system/SearchSettings'
+import IndexSettings from '@/components/admin/system/IndexSettings'
 
 export default {
   name: 'SystemSettings',
@@ -40,6 +44,7 @@ export default {
     TitleBar,
     AppRegistry,
     SearchSettings,
+    IndexSettings,
     ApiSettings
   },
   data () {

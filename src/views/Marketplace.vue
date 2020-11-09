@@ -1,14 +1,10 @@
 <template>
-<div class="container mt-5">
+<div class="container" style="position: relative; top: 150px;">
   <div class="row p-3">
     <div class="col-3 border p-3">
       <h3>Projects</h3>
-      <div v-for="(result, index) in projects" :key="index">
-        <img width="150px" :src="result.assetUrl"/>
-        <div class="">
-          <!-- <router-link class="mr-3" to="/admin-app"><b-icon icon="eye"></b-icon></router-link> -->
-          <a href="#" @click.prevent="findByProjectId(result.projectId)">{{result.title}}</a>
-        </div>
+      <div v-for="(project, index) in projects" :key="index">
+        <project-list :contractId="project.contractId" />
       </div>
     </div>
     <div class="col-9 p-3 border">
@@ -30,10 +26,12 @@
 <script>
 import moment from 'moment'
 import { APP_CONSTANTS } from '@/app-constants'
+import ProjectList from '@/components/agora/ProjectList'
 
 export default {
   name: 'Marketplace',
   components: {
+    ProjectList
   },
   data () {
     return {
@@ -42,11 +40,11 @@ export default {
   },
   mounted () {
     this.loading = false
-    this.findByProjectId('loopbomb')
+    // this.findByProjectId('loopbomb')
   },
   methods: {
-    findByProjectId (projectId) {
-      this.$store.dispatch('searchStore/findByProjectId', projectId).then((results) => {
+    findByProjectId () {
+      this.$store.dispatch('searchStore/findBySearchTerm').then((results) => {
         this.results = results
       })
     },
@@ -59,7 +57,9 @@ export default {
       return this.$store.getters[APP_CONSTANTS.KEY_SEARCH_RESULTS]
     },
     projects () {
-      return this.$store.getters[APP_CONSTANTS.KEY_PROJECTS]
+      const appmap = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP]
+      if (appmap) return appmap.apps
+      return []
     }
   }
 }

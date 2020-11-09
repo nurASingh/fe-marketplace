@@ -60,8 +60,7 @@
   <b-modal scrollable id="app-modal" title="Saving Application Details">
     <div class="row">
       <div class="col-12 my-1">
-        <p>Saving to your decentralised storage.</p>
-        <p>Won't be long.</p>
+        <p>{{result}}</p>
       </div>
     </div>
   </b-modal>
@@ -89,6 +88,7 @@ export default {
       projectId: null,
       loaded: false,
       dims: { width: 250, height: 250 },
+      result: 'Saving to your decentralised storage - wo\'t be long.',
       project: {
         logo: require('@/assets/img/Group 15980.svg'),
         projectId: null,
@@ -102,7 +102,6 @@ export default {
         popoverBody: 'Your logo  file.'
       },
       files: [],
-      result: null,
       doValidate: true,
       defaultBadge: require('@/assets/img/Group 15980.svg'),
       defaultBadgeData: null
@@ -207,8 +206,8 @@ export default {
         this.$router.push('/my-app/' + project.projectId)
         this.$bvModal.hide('app-modal')
       }).catch((error) => {
-        this.$notify({ type: 'error', title: 'Transfers', text: 'Error message: ' + error })
-        this.$bvModal.hide('app-modal')
+        // this.$notify({ type: 'error', title: 'Transfers', text: 'Error message: ' + error })
+        this.result = error
       })
     }
   },
