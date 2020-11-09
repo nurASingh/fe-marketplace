@@ -3,9 +3,16 @@
   <div class="mb-4">
     <div class="d-flex justify-content-between">
       <div>
-        <a class="mx-2" href="#" @click.prevent="findApplications">projects</a>
-        <a class="mx-2" href="#" @click.prevent="findAssets">assets</a>
-        <a class="mx-2" href="#" @click.prevent="findUsers">users</a>
+        Clear:
+        <a class="mx-2" href="#" @click.prevent="clearAssets">assets</a>
+        <a class="mx-2" href="#" @click.prevent="clearUsers">users</a>
+      </div>
+    </div>
+    <div class="d-flex justify-content-start">
+      <div>
+        Index:
+        <a class="mx-2" href="#" @click.prevent="indexUsers(users)">all me</a>
+        <a class="mx-2" href="#" @click.prevent="indexUsers(usersMin)">radicle_art</a>
       </div>
     </div>
     <div class="p-4">
@@ -29,10 +36,9 @@
 
 <script>
 import moment from 'moment'
-import { APP_CONSTANTS } from '@/app-constants'
 
 export default {
-  name: 'SearchSettings',
+  name: 'IndexSettings',
   components: {
   },
   data () {
@@ -71,11 +77,11 @@ export default {
     values () {
       if (!this.searchResults) return
       let mapped = []
-      const $self = this
       if (this.searchType === 'users') {
+        const $self = this
         mapped = this.searchResults.map(function (a) { return { name: a.name, 'app count': $self.countApps(a.apps), zonefile: '<a href="' + $self.parseProfile(a.zonefile) + '">profile</a>' } })
       } else if (this.searchType === 'projects') {
-        mapped = this.searchResults.map(function (a) { return { id: $self.contract(a.contractId), owner: a.owner, updated: moment(a.updated).format('YYYY-MM-DD HH:mm:SS'), title: a.gaiaProject.title, type: a.gaiaProject.objType, assetUrl: '<img width="50px" height="50px" src="' + a.gaiaProject.imageUrl + '"/>' } })
+        mapped = this.searchResults.map(function (a) { return { id: a.projectId, owner: a.owner, updated: moment(a.updated).format('YYYY-MM-DD HH:mm:SS'), title: a.title, type: a.objType, assetUrl: '<img width="50px" height="50px" src="' + a.assetUrl + '"/>' } })
       } else {
         mapped = this.searchResults.map(function (a) { return { owner: a.owner, updated: moment(a.updated).format('YYYY-MM-DD HH:mm:SS'), title: a.title, assetUrl: (a.assetProjectUrl) ? '<a href="' + a.assetProjectUrl + '" target="_blank"><img width="50px" height="50px" src="' + a.assetUrl + '"/></a>' : '', projectId: a.projectId } })
       }
@@ -118,17 +124,30 @@ export default {
       })
     },
     findApplications () {
-      const appmap = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP]
-      this.searchResults = appmap.apps
-      this.searchType = 'projects'
-    },
-    contract (contractId) {
-      return contractId.substring(0, 10) + '...'
+      this.$store.dispatch('applicationStore/findApplications').then((results) => {
+        this.searchResults = results
+        this.searchType = 'applications'
+      })
     },
     findAssets () {
       this.$store.dispatch('searchStore/findAssets').then((results) => {
         this.searchResults = results
         this.searchType = 'assets'
+      })
+    },
+    indexUsers (users) {
+      this.$store.dispatch('searchStore/indexUsers', users).then((result) => {
+        this.result = result
+      })
+    },
+    clearUsers () {
+      this.$store.dispatch('searchStore/clearUsers').then(() => {
+        this.$notify({ type: 'info', title: 'Index Details', text: 'Cleared the user lucene index' })
+      })
+    },
+    clearAssets () {
+      this.$store.dispatch('searchStore/clearAssets').then(() => {
+        this.$notify({ type: 'info', title: 'Index Details', text: 'Cleared the assets lucene index' })
       })
     }
   },

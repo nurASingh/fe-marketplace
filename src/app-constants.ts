@@ -10,7 +10,6 @@ export const APP_CONSTANTS = {
   KEY_APP_MAP_CONTRACT_ID: 'applicationStore/getAppmapContractId',
   KEY_ASSET: 'searchStore/getAsset',
   KEY_SEARCH_RESULTS: 'searchStore/getSearchResults',
-  KEY_PROJECTS: 'searchStore/getProjects',
   KEY_MY_PROJECT: 'projectStore/getProject',
   KEY_MY_PROJECTS: 'projectStore/getProjects',
   KEY_PROFILE: 'authStore/getMyProfile',

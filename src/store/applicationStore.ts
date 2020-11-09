@@ -1,22 +1,9 @@
 import projectService from '@/services/projectService.js'
 import utils from '@/services/utils'
-import axios from 'axios'
 import store from '.'
-import { intCV, serializeCV } from '@stacks/transactions'
+import { uintCV, intCV, serializeCV } from '@stacks/transactions'
 
-const SEARCH_API_PATH = process.env.VUE_APP_API_SEARCH
-const readProjectFromGaia = function (resolve, reject, projectLookups, commit) {
-  try {
-    projectLookups.forEach((projectLookup) => {
-      projectService.fetchUserProjects(projectLookup.owner).then((connectedProjects) => {
-        commit('setConnectedProjects', { owner: projectLookup.owner, projects: connectedProjects })
-      })
-    })
-    resolve()
-  } catch {
-    reject(new Error('Unable to fetch project from users gaia storage.' + JSON.stringify(projectLookups)))
-  }
-}
+const KEY_GAIA_PROJECT = 'getGaiaProject'
 
 const applicationStore = {
   namespaced: true,
@@ -25,8 +12,8 @@ const applicationStore = {
     appmap: {
       apps: []
     },
+    gaiaProjects: [],
     appCounter: -1,
-    connectedProjects: null,
     appmapContractId: 'ST1ESYCGJB5Z5NBHS39XPC70PGC14WAQK5XXNQYDW.appmap'
   },
   getters: {
@@ -47,6 +34,13 @@ const applicationStore = {
       if (index > -1) {
         return state.appmap.apps[index]
       }
+    },
+    getGaiaProject: (state: any) => projectId => {
+      // note a user might store multiple projects in their gaia space
+      const index = state.gaiaProjects.findIndex((o) => o.projectId === projectId)
+      if (index > -1) {
+        return state.gaiaProjects[index]
+      }
     }
   },
   mutations: {
@@ -55,6 +49,17 @@ const applicationStore = {
     },
     setAppCounter (state, appCounter) {
       state.appCounter = appCounter
+    },
+    setGaiaProjects (state, gaiaProjects) {
+      let index = -1
+      gaiaProjects.forEach((project) => {
+        index = state.gaiaProjects.findIndex((o) => o.projectId === project.projectId)
+        if (index < 0) {
+          state.gaiaProjects.splice(0, 0, project)
+        } else {
+          state.gaiaProjects.splice(index, 1, project)
+        }
+      })
     },
     setAppmap (state, appmap) {
       state.appmap = appmap
@@ -74,7 +79,7 @@ const applicationStore = {
         store.dispatch('stacksStore/callContractReadOnly', { contractId: state.appmapContractId, functionName: 'get-app-counter' }).then((data) => {
           const appCounter = data.value.value
           commit('setAppCounter', appCounter)
-          for (let i = 0; i < appCounter; i++) {
+          for (let i = 0; i < state.appCounter; i++) {
             dispatch('lookupApplicationByIndex', i)
           }
         }).catch((e) => {
@@ -82,7 +87,7 @@ const applicationStore = {
         })
       })
     },
-    lookupApplicationByIndex: function ({ state, commit, dispatch }: any, appCounter: number) {
+    lookupApplicationByIndex: function ({ state, commit, dispatch, getters }: any, appCounter: number) {
       return new Promise(function (resolve, reject) {
         const index = state.appmap.apps.findIndex((o) => o.appCounter === appCounter)
         if (index > -1) {
@@ -100,7 +105,63 @@ const applicationStore = {
           application.appCounter = appCounter
           dispatch('fetchApplicationBaseTokenAddress', application)
           commit('addAppToAppmap', application)
-          resolve(application)
+          const gaiaProject = getters[KEY_GAIA_PROJECT](application.contractId)
+          if (!gaiaProject) {
+            projectService.fetchUserProjects(application.owner).then((gaiaProjects) => {
+              commit('setGaiaProjects', gaiaProjects)
+              const gp = getters[KEY_GAIA_PROJECT](application.contractId)
+              application.gaiaProject = gp
+              commit('addAppToAppmap', application)
+              dispatch('lookupMintCounter', application)
+              resolve(application)
+            })
+          } else {
+            resolve(application)
+          }
+        }).catch((e) => {
+          reject(e)
+        })
+      })
+    },
+    lookupMintCounter ({ commit, dispatch }: any, application: any) {
+      return new Promise((resolve, reject) => {
+        const config = {
+          contractId: application.contractId,
+          functionName: 'get-base-token-uri',
+          functionArgs: []
+        }
+        store.dispatch('stacksStore/callContractReadOnly', config).then((response) => {
+          const baseTokenUri = utils.toObjectString(response)
+          application.baseTokenUri = baseTokenUri
+          commit('addAppToAppmap', application)
+          store.dispatch('stacksStore/callContractReadOnly', { contractId: application.contractId, functionName: 'get-mint-counter' }).then((data) => {
+            application.mintCounter = data.value.value
+            commit('addAppToAppmap', application)
+            application.assets = []
+            for (let i = 0; i < application.mintCounter; i++) {
+              dispatch('lookupMintedAssets', { application: application, index: i })
+            }
+          }).catch((e) => {
+            reject(e)
+          })
+        }).catch((e) => {
+          reject(e)
+        })
+      })
+    },
+    lookupMintedAssets: function ({ commit }: any, appdata: any) {
+      return new Promise(function (resolve, reject) {
+        const functionArgs = [`0x${serializeCV(uintCV(appdata.index)).toString('hex')}`]
+        const config = {
+          contractId: appdata.application.contractId,
+          functionName: 'get-token-info',
+          functionArgs: functionArgs
+        }
+        store.dispatch('stacksStore/callContractReadOnly', config).then((data) => {
+          const asset: any = utils.toObjectAsset(data)
+          appdata.application.assets.push(asset)
+          commit('addAppToAppmap', appdata.application)
+          resolve(appdata.application)
         }).catch((e) => {
           reject(e)
         })
@@ -120,37 +181,6 @@ const applicationStore = {
           resolve(application)
         }).catch((e) => {
           reject(e)
-        })
-      })
-    },
-    findApplicationsByOwner: function ({ commit }: any, owner: string) {
-      return new Promise(function (resolve, reject) {
-        if (!owner) {
-          reject(new Error('No owner'))
-          return
-        }
-        const url = SEARCH_API_PATH + '/projectsByOwner/' + owner
-        axios.get(url).then((response) => {
-          readProjectFromGaia(resolve, reject, response.data, commit)
-        }).catch((error) => {
-          reject(new Error('Unable index record: ' + error))
-        })
-      })
-    },
-    findApplicationByProjectId ({ commit }: any, projectId: string) {
-      return new Promise((resolve, reject) => {
-        if (!projectId) {
-          reject(new Error('No domain'))
-          return
-        }
-        const url = SEARCH_API_PATH + '/projectsByProjectId/' + projectId
-        axios.get(url).then((response) => {
-          if (response.data) {
-            const projectLookups = [response.data]
-            readProjectFromGaia(resolve, reject, projectLookups, commit)
-          }
-        }).catch((error) => {
-          reject(new Error('Unable index record: ' + error))
         })
       })
     }

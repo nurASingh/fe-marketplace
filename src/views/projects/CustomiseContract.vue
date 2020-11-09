@@ -12,6 +12,11 @@
             <div class="">
               <div class="">
                 <div class="mb-2 d-flex justify-content-between">
+                  <div>Token Name</div>
+                  <div><a href="#" class="mr-1" @click.prevent="useProject()">use project name</a></div>
+                </div>
+                <b-input v-model="params.token"></b-input>
+                <div class="mb-2 d-flex justify-content-between">
                   <div>Contract Owner</div>
                   <div><a href="#" class="mr-1" @click.prevent="useMyAddress()">mine</a> <a class="text-info" href="#" @click.prevent="useMacsAddress()">macs</a></div>
                 </div>
@@ -95,68 +100,81 @@ export default {
       result: null,
       params: {
         mintPrice: '100000',
+        token: null,
         contractName: null,
         contractOwner: 'stacks-address',
         callBack: 'https://loopbomb.risidio.com/nft/v1/assets/'
       },
       // contractSourceDisplay: null,
       contractSource: `
-;; nongible
-(define-data-var owner principal 'params.contractOwner)
-(define-non-fungible-token nongible-tokens (buff 32)) ;; identifier is 256-bit hash of image
+;; data structures
+;; ---------------
+(define-non-fungible-token params.token uint)
+(define-map params.token-data ((index uint)) ((owner (buff 80)) (asset-hash (buff 32)) (date uint)))
+(define-map params.token-lookup ((asset-hash (buff 32))) ((index uint)))
+
+(define-data-var administrator principal 'params.contractOwner)
 (define-data-var mint-price uint uparams.mintPrice)
 (define-data-var base-token-uri (buff 100) params.callBack)
-(define-map nongibles ((token-id (buff 32))) ((author principal) (date uint))) ;; extra info about token related to the nft-token
+(define-data-var mint-counter uint u0) ;; tracks nft creation
 
-;; ownable methods
-(define-read-only (get-owner)
-    (var-get owner))
-
-(define-read-only (is-owner)
-    (ok (is-eq (var-get owner) tx-sender)))
-
-(define-read-only (only-owner)
-    (if (is-eq (var-get owner) tx-sender) (ok none) (err 1)))
-
-(define-public (transfer-ownership (new-owner principal))
+;; public methods
+;; --------------
+(define-public (transfer-administrator (new-administrator principal))
     (begin
-        (asserts! (is-eq (var-get owner) tx-sender) (err 1))
-        (var-set owner new-owner)
+        (asserts! (is-eq (var-get administrator) tx-sender) (err 1))
+        (var-set administrator new-administrator)
         (ok true)))
 
-;; nongible methods
 (define-public (update-base-token-uri (new-base-token-uri (buff 100)))
     (begin
-        (asserts! (is-eq (var-get owner) tx-sender) (err 1))
+        (asserts! (is-eq (var-get administrator) tx-sender) (err 1))
         (var-set base-token-uri new-base-token-uri)
         (ok true)))
 
 (define-public (update-mint-price (new-mint-price uint))
     (begin
-        (asserts! (is-eq (var-get owner) tx-sender) (err 1))
+        (asserts! (is-eq (var-get administrator) tx-sender) (err 1))
         (var-set mint-price new-mint-price)
         (ok true)))
+
+(define-public (mint-token (asset-hash (buff 32)) (owner (buff 80)))
+    (begin
+        (asserts! (> (stx-get-balance tx-sender) (var-get mint-price)) (err 2))
+        (as-contract
+            (stx-transfer? (var-get mint-price) tx-sender (var-get administrator))) ;; transfer stx if there is enough to pay for mint, otherwith throws an error
+        (nft-mint? params.token (var-get mint-counter) tx-sender)
+        (map-insert params.token-data ((index (var-get mint-counter))) ((owner owner) (asset-hash asset-hash) (date block-height)))
+        (map-insert params.token-lookup ((asset-hash asset-hash)) ((index (var-get mint-counter))))
+        (var-set mint-counter (+ (var-get mint-counter) u1))
+        (ok (var-get mint-counter))))
+
+;; read only methods
+;; ---------------
+(define-read-only (get-administrator)
+    (var-get administrator))
+
+(define-read-only (is-administrator)
+    (ok (is-eq (var-get administrator) tx-sender)))
 
 (define-read-only (get-base-token-uri)
     (var-get base-token-uri))
 
+(define-read-only (get-mint-counter)
+  (ok (var-get mint-counter))
+)
+
 (define-read-only (get-mint-price)
     (var-get mint-price))
 
-(define-read-only (get-token-uri (token-id (buff 32)))
-    (concat (var-get base-token-uri) token-id))
+(define-read-only (get-token-info (index uint))
+    (map-get? params.token-data ((index index))))
 
-(define-read-only (get-token-info (token-id (buff 32)))
-    (map-get? nongibles ((token-id token-id))))
+(define-read-only (get-index (asset-hash (buff 32)))
+    (map-get? params.token-lookup ((asset-hash asset-hash))))
 
-(define-public (create-nongible (token-id (buff 32)))
-    (begin
-        (asserts! (>= (stx-get-balance tx-sender) (var-get mint-price)) (err 2))
-        (as-contract
-            (stx-transfer? (var-get mint-price) tx-sender (var-get owner))) ;; transfer stx if there is enough to pay for mint, otherwith throws an error
-        (nft-mint? nongible-tokens token-id tx-sender) ;; fails if token has been minted before
-        (map-insert nongibles ((token-id token-id)) ((author tx-sender) (date block-height)))
-        (ok true)))
+;; private methods
+;; ---------------
 `
     }
   },
@@ -182,6 +200,9 @@ export default {
     })
   },
   methods: {
+    useProject: function () {
+      this.params.token = this.project.projectId.split('.')[1]
+    },
     useMyAddress: function () {
       this.params.contractOwner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
     },
@@ -229,6 +250,7 @@ export default {
       // contractName = this.this.files[0].name.split(/\./)[1]
       const projectPlus = this.project
       let source = this.contractSource.replaceAll('params.contractOwner', this.params.contractOwner)
+      source = source.replaceAll('params.token', this.params.token)
       source = source.replaceAll('params.mintPrice', this.params.mintPrice)
       source = source.replaceAll('params.callBack', utils.stringToHex(this.params.callBack))
       projectPlus.codeBody = source
@@ -248,6 +270,8 @@ export default {
     contractSourceDisplay () {
       let rep1 = '<span class="text-danger bg-white">' + this.params.contractOwner + '</span>'
       let contractSourceDisplay = this.contractSource.replaceAll('params.contractOwner', rep1)
+      rep1 = '<span class="text-danger bg-white">' + this.params.token + '</span>'
+      contractSourceDisplay = contractSourceDisplay.replaceAll('params.token', rep1)
       rep1 = '<span class="text-danger bg-white">' + this.params.mintPrice + '</span>'
       contractSourceDisplay = contractSourceDisplay.replaceAll('params.mintPrice', rep1)
       rep1 = '<span class="text-danger bg-white">' + utils.stringToHex(this.params.callBack) + '</span>'

@@ -51,6 +51,14 @@ const utils = {
       storageModel: o.value.data['storage-model'].value
     }
   },
+  toObjectAsset: function (o) {
+    const td = new TextDecoder('utf-8')
+    return {
+      owner: td.decode(o.value.data.owner.buffer),
+      assetHash: o.value.data['asset-hash'].buffer.toString('hex'),
+      bh: o.value.data.date.value
+    }
+  },
   toObjectString: function (o) {
     const td = new TextDecoder('utf-8')
     return td.decode(o.buffer)
