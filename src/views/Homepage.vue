@@ -11,7 +11,7 @@
         </div>
     </div>
   </div>
-
+  <!-- Items Section -->
   <div class="container" v-if="content" :key="componentKey">
     <div class="d-flex justify-content-center main-search">
       <div class="text-center no-wrap main-search--border">
@@ -75,6 +75,7 @@
     <button class="button-primary">See more collectables</button>
   </div>
   <div class="container"><div class="homepage__divider"></div></div>
+  <!-- Applications Section -->
   <div class="container d-flex justify-content-between homepage__applications">
     <div class="homepage__applications--whitespace d-lg-block d-none"></div>
     <div>
@@ -120,6 +121,7 @@
     </div>
   </div>
 -->
+<!-- Collections Section -->
 <div class="container"><div class="homepage__divider"></div></div>
   <div class="container d-flex justify-content-between mb-5 homepage__collections">
     <div class="homepage__collections--whitespace d-lg-block d-none"></div>
@@ -127,7 +129,7 @@
       <h3>Featured Collections</h3>
     </div>
     <div class="homepage__collections--view-all">
-      <a class="text-info">View all artists <b-icon icon="caret-right-fill"/></a>
+      <a class="text-info">View all collections <b-icon icon="caret-right-fill"/></a>
     </div>
   </div>
   <div class="container my-5" v-if="content">
@@ -145,38 +147,58 @@
       </div>
     </div>
   </div>
-
+  <div class="container"><div class="homepage__divider homepage__divider--categories"></div></div>
+  <!-- Categories Section -->
+  <section class="homepage__categories-sn">
+    <div class="container">
+      <h2 class="text-white text-center">Categories</h2>
+      <div class="row justify-content-center">
+        <div class="homepage__categories-sn--category"><img src="" alt=""><div class="homepage__categories-sn--text">Digital Art</div></div>
+        <div class="homepage__categories-sn--category"><img src="" alt=""><div class="homepage__categories-sn--text">Trading Cards</div></div>
+        <div class="homepage__categories-sn--category"><img src="" alt=""><div class="homepage__categories-sn--text">Certificates</div></div>
+        <div class="homepage__categories-sn--category"><img src="" alt=""><div class="homepage__categories-sn--text">Digital Property</div></div>
+        <div class="homepage__categories-sn--category"><img src="" alt=""><div class="homepage__categories-sn--text">Gaming</div></div>
+      </div>
+    </div>
+  </section>
+  <!-- Marketplace Section -->
   <div class="container flex-column align-items-center homepage__marketplace-section">
     <div class="row">
       <div class="col-12 text-center">
         <prismic-rich-text
           :field="content.info"
         />
+        <div>
+          <button class="button-primary button-primary--alternative-marketplace">How It Works</button>
+          <button class="button-secondary button-secondary--alternative-marketplace">About Risidio</button>
+        </div>
       </div>
     </div>
   </div>
   <!-- trading section with background -->
-  <div :style="tradingImage" class="pt-5 d-flex align-items-center flex-column">
+  <div :style="tradingImage" class="d-flex align-items-center flex-column homepage__trading-banner">
     <div class="my-auto text-white text-center">
         <prismic-rich-text
           :field="content.trading[0].trading_info"
         />
         <div>
-          <b-button class="mr-3"><span v-html="content.trading_buttons[0].button1[0].text"></span></b-button>
-          <b-button class="ml-3"><span v-html="content.trading_buttons[0].button2[0].text"></span></b-button>
+          <button class="button-primary"><span v-html="content.trading_buttons[0].button1[0].text"></span></button>
+          <button class="button-secondary"><span v-html="content.trading_buttons[0].button2[0].text"></span></button>
         </div>
     </div>
   </div>
   <!-- news and blog section -->
-  <div class="container">
+  <div class="container homepage__blog-section">
+    <h2 class="text-center mb-5">News and Blogs</h2>
     <div class="row">
       <div v-for="(item, index2) in content.blogs" :key="index2" class="col-md-3 col-sm-6 col-xs-12" >
-        <div class="mb-4">
+        <div class="mb-5">
           <img width="100%" :src="item.image1.url"/>
-          <div class="text-center" v-html="item.words[0].text"></div>
+          <div class="mt-3" v-html="item.words[0].text"></div>
         </div>
       </div>
     </div>
+    <div class="text-center"><button class="button-primary button-primary--alternative-marketplace">Read More</button></div>
   </div>
 </div>
 </template>
@@ -284,7 +306,7 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 @import "@/assets/scss/custom.scss";
 
 #homepage {
@@ -539,9 +561,81 @@ export default {
     visibility: hidden;
   }
 
+  /* CATEGORIES SECTION */
+  & .homepage__divider--categories {
+    margin-bottom: 70px;
+  }
+
+  & .homepage__categories-sn {
+    background: transparent linear-gradient(180deg, #220E95 0%, #071764 100%);
+  }
+  & .homepage__categories-sn .container {
+    padding-top: 50px;
+    padding-bottom: 50px;
+  }
+  & .homepage__categories-sn h2 {
+    margin-bottom: 35px;
+  }
+  & .homepage__categories-sn--category {
+    width: 208px;
+    height: 180px;
+    background-color: rgba(95, 189, 193, 0.1);
+    border-radius: 25px;
+    display: flex;
+    flex-flow: column;
+    justify-content: center;
+    align-items: center;
+  }
+  & .homepage__categories-sn--category:not(:last-child) {
+    margin-right: 25px;
+  }
+  & .homepage__categories-sn--text {
+    font-size: 16px;
+    color: #fff;
+    margin-top: 20px;
+  }
+
   /* MARKETPLACE SECTION */
   & .homepage__marketplace-section {
-    padding: 120px 0;
+    padding: 120px 0 120px;
+  }
+  & .homepage__marketplace-section h1 {
+    margin-bottom: 24px;
+  }
+  & .homepage__marketplace-section h2 {
+    margin-bottom: 0;
+  }
+  & .homepage__marketplace-section p {
+    text-align: center;
+    margin: 30px auto;
+    width: 50%;
+  }
+  & .button-primary--alternative-marketplace {
+    width: 141px;
+    margin-right: 20px;
+  }
+  & .button-secondary--alternative-marketplace {
+    width: 141px;
+    background-color: rgba(80, 177, 181, 0.1);
+  }
+
+  /* TRADING SECTION */
+  & .homepage__trading-banner h1 {
+    margin-bottom: 24px;
+  }
+  & .homepage__trading-banner div button:first-child {
+    margin-right: 20px;
+    margin-top: 22px;
+  }
+
+  /* BLOG SECTION */
+  & .homepage__blog-section {
+    padding-top: 120px;
+    padding-bottom: 120px;
+  }
+  & .homepage__blog-section p {
+    font-size: 17px;
+    font-weight: 500;
   }
 
   /* MIKE'S STYLE */

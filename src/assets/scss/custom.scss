@@ -1,5 +1,5 @@
 @import 'my_variables.scss';
-@import 'node_modules/bootstrap/scss/bootstrap';
+@import 'node_modules/bootstrap/scss/bootstrap.scss';
 @import 'node_modules/bootstrap-vue/src/index.scss';
 
 $font-dir: "/fonts/";
@@ -284,6 +284,7 @@ button:focus {
   border: none;
   color: #fff;
   background: $info;
+  padding: 0;
 }
 .button-secondary {
   width: 177px;
