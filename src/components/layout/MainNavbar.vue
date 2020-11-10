@@ -8,14 +8,16 @@
     <span> </span>
     <span> </span>
   </b-navbar-toggle>
-  <b-navbar-nav class="navbar_login d-md-block d-xl-none">
+  <!--<b-navbar-nav class="navbar__login d-md-block d-xl-none">
   <div v-if="avatar" v-b-toggle.login-sidebar class="navbar__account"><span class="text-info" v-html="avatar"></span></div>
   <div v-else        v-b-toggle.login-sidebar class="navbar__account"><span><b-icon style="width: 30px; height: 30px;" class="text-info" icon="person-fill"/></span></div>
-  </b-navbar-nav>
+  </b-navbar-nav>-->
 
-  <b-navbar-nav class="navbar_login d-xl-none">
+  <!-- Mobile Design for login menu -->
+  <b-navbar-nav class="navbar__login d-xl-none">
     <b-nav-item v-if="loggedIn">
-        <div v-b-toggle.login-sidebar class="navbar__account text-info"><span class="text-info" v-html="avatar"></span><span class="text-info navbar__account--text">Account</span></div>
+        <div v-if="avatar" v-b-toggle.login-sidebar class="navbar__account"><span v-html="avatar"></span><span class="text-info navbar__account--text">Account</span></div>
+        <div v-else v-b-toggle.login-sidebar class="navbar__account"><span><b-icon icon="person-fill" class="navbar__default-account-icon"/></span><span class="text-info navbar__account--text">Account</span></div>
         <b-sidebar id="login-sidebar" right bg-variant="white" width="232px">
           <div class="">
             <div class="login-sidebar__username login-sidebar--border-bottom"><div>Hi, <span class="text-info">{{ username }}</span></div></div>
@@ -83,27 +85,14 @@
       <b-nav-item>How It Works</b-nav-item>
       <b-nav-item>About Risidio</b-nav-item>
       <b-nav-item>Help</b-nav-item>
-      <!-- <b-nav-item-dropdown class="text-white ml-3" right v-if="loggedIn" no-caret>
-        <template v-slot:button-content class="v-nav-user">
-          <b-avatar class="bg-info"></b-avatar>
-        </template>
-        <b-dropdown-item><span>{{ username }}</span></b-dropdown-item>
-        <b-dropdown-divider></b-dropdown-divider>
-        <b-dropdown-item><span>Balance: {{ balance }}</span></b-dropdown-item>
-        <b-dropdown-item><span>Addr: {{ stxAddress }}</span></b-dropdown-item>
-        <b-dropdown-divider></b-dropdown-divider>
-        <b-dropdown-item><router-link to="/admin-app"><i class="far fa-play-circle"></i> Connect Project</router-link></b-dropdown-item>
-        <b-dropdown-item><router-link to="/my-items"><i class="far fa-folder-open"></i> My Collectibles</router-link></b-dropdown-item>
-        <b-dropdown-item><span @click="logout()"><i class="fas fa-sign-out-alt"></i> Logout</span></b-dropdown-item>
-      </b-nav-item-dropdown>-->
     </b-navbar-nav>
-  <b-navbar-nav class="navbar_login d-flex">
-    <b-nav-item class="navbar_login--loogedin" v-if="loggedIn">
-        <div v-if="avatar" v-b-toggle.login-sidebar class="navbar__account"><span v-html="avatar"></span><span class="text-info navbar__account--text">Account</span></div>
-        <div v-else        v-b-toggle.login-sidebar class="navbar__account"><span><b-icon icon="person-fill"/></span><span class="text-info navbar__account--text">Account</span></div>
+
+    <b-navbar-nav class="navbar__login d-flex">
+      <b-nav-item class="navbar__login--loogedin" v-if="loggedIn">
+        <div v-if="avatar" v-b-toggle.login-sidebar class="navbar__account d-flex align-items-center"><span v-html="avatar"></span><span class="text-info navbar__account--text">Account</span></div>
+        <div v-else v-b-toggle.login-sidebar class="navbar__account d-flex align-items-center"><span><b-icon icon="person-fill" class="navbar__default-account-icon"/></span><span class="text-info navbar__account--text">Account</span></div>
         <b-sidebar id="login-sidebar" right bg-variant="white" width="232px">
-          <div class="">
-            <div class="login-sidebar__username login-sidebar--border-bottom"><div>Hi, <span class="text-info">{{ username }}</span></div></div>
+          <div class="login-sidebar__username login-sidebar--border-bottom"><div>Hi, <span class="text-info">{{ username }}</span></div></div>
             <div class="login-sidebar__item-group login-sidebar--border-bottom">
               <div>Balance: {{ balance }}</div>
               <div>Addr: {{ stxAddress }}</div>
@@ -112,9 +101,10 @@
               <div><router-link to="/admin-app"><i class="far fa-play-circle"></i> Connect Project</router-link></div>
               <div><router-link to="/my-items"><i class="far fa-folder-open"></i> My Collectibles</router-link></div>
             </div>
-          </b-sidebar>
-        </b-nav-item>
-        <b-nav-item @click.prevent="startLogin()" href="#" v-else><button class="login-button button-secondary">Login</button></b-nav-item>
+            <div class="login-sidebar__item-group"><span @click="logout()"><i class="fas fa-sign-out-alt"></i>Logout</span></div>
+        </b-sidebar>
+      </b-nav-item>
+      <b-nav-item @click.prevent="startLogin()" href="#" v-else><button class="login-button button-secondary">Login</button></b-nav-item>
     </b-navbar-nav>
   </b-collapse>
 </b-navbar>
@@ -283,11 +273,18 @@ nav .login-button {
   font-size: 12px;
 }
 
+nav .navbar__default-account-icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: $info;
+}
+
 nav .navbar__account {
   margin-left: 30px;
 }
 
-nav .navbar_login .nav-link {
+nav .navbar__login .nav-link {
   padding: 0;
 }
 
@@ -371,23 +368,19 @@ nav .navbar-toggler {
     margin-left: 0px;
     font-size: 14px;
   }
-  nav .navbar-collapse .navbar_login {
+  nav .navbar-collapse .navbar__login {
     margin: auto 0 0;
   }
 
   nav .navbar__account {
-    margin-left: 0;
-  }
-
-  nav .navbar_login--loogedin {
-    display: none;
-  }
-
-  nav .navbar_login .nav-link {
     margin-left: 20px;
   }
 
-  nav .navbar_login .navbar__account--text {
+  nav .navbar__login--loogedin {
+    display: none;
+  }
+
+  nav .navbar__login .navbar__account--text {
     display: none;
   }
 
@@ -418,6 +411,13 @@ nav .navbar-toggler {
     position: absolute;
     top: 0;
     left: 0;
+    overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+  }
+  .navbar-collapse.collapse::-webkit-scrollbar { /* WebKit */
+    width: 0;
+    height: 0;
   }
 
   #nav-collapse .navbar-nav {
