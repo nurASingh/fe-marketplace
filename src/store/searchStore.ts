@@ -4,6 +4,8 @@ import store from '.'
 import { bufferCV, serializeCV } from '@stacks/transactions'
 
 const matchAssetIndex = function (commit, result) {
+  // const bCV1 = `${serializeCV(bufferCV(result.assetHash))}`
+
   const bCV = bufferCV(Buffer.from(result.assetHash))
   const sCV = serializeCV(bCV)
   const functionArg = '0x' + sCV
