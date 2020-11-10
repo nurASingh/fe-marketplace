@@ -586,8 +586,8 @@ export default {
     justify-content: center;
     align-items: center;
   }
-  & .homepage__categories-sn--category:not(:last-child) {
-    margin-right: 25px;
+  & .homepage__categories-sn--category {
+    margin: 0 12.5px 12px;
   }
   & .homepage__categories-sn--text {
     font-size: 16px;
