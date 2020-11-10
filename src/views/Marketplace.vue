@@ -9,11 +9,15 @@
     </div>
     <div class="col-9 p-3 border">
       <h1>Marketplace</h1>
+      <result-grid :resultSet="resultSet" />
       <div class="row">
         <div class="col-3" v-for="(result, index) in resultSet" :key="index">
           <div v-if="result">
             <router-link :to="'/assets/' + result.assetHash"><img width="100%" :src="result.assetUrl"/></router-link>
             <div class="tagline"><span class="tagline1">{{result.title}}</span></div>
+            <div class="tagline"><span class="tagline1">{{truncateAssetHash(result.assetHash)}}</span></div>
+            <div class="tagline"><span class="tagline1">{{owner(result.artist)}}</span></div>
+            <div class="tagline"><span class="tagline1">{{truncateProjectId(result.projectId)}}</span></div>
             <div class="tagline">{{created(result.created)}}</div>
           </div>
         </div>
@@ -27,11 +31,13 @@
 import moment from 'moment'
 import { APP_CONSTANTS } from '@/app-constants'
 import ProjectList from '@/components/agora/ProjectList'
+import ResultGrid from '@/components/agora/ResultGrid'
 
 export default {
   name: 'Marketplace',
   components: {
-    ProjectList
+    ProjectList,
+    ResultGrid
   },
   data () {
     return {
@@ -40,13 +46,30 @@ export default {
   },
   mounted () {
     this.loading = false
-    // this.findByProjectId('loopbomb')
+    this.findAssets()
   },
   methods: {
-    findByProjectId () {
+    findAssets () {
       this.$store.dispatch('searchStore/findBySearchTerm').then((results) => {
         this.results = results
       })
+    },
+    truncateProjectId (projectId) {
+      if (projectId.indexOf('.') > -1) {
+        let addr = projectId.split('.')[0]
+        addr = addr.substring(addr.length - 5)
+        return addr + '.' + projectId.split('.')[1]
+      }
+      return projectId
+    },
+    truncateAssetHash (assetHash) {
+      const addr = assetHash.substring(0, 4)
+      return addr + '...' + assetHash.substring(assetHash.length - 4)
+    },
+    // 91208c24998e8e264f5a8be992d80538b5e8bab9874863f816d603c6df0dca0d
+    // b696f04cb51e99953f792703bfabd353b197643f024e7309b27074099ef69eab
+    owner (id) {
+      return id.split('.')[0]
     },
     created (created) {
       return moment(created).format('YYYY-MM-DD HH:mm:SS')

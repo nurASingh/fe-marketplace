@@ -1,6 +1,26 @@
 
 import searchIndexService from '@/services/searchIndexService'
 import store from '.'
+import { bufferCV, serializeCV } from '@stacks/transactions'
+
+const matchAssetIndex = function (commit, result) {
+  const bCV = bufferCV(Buffer.from(result.assetHash))
+  const sCV = serializeCV(bCV)
+  const functionArg = '0x' + sCV
+  const functionArgs = [functionArg]
+  if (result.projectId.indexOf('.') === -1) return
+  const config = {
+    contractId: (result.projectId) ? result.projectId : '',
+    functionName: 'get-index',
+    functionArgs: functionArgs
+  }
+  store.dispatch('stacksStore/callContractReadOnly', config).then((data) => {
+    result.index = data.value.data.index.value
+    commit('addSearchResult', result)
+  }).catch((error) => {
+    console.log(error)
+  })
+}
 
 const searchStore = {
   namespaced: true,
@@ -60,7 +80,7 @@ const searchStore = {
     },
     clearUsers ({ commit }: any) {
       return new Promise((resolve, reject) => {
-        searchIndexService.clearNamesIndex().then((resultSet) => {
+        searchIndexService.clearNamesIndex().then((resultSet: any) => {
           commit('setUsers', resultSet)
           resolve(resultSet)
         }).catch((error) => {
@@ -81,7 +101,10 @@ const searchStore = {
     findAssets ({ commit }: any) {
       return new Promise((resolve, reject) => {
         searchIndexService.findAssets().then((resultSet) => {
-          commit('setArtworks', resultSet)
+          resultSet.forEach((result) => {
+            matchAssetIndex(commit, result)
+          })
+          commit('setSearchResults', resultSet)
           resolve(resultSet)
         }).catch((error) => {
           reject(new Error('Unable index record: ' + error))
@@ -98,7 +121,7 @@ const searchStore = {
         })
       })
     },
-    findBySearchTerm ({ commit }: any, query: string) {
+    findBySearchTerm ({ commit, dispatch }: any, query: string) {
       return new Promise((resolve, reject) => {
         if (query && query.length > 0) {
           query += '*'
@@ -109,7 +132,7 @@ const searchStore = {
             reject(new Error('Unable index record: ' + error))
           })
         } else {
-          return store.dispatch('searchStore/findAssets')
+          return dispatch('findAssets')
         }
       })
     }

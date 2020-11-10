@@ -87,7 +87,7 @@ const searchIndexService = {
       })
     })
   },
-  findAssets: function () {
+  findAssets: function (): Promise < any[] > {
     return new Promise(function (resolve, reject) {
       const url = SEARCH_API_PATH + '/findByObject/artwork'
       axios.get(url).then((result) => {
