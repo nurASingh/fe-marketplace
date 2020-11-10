@@ -3,13 +3,12 @@
   <div class="row p-3">
     <div class="col-3 border p-3">
       <h3>Projects</h3>
-      <div v-for="(project, index) in projects" :key="index">
-        <project-list :contractId="project.contractId" />
-      </div>
+      <project-list :resultSet="resultSet" @set-filter="setFilter"/>
     </div>
     <div class="col-9 p-3 border">
       <h1>Marketplace</h1>
       <result-grid :resultSet="resultSet" />
+      <!--
       <div class="row">
         <div class="col-3" v-for="(result, index) in resultSet" :key="index">
           <div v-if="result">
@@ -22,6 +21,7 @@
           </div>
         </div>
       </div>
+      -->
     </div>
   </div>
 </div>
@@ -54,6 +54,11 @@ export default {
         this.results = results
       })
     },
+    setFilter (projectId) {
+      this.$store.dispatch('searchStore/findBySearchTerm').then((results) => {
+        this.results = results
+      })
+    },
     truncateProjectId (projectId) {
       if (projectId.indexOf('.') > -1) {
         let addr = projectId.split('.')[0]
@@ -78,11 +83,6 @@ export default {
   computed: {
     resultSet () {
       return this.$store.getters[APP_CONSTANTS.KEY_SEARCH_RESULTS]
-    },
-    projects () {
-      const appmap = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP]
-      if (appmap) return appmap.apps
-      return []
     }
   }
 }
