@@ -328,6 +328,16 @@ a:focus {
   font-weight: 700;
   color: $info;
 }
+.btn {
+  border-radius: 22px;
+  text-align: center;
+  font-weight: 700;
+  font-size: 11px;
+  letter-spacing: 0px;
+  color: #FFFFFF;
+  text-transform: capitalize;
+  width: auto !important;
+}
 .btn-services {
   background: #d1ebeb;
   border-radius: 22px;
@@ -473,4 +483,23 @@ a:focus {
     background-color: $success;
     border-left-color: $danger;
   }
+}
+.text1 {
+  font-weight: 300;
+  font-size: 11px;
+  color: #707070;
+  text-transform: capitalize;
+}
+.text2 {
+  font-weight: 500;
+  font-size: 12px;
+  color: #000000;
+}
+
+.form-control {
+  background: #FFFFFF 0% 0% no-repeat padding-box;
+  border: 1px solid #E3E3E3;
+  border-radius: 22px !important;
+  text-align: left;
+  padding: 0 20px;
 }

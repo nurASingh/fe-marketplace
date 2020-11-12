@@ -22,10 +22,9 @@ export default {
 }
 </script>
 <style lang="scss">
-@import "@/assets/scss/custom.scss";
 .account-menu {
   padding: 10px 13px;
-  background: $secondary;
+  background: #5154A1;
   cursor: pointer;
   color: #fff;
   border-radius: 50%;

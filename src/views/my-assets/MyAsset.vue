@@ -1,0 +1,139 @@
+<template>
+<div class="container-fluid bg-secondary" v-if="asset" style="padding: 50px 50px; height: 100vh;">
+  <div class="text-right"><router-link class="p-3" to="/my-assets" ><b-icon icon="x-circle" scale="1" variant="white"></b-icon></router-link></div>
+  <div class="mx-auto" v-if="asset" style="">
+    <div class="row">
+      <div class="col-6 text-right">
+        <div id="img1"><img :src="asset.assetUrl" class="img-responsive" width="80%"/></div>
+      </div>
+      <div class="col-6">
+        <div class="text-white d-flex flex-column align-items-start" :style="calcHeight">
+          <div>
+            <p class="text1">Collectible name</p>
+            <p class="text2">{{asset.title}} / {{nftIndex}}</p>
+            <p class="text1">Created with</p>
+            <p class="text2">{{projectName(asset.projectId)}}</p>
+            <p class="text1">Created on</p>
+            <p class="text2">{{created(asset.created)}}</p>
+            <p class="text1" v-if="biddingEndsDisplay">Bidding Ends</p>
+            <p class="text2">{{biddingEndsDisplay}}</p>
+
+          </div>
+          <!--
+          <div class="mt-auto">
+            <button @click.prevent="download()" class="button-secondary"><span>Download</span></button>
+          </div>
+          -->
+          <div class="mt-auto">
+            <button class="mb-3 button-primary"><router-link :to="'/asset-sale-data/' + assetHash">Sell Collectible</router-link></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</template>
+
+<script>
+import { APP_CONSTANTS } from '@/app-constants'
+import moment from 'moment'
+
+export default {
+  name: 'MyAsset',
+  components: {
+  },
+  data () {
+    return {
+      assetHash: null
+    }
+  },
+  mounted () {
+    this.loading = false
+    this.assetHash = this.$route.params.assetHash
+    this.$store.dispatch('searchStore/findArtworkById', this.assetHash)
+  },
+  methods: {
+    projectName (projectId) {
+      if (projectId.indexOf('.') === -1) {
+        return projectId
+      }
+      return projectId.split('.')[1]
+    },
+    biddingEndsDisplay () {
+      const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
+      let bd
+      if (asset.saleData && asset.saleData.biddingEnds) {
+        bd = moment(this.item.saleData.biddingEnds).format('LLLL')
+      }
+      return bd
+    },
+    created (created) {
+      return moment(created).format('YYYY-MM-DD HH:mm:SS')
+    },
+    /**
+    download () {
+      const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
+      const extUrl = asset.imageUrl.replace('.png', '_minted.png')
+      imageDataURI.encodeFromURL(extUrl).then(dataUrl => {
+        const image = dataUrl.replace('image/png', 'image/octet-stream')
+        const link = document.createElement('a')
+        link.download = asset.name + '.png'
+        link.href = image
+        link.click()
+      }).catch(() => {
+        imageDataURI.encodeFromURL(asset.imageUrl).then(dataUrl => {
+          const image = dataUrl.replace('image/png', 'image/octet-stream')
+          const link = document.createElement('a')
+          link.download = asset.name + '.png'
+          link.href = image
+          link.click()
+        })
+      })
+    },
+    **/
+    isOwner () {
+      const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      return asset.artist === profile.username
+    }
+  },
+  computed: {
+    nftIndex () {
+      const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
+      const application = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_PROJECT](asset.projectId)
+      if (application && application.assets && application.assets.length > 0) {
+        const asset = application.assets.find(o => o.assetHash === this.assetHash)
+        if (asset) {
+          return asset.nftIndex
+        }
+      }
+      return null
+    },
+    calcHeight () {
+      const img1 = document.getElementById('img1')
+      if (img1) {
+        return img1.height + 'px'
+      }
+      return 'min-height: 50vh;'
+    },
+    asset () {
+      const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
+      return asset
+    },
+    projectUrl () {
+      const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
+      return decodeURI(asset.assetProjectUrl.replace('_minted', ''))
+    }
+  }
+}
+</script>
+<style lang="scss" scoped>
+.text1 {
+  font-weight: 300;
+  font-size: 12px;
+}
+.text2 {
+  font-weight: 500;
+  font-size: 14px;
+}
+</style>

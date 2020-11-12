@@ -4,6 +4,10 @@ import VueRouter, { RouteConfig } from 'vue-router'
 import MainNavbar from '@/components/layout/MainNavbar.vue'
 import MainFooter from '@/components/layout/MainFooter.vue'
 
+import MyAssets from '../views/my-assets/MyAssets.vue'
+import MyAsset from '../views/my-assets/MyAsset.vue'
+import AssetSaleData from '../views/my-assets/AssetSaleData.vue'
+
 import Homepage from '../views/Homepage.vue'
 import AssetDetails from '../views/AssetDetails.vue'
 import Marketplace from '../views/Marketplace.vue'
@@ -69,12 +73,27 @@ const routes: Array<RouteConfig> = [
   {
     path: '/assets/:assetHash',
     name: 'asset-details',
-    components: { default: AssetDetails, header: MainNavbar }
+    components: { default: AssetDetails, header: MainNavbar, footer: MainFooter }
+  },
+  {
+    path: '/my-assets',
+    name: 'my-assets',
+    components: { default: MyAssets, header: MainNavbar, footer: MainFooter }
+  },
+  {
+    path: '/my-assets/:assetHash',
+    name: 'my-asset',
+    components: { default: MyAsset }
+  },
+  {
+    path: '/asset-sale-data/:assetHash',
+    name: 'asset-sale-data',
+    components: { default: AssetSaleData }
   },
   {
     path: '/marketplace',
     name: 'marketplace',
-    components: { default: Marketplace, header: MainNavbar }
+    components: { default: Marketplace, header: MainNavbar, footer: MainFooter }
   },
   {
     path: '/marketplace1',

@@ -1,28 +1,7 @@
 
 import searchIndexService from '@/services/searchIndexService'
 import store from '.'
-import { bufferCV, serializeCV } from '@stacks/transactions'
-
-const matchAssetIndex = function (commit, result) {
-  // const bCV1 = `${serializeCV(bufferCV(result.assetHash))}`
-
-  const bCV = bufferCV(Buffer.from(result.assetHash))
-  const sCV = serializeCV(bCV)
-  const functionArg = '0x' + sCV
-  const functionArgs = [functionArg]
-  if (result.projectId.indexOf('.') === -1) return
-  const config = {
-    contractId: (result.projectId) ? result.projectId : '',
-    functionName: 'get-index',
-    functionArgs: functionArgs
-  }
-  store.dispatch('stacksStore/callContractReadOnly', config).then((data) => {
-    result.index = data.value.data.index.value
-    commit('addSearchResult', result)
-  }).catch((error) => {
-    console.log(error)
-  })
-}
+import { APP_CONSTANTS } from '@/app-constants'
 
 const searchStore = {
   namespaced: true,
@@ -104,7 +83,11 @@ const searchStore = {
       return new Promise((resolve, reject) => {
         searchIndexService.findAssets().then((resultSet) => {
           resultSet.forEach((result) => {
-            matchAssetIndex(commit, result)
+            commit('addSearchResult', result)
+            store.dispatch('stacksStore/matchAssetIndex', result).then((data) => {
+              result.index = data.value.data.index.value
+              commit('addSearchResult', result)
+            })
           })
           commit('setSearchResults', resultSet)
           resolve(resultSet)
@@ -123,7 +106,7 @@ const searchStore = {
         })
       })
     },
-    findBySearchTerm ({ commit, dispatch }: any, query: string) {
+    findBySearchTerm ({ commit }: any, query: string) {
       return new Promise((resolve, reject) => {
         if (query && query.length > 0) {
           query += '*'
@@ -134,8 +117,35 @@ const searchStore = {
             reject(new Error('Unable index record: ' + error))
           })
         } else {
-          return dispatch('findAssets')
+          query += '*'
+          searchIndexService.findAssets().then((resultSet) => {
+            commit('setSearchResults', resultSet)
+            resolve(resultSet)
+          }).catch((error) => {
+            reject(new Error('Unable index record: ' + error))
+          })
         }
+      })
+    },
+    findByProjectId ({ commit }: any, projectId: string) {
+      return new Promise((resolve, reject) => {
+        searchIndexService.findByProjectId(projectId).then((resultSet) => {
+          commit('setSearchResults', resultSet)
+          resolve(resultSet)
+        }).catch((error) => {
+          reject(new Error('Unable index record: ' + error))
+        })
+      })
+    },
+    findByOwner ({ commit }: any) {
+      return new Promise((resolve, reject) => {
+        const profile = store.getters[APP_CONSTANTS.KEY_PROFILE]
+        searchIndexService.findByOwner(profile.username).then((resultSet) => {
+          commit('setSearchResults', resultSet)
+          resolve(resultSet)
+        }).catch((error) => {
+          reject(new Error('Unable index record: ' + error))
+        })
       })
     }
   }

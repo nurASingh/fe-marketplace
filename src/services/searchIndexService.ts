@@ -97,6 +97,24 @@ const searchIndexService = {
       })
     })
   },
+  findByOwner: function (owner: string) {
+    return new Promise(function (resolve, reject) {
+      axios.get(SEARCH_API_PATH + '/findByOwner' + '?q=' + owner).then((result) => {
+        resolve(result.data.details)
+      }).catch((error) => {
+        reject(new Error('Unable index record: ' + error))
+      })
+    })
+  },
+  findByProjectId: function (projectId: string) {
+    return new Promise(function (resolve, reject) {
+      axios.get(SEARCH_API_PATH + '/findByProjectId' + '?q=' + projectId).then((result) => {
+        resolve(result.data.details)
+      }).catch((error) => {
+        reject(new Error('Unable index record: ' + error))
+      })
+    })
+  },
   findByDomainAndObjectTypeAndTitleOrDescriptionOrCategoryOrKeyword: function (domain: string, objType: string, term: string, query: string) {
     return new Promise(function (resolve, reject) {
       axios.get(SEARCH_API_PATH + '/findByDomainAndObjectTypeAndTitleOrDescriptionOrCategoryOrKeyword/' + domain + '/' + objType + '/' + term + '?q=' + query).then((result) => {

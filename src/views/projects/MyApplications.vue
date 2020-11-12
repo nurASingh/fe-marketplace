@@ -82,7 +82,6 @@ export default {
 }
 </script>
 <style lang="scss">
-@import "@/assets/scss/custom.scss";
 .source-code {
   background: #c3dee0;
   border: 2pt solid #342343;
