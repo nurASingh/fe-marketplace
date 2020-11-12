@@ -1,42 +1,21 @@
 <template>
 <div class="container" style="margin: 150px 0;">
   <div class="row p-3">
-    <div class="col-3 border p-3">
-      <h3>Projects</h3>
-      <project-list :resultSet="resultSet" @set-filter="setProjectFilter"/>
-    </div>
-    <div class="col-9 p-3 border">
-      <h1>Marketplace</h1>
-      <result-grid :resultSet="resultSet" />
-      <!--
-      <div class="row">
-        <div class="col-3" v-for="(result, index) in resultSet" :key="index">
-          <div v-if="result">
-            <router-link :to="'/assets/' + result.assetHash"><img width="100%" :src="result.assetUrl"/></router-link>
-            <div class="tagline"><span class="tagline1">{{result.title}}</span></div>
-            <div class="tagline"><span class="tagline1">{{truncateAssetHash(result.assetHash)}}</span></div>
-            <div class="tagline"><span class="tagline1">{{owner(result.artist)}}</span></div>
-            <div class="tagline"><span class="tagline1">{{truncateProjectId(result.projectId)}}</span></div>
-            <div class="tagline">{{created(result.created)}}</div>
-          </div>
-        </div>
-      </div>
-      -->
+    <div class="col-12 p-3 border">
+      <h1>My Collectibles</h1>
+      <result-grid :resultSet="resultSet"/>
     </div>
   </div>
 </div>
 </template>
 
 <script>
-import moment from 'moment'
 import { APP_CONSTANTS } from '@/app-constants'
-import ProjectList from '@/components/agora/ProjectList'
 import ResultGrid from '@/components/agora/ResultGrid'
 
 export default {
-  name: 'Marketplace',
+  name: 'MyAssets',
   components: {
-    ProjectList,
     ResultGrid
   },
   data () {
@@ -50,7 +29,7 @@ export default {
   },
   methods: {
     findAssets () {
-      this.$store.dispatch('searchStore/findBySearchTerm').then((results) => {
+      this.$store.dispatch('searchStore/findByOwner').then((results) => {
         this.results = results
       })
     },
@@ -75,9 +54,6 @@ export default {
     // b696f04cb51e99953f792703bfabd353b197643f024e7309b27074099ef69eab
     owner (id) {
       return id.split('.')[0]
-    },
-    created (created) {
-      return moment(created).format('YYYY-MM-DD HH:mm:SS')
     }
   },
   computed: {

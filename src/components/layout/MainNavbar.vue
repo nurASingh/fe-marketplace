@@ -2,7 +2,7 @@
 <div class="d-flex justify-content-center">
 <b-navbar id="navbar" :style="bannerImage" toggleable="xl" class="my-nav mx-0">
 
-  <b-navbar-brand href="/"><img :src="logo" alt="risidio-logo"/></b-navbar-brand>
+  <b-navbar-brand><router-link class="navbar-brand" to="/"><img :src="logo" alt="risidio-logo"/></router-link></b-navbar-brand>
   <b-navbar-toggle target="nav-collapse" @click="mobileMenuExpandClass(); noScroll();">
     <span> </span>
     <span> </span>
@@ -25,7 +25,7 @@
             </div>
             <div class="login-sidebar__item-group login-sidebar--border-bottom">
               <div><router-link to="/admin-app"><i class="far fa-play-circle"></i> Connect Project</router-link></div>
-              <div><router-link to="/my-items"><i class="far fa-folder-open"></i> My Collectibles</router-link></div>
+              <div><router-link to="/my-assets"><i class="far fa-folder-open"></i> My Collectibles</router-link></div>
             </div>
             <div class="login-sidebar__item-group"><span @click="logout()"><i class="fas fa-sign-out-alt"></i> Logout</span></div>
           </div>
@@ -94,7 +94,7 @@
         <b-dropdown-item><span>Addr: {{ stxAddress }}</span></b-dropdown-item>
         <b-dropdown-divider></b-dropdown-divider>
         <b-dropdown-item><router-link to="/admin-app"><i class="far fa-play-circle"></i> Connect Project</router-link></b-dropdown-item>
-        <b-dropdown-item><router-link to="/my-items"><i class="far fa-folder-open"></i> My Collectibles</router-link></b-dropdown-item>
+        <b-dropdown-item><router-link to="/my-assets"><i class="far fa-folder-open"></i> My Collectibles</router-link></b-dropdown-item>
         <b-dropdown-item><span @click="logout()"><i class="fas fa-sign-out-alt"></i> Logout</span></b-dropdown-item>
       </b-nav-item-dropdown>-->
     </b-navbar-nav>
@@ -112,7 +112,7 @@
             </div>
             <div class="login-sidebar__item-group login-sidebar--border-bottom">
               <div><router-link to="/admin-app"><i class="far fa-play-circle"></i> Connect Project</router-link></div>
-              <div><router-link to="/my-items"><i class="far fa-folder-open"></i> My Collectibles</router-link></div>
+              <div><router-link to="/my-assets"><i class="far fa-folder-open"></i> My Collectibles</router-link></div>
             </div>
             <div class="login-sidebar__item-group"><span @click="logout()"><i class="fas fa-sign-out-alt"></i> Logout</span></div>
           </div>
@@ -200,7 +200,10 @@ export default {
     },
     stxAddress () {
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
-      return (profile && profile.wallet) ? profile.wallet.keyInfo.address : 'n/a'
+      if (profile.wallet.keyInfo.address) {
+        return profile.wallet.keyInfo.address.substring(0, 5) + '...' + profile.wallet.keyInfo.address.substring(profile.wallet.keyInfo.address.length - 5)
+      }
+      return 'n/a'
     },
     username () {
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
@@ -236,8 +239,6 @@ export default {
 </script>
 
 <style lang="scss">
-@import "@/assets/scss/custom.scss";
-
 /* NAVBAR PADDING AND WIDTH */
 nav.navbar {
   width: 100vw;
@@ -264,7 +265,7 @@ nav.navbar {
   padding: 0;
 }
 #nav-collapse ul:first-child li.text-info a {
-  color: $info !important;
+  color: #50B1B5 !important;
   font-weight: 700;
 }
 .navbar__account--text {

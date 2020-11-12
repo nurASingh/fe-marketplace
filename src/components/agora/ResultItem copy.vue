@@ -1,12 +1,11 @@
 <template>
 <div>
 <router-link :to="assetUrl">
-  <div id="result-item" class="mb-4 ">
+  <div id="result-item" class="mb-4 homepage__items">
     <img width="100%" :src="result.assetUrl"/>
-    <div style="position: absolute; top: -20px; left: 15px; font-size: 2rem;"><b-badge variant="light">{{nftIndex}} <span class="sr-only">NFT</span></b-badge></div>
-    <div style="position: absolute; top: 0px; right: 15px;"><a href="#" class="homepage__items--like-btn"><b-icon icon="heart"></b-icon></a></div>
     <!--<div class="homepage__items--description" v-if="dHover[index]" v-html="item.b1_text1[0].text"></div>-->
-    <div class="homepage__items--overlay" style="position: absolute; top: -20px; right: 0px; left: 0px;">
+    <div class="homepage__items--overlay">
+      <a href="#" class="homepage__items--like-btn"><b-icon icon="heart"></b-icon></a>
       <div class="homepage__items--description">
         <div class="d-flex justify-content-between">
           <div class="homepage__items--title">{{result.title}}</div>
@@ -74,15 +73,9 @@ export default {
       }
       return assetUrl
     },
-    nftIndex () {
-      const application = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_PROJECT](this.result.projectId)
-      if (application && application.assets && application.assets.length > 0) {
-        const asset = application.assets.find(o => o.assetHash === this.result.assetHash)
-        if (asset) {
-          return asset.nftIndex
-        }
-      }
-      return null
+    application () {
+      const application = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_PROJECT](this.contractId)
+      return (application && application.gaiaProject) ? application : null
     }
   }
 }

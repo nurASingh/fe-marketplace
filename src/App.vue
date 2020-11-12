@@ -37,19 +37,14 @@ export default {
   },
   mounted () {
     this.adminPage = this.$route.name.indexOf('-app') > -1
-    const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
     this.$store.dispatch('authStore/fetchMyAccount').then((profile) => {
+      this.loaded = true
       this.$store.dispatch('stacksStore/fetchMacsWalletInfo')
+      this.$store.dispatch('applicationStore/lookupApplications')
       this.$store.dispatch('projectStore/fetchMyProjects', profile).catch((err) => {
         console.log(err)
       })
     })
-    this.$store.dispatch('applicationStore/lookupApplications')
-    if (profile.loggedIn && profile.environment !== 'localhost') {
-      this.loaded = true
-    } else {
-      this.loaded = true
-    }
     const $self = this
     let resizeTimer
     window.addEventListener('resize', function () {

@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="px-3 px-md-5 pt-4"><p class="text-sm"><b-icon icon="heart"/> Favourites</p></div>
-    <div class="px-3 px-md-5"><p class="text-sm"><b-icon icon="bookmarks"/> My Collections</p></div>
+    <div class="px-3 px-md-5"><p class="text-sm"><router-link to="/my-assets"><b-icon icon="bookmarks"/> My Collections</router-link></p></div>
     <div class="px-3 px-md-5 pt-4 border-top">
       <p class="text-sm"><router-link to="/admin-app"><b-icon icon="code"/> Connect Application</router-link></p>
     </div>

@@ -159,6 +159,7 @@ const applicationStore = {
         }
         store.dispatch('stacksStore/callContractReadOnly', config).then((data) => {
           const asset: any = utils.toObjectAsset(data)
+          asset.nftIndex = appdata.index
           appdata.application.assets.push(asset)
           commit('addAppToAppmap', appdata.application)
           resolve(appdata.application)

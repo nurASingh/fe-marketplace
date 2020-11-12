@@ -284,9 +284,8 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-@import "@/assets/scss/custom.scss";
-
+<style lang="scss">
+/* $info --> #50B1B5 */
 #homepage {
 
   /* MAIN SEARCH BAR */
@@ -456,7 +455,7 @@ export default {
     padding: 11px 18px;
     color: #fff;
     text-shadow: 0px 3px 6px #00000029;
-    background: $info;
+    background: #50B1B5;
     opacity: 0;
     transition: opacity ease 0.3s;
   }
@@ -496,7 +495,7 @@ export default {
     right: 0;
     color: #FFFFFF;
     font-size: 13px;
-    background-color: $info;
+    background-color: #50B1B5;
     padding: 10px 13px;
     border-radius: 50%;
     z-index: 3;
