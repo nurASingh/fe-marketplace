@@ -1,29 +1,7 @@
 
 import searchIndexService from '@/services/searchIndexService'
 import store from '.'
-import { bufferCV, serializeCV } from '@stacks/transactions'
 import { APP_CONSTANTS } from '@/app-constants'
-
-const matchAssetIndex = function (commit, result) {
-  // const bCV1 = `${serializeCV(bufferCV(result.assetHash))}`
-
-  const bCV = bufferCV(Buffer.from(result.assetHash))
-  const sCV = serializeCV(bCV)
-  const functionArg = '0x' + sCV
-  const functionArgs = [functionArg]
-  if (result.projectId.indexOf('.') === -1) return
-  const config = {
-    contractId: (result.projectId) ? result.projectId : '',
-    functionName: 'get-index',
-    functionArgs: functionArgs
-  }
-  store.dispatch('stacksStore/callContractReadOnly', config).then((data) => {
-    result.index = data.value.data.index.value
-    commit('addSearchResult', result)
-  }).catch((error) => {
-    console.log(error)
-  })
-}
 
 const searchStore = {
   namespaced: true,
@@ -105,7 +83,11 @@ const searchStore = {
       return new Promise((resolve, reject) => {
         searchIndexService.findAssets().then((resultSet) => {
           resultSet.forEach((result) => {
-            matchAssetIndex(commit, result)
+            commit('addSearchResult', result)
+            store.dispatch('stacksStore/matchAssetIndex', result).then((data) => {
+              result.index = data.value.data.index.value
+              commit('addSearchResult', result)
+            })
           })
           commit('setSearchResults', resultSet)
           resolve(resultSet)

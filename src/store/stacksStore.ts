@@ -5,7 +5,8 @@ import {
   broadcastTransaction,
   makeContractDeploy,
   callReadOnlyFunction,
-  deserializeCV
+  deserializeCV,
+  bufferCV, serializeCV
 } from '@stacks/transactions'
 import { openContractCall } from '@stacks/connect'
 import {
@@ -365,6 +366,27 @@ const stacksStore = {
           store.commit('projectStore/addContractData', { projectId: projectId, interface: response.data })
           commit('setResult', { projectId: projectId, interface: response.data })
           resolve({ projectId: projectId, interface: response.data })
+        }).catch((error) => {
+          resolveError(reject, error)
+        })
+      })
+    },
+    matchAssetIndex ({ commit }, result) {
+      return new Promise((resolve, reject) => {
+        // const bCV1 = `${serializeCV(bufferCV(result.assetHash))}`
+        const bCV = bufferCV(Buffer.from(result.assetHash))
+        const sCV = serializeCV(bCV)
+        const functionArg = '0x' + sCV
+        const functionArgs = [functionArg]
+        if (result.projectId.indexOf('.') === -1) return
+        const config = {
+          contractId: (result.projectId) ? result.projectId : '',
+          functionName: 'get-index',
+          functionArgs: functionArgs
+        }
+        store.dispatch('stacksStore/callContractReadOnly', config).then((data) => {
+          result.index = data.value.data.index.value
+          resolve(data)
         }).catch((error) => {
           resolveError(reject, error)
         })
