@@ -4,6 +4,7 @@ import store from '.'
 import { uintCV, intCV, serializeCV } from '@stacks/transactions'
 
 const KEY_GAIA_PROJECT = 'getGaiaProject'
+const mac = JSON.parse(process.env.VUE_APP_WALLET_MAC || '')
 
 const applicationStore = {
   namespaced: true,
@@ -14,7 +15,7 @@ const applicationStore = {
     },
     gaiaProjects: [],
     appCounter: -1,
-    appmapContractId: 'ST1ESYCGJB5Z5NBHS39XPC70PGC14WAQK5XXNQYDW.appmap'
+    appmapContractId: mac.keyInfo.address + '.appmap'
   },
   getters: {
     getAppmapTxId: (state: any) => {
@@ -77,7 +78,7 @@ const applicationStore = {
     lookupApplications ({ state, commit, dispatch }: any) {
       return new Promise((resolve, reject) => {
         store.dispatch('stacksStore/callContractReadOnly', { contractId: state.appmapContractId, functionName: 'get-app-counter' }).then((data) => {
-          const appCounter = data.value.value
+          const appCounter = data.value.value.toNumber()
           commit('setAppCounter', appCounter)
           for (let i = 0; i < state.appCounter; i++) {
             dispatch('lookupApplicationByIndex', i)
@@ -114,6 +115,9 @@ const applicationStore = {
               commit('addAppToAppmap', application)
               dispatch('lookupMintCounter', application)
               resolve(application)
+            }).catch(() => {
+              dispatch('lookupMintCounter', application)
+              resolve(application)
             })
           } else {
             resolve(application)
@@ -135,7 +139,7 @@ const applicationStore = {
           application.baseTokenUri = baseTokenUri
           commit('addAppToAppmap', application)
           store.dispatch('stacksStore/callContractReadOnly', { contractId: application.contractId, functionName: 'get-mint-counter' }).then((data) => {
-            application.mintCounter = data.value.value
+            application.mintCounter = data.value.value.toNumber()
             commit('addAppToAppmap', application)
             application.assets = []
             for (let i = 0; i < application.mintCounter; i++) {

@@ -23,10 +23,6 @@ export default {
   methods: {
   },
   computed: {
-    application () {
-      const application = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_PROJECT](this.contractId)
-      return (application && application.gaiaProject) ? application : null
-    },
     projects () {
       const appmap = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP]
       if (appmap) return appmap.apps

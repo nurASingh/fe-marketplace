@@ -4,7 +4,7 @@
     <div role="group">
       <label for="input-live"><span class="text2">Starting Price</span></label>
       <b-input-group>
-        <b-form-input type="number" v-model="startingPrice" class="input" placeholder="STX"></b-form-input>
+        <b-form-input type="number" v-model="saleData.startingPrice" class="input" placeholder="STX"></b-form-input>
       </b-input-group>
     </div>
   </div>
@@ -12,16 +12,16 @@
     <div role="group">
       <label for="input-live"><span class="text2">Reserve Price</span></label>
       <b-input-group>
-        <b-form-input type="number" v-model="reservePrice" class="input" placeholder="STX"></b-form-input>
+        <b-form-input type="number" v-model="saleData.reservePrice" class="input" placeholder="STX"></b-form-input>
       </b-input-group>
 
       <label for="input-live"><span class="text2">Increment</span></label>
       <b-input-group>
-        <b-form-input type="number" v-model="incrementPrice" class="input" placeholder="STX"></b-form-input>
+        <b-form-input type="number" v-model="saleData.incrementPrice" class="input" placeholder="STX"></b-form-input>
       </b-input-group>
 
       <label for="input-live"><span class="text2">Bidding Ends</span></label>
-      <datetime type="datetime" input-id="biddingEndTime" v-model="biddingEndTime">
+      <datetime type="datetime" input-id="biddingEndTime" v-model="saleData.biddingEndTime">
         <input id="biddingEndTime">
       </datetime>
     </div>
@@ -65,7 +65,7 @@ export default {
       const dd = moment({}).add(2, 'days')
       dd.hour(10)
       dd.minute(0)
-      this.biddingEndTime = dd.format()
+      this.saleData.biddingEndTime = dd.format()
     }
   },
   methods: {

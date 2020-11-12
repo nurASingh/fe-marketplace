@@ -13,7 +13,7 @@
       </div>
     </div>
   </div>
-  <div v-else>
+  <div>
       <div class="col-md-12">
         <b-form>
           <div class="mb-2">
@@ -44,6 +44,7 @@
 <script>
 import DeployContractFromFile from '@/components/admin/DeployContractFromFile'
 import { APP_CONSTANTS } from '@/app-constants'
+const mac = JSON.parse(process.env.VUE_APP_WALLET_MAC || '')
 
 export default {
   name: 'AppRegistry',
@@ -53,7 +54,7 @@ export default {
   data () {
     return {
       project: {
-        projectId: 'ST1ESYCGJB5Z5NBHS39XPC70PGC14WAQK5XXNQYDW.replacewithfilename'
+        projectId: mac.keyInfo.address + '.replacewithfilename'
       },
       deployedProject: null,
       loading: false
