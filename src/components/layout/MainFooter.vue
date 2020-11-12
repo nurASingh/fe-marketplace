@@ -7,7 +7,7 @@
             <router-link to="/" class="navbar-brand text-white"><img :src="logo" alt="risidio-logo" class="footer-logo"/></router-link>
             <p class="footer__pitch">(Elevator Pitch here) The new digital marketplace for crypto collectibles assets. Buy, sell, etch… Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
         </div>
-        <div class="col-lg-7 col-12 d-flex align-items-end columns3-content__container">
+        <div class="col-lg-7 col-12 d-flex columns3-content__container">
             <div class="footer__column-content ml-lg-auto">
               <div>Marketplace</div>
               <div>Gallery</div>
@@ -37,10 +37,10 @@
           &copy; &nbsp; {{ year }} Risidio Ltd. All right reserved.
         </div>
         <div>
-          <a href="https://discord.gg/qvuxB9P"><i class="fab fa-discord"></i></a>
-          <a href="https://twitter.com/Risidio1"><i class="fab fa-twitter"></i></a>
-          <a href="https://www.instagram.com/risidio_official/"><i class="fab fa-instagram"></i></a>
-          <a href="https://www.youtube.com/channel/UCrMDxxhMvpeyErw7m92IIXA/featured"><i class="fab fa-youtube"></i></a>
+          <a href="https://discord.gg/qvuxB9P"><img :src="discordLogo" alt="discord-logo"></a>
+          <a href="https://www.instagram.com/risidio_official/"><img :src="instagramLogo" alt="instagram-logo"></a>
+          <a href="https://twitter.com/Risidio1"><img :src="twitterLogo" alt="twitter-logo"></a>
+          <a href="https://www.youtube.com/channel/UCrMDxxhMvpeyErw7m92IIXA/featured"><img :src="youtubeLogo" alt="youtube-logo"></a>
         </div>
         <div>
           <span>Privacy Policy</span>
@@ -50,10 +50,10 @@
       <!-- MOBILE DESIGN LAST ROW -->
       <div class="col-12 d-flex d-lg-none flex-column align-items-center footer__bottom-row">
         <div>
-          <a href="https://discord.gg/qvuxB9P"><i class="fab fa-discord"></i></a>
-          <a href="https://twitter.com/Risidio1"><i class="fab fa-twitter"></i></a>
-          <a href="https://www.instagram.com/risidio_official/"><i class="fab fa-instagram"></i></a>
-          <a href="https://www.youtube.com/channel/UCrMDxxhMvpeyErw7m92IIXA/featured"><i class="fab fa-youtube"></i></a>
+          <a href="https://discord.gg/qvuxB9P"><img :src="discordLogo" alt="discord-logo"></a>
+          <a href="https://www.instagram.com/risidio_official/"><img :src="instagramLogo" alt="instagram-logo"></a>
+          <a href="https://twitter.com/Risidio1"><img :src="twitterLogo" alt="twitter-logo"></a>
+          <a href="https://www.youtube.com/channel/UCrMDxxhMvpeyErw7m92IIXA/featured"><img :src="youtubeLogo" alt="youtube-logo"></a>
         </div>
         <div>
           &copy; &nbsp; {{ year }} Risidio Ltd. All right reserved.
@@ -95,7 +95,11 @@ export default {
   data () {
     return {
       logo: require('@/assets/img/Group 15980.svg'),
-      year: new Date().getFullYear()
+      year: new Date().getFullYear(),
+      discordLogo: require('@/assets/img/discord-logo.svg'),
+      instagramLogo: require('@/assets/img/instagram-logo.svg'),
+      twitterLogo: require('@/assets/img/twitter-logo.svg'),
+      youtubeLogo: require('@/assets/img/youtube-logo.svg')
     }
   },
   methods: {
@@ -148,6 +152,10 @@ footer .navbar-brand {
 }
 
 /* FOOTER CONTENT COLUMN */
+.columns3-content__container {
+  align-items: flex-end;
+}
+
 .footer__column-content:not(:last-child) {
   padding-right: 100px;
 }
@@ -201,6 +209,7 @@ footer .navbar-brand {
   }
   .columns3-content__container {
     justify-content: center;
+    align-items: flex-start;
   }
   .footer__divider {
     margin: 40px 15px;
@@ -233,59 +242,4 @@ footer .navbar-brand {
     font-size: 10px;
   }
 }
-
-/* FOOTER ON MOBILE
-.mobile-footer p {
-  width: 30%;
-  margin: 0 auto !important;
-  text-align: center;
-  font-size: 10px !important;
-  font-weight: 400 !important;
-  letter-spacing: 0.5px;
-  padding-top: 8px !important;
-}
-
-.mobile-footer h2 {
-  font-size: 15px !important;
-  letter-spacing: 0.75px;
-  margin-bottom: 2px;
-}
-
-.mobile-footer--contact p:last-child, .mobile-footer--contact p:nth-child(3) {
-  display: none;
-}
-
-.social-icons {
-  margin-top: 11px;
-}
-
-.social-icons a:not(:last-child) {
-  margin-right: 15px;
-}
-
-.social-icons a {
-  color: #fff;
-}
-
-.social-icons a:hover {
-  color: #fff;
-}
-
-.mobile-footer--copyright {
-  font-size: 8px;
-  font-weight: 300;
-  padding-bottom: 22px;
-}
-
-@media only screen and (max-width: 768px) {
-  .columns3-content__container {
-    margin-left: 3rem;
-  }
-}
-
-@media only screen and (max-width: 320px) {
-  .mobile-footer p {
-    width: 33%;
-  }
-}*/
 </style>

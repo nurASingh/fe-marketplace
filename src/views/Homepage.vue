@@ -87,7 +87,7 @@
   </div>
   <div class="container my-5" v-if="content">
     <div class="row">
-      <div v-for="(item, index1) in block2Items" :key="index1" class="col-md-3 col-sm-6 col-12" >
+      <div v-for="(item, index1) in block2Items" :key="index1" class="col-md-3 col-6">
         <div class="mb-4">
           <img width="50%" :src="content.block1[index1].b1_image1.url"/>
           <img width="50%" :src="content.block1[index1 + 1].b1_image1.url"/>
@@ -134,7 +134,7 @@
   </div>
   <div class="container my-5" v-if="content">
     <div class="row">
-      <div v-for="(item, index3) in block1Items" :key="index3" class="col-md-3 col-sm-6 col-12" >
+      <div v-for="(item, index3) in block1Items" :key="index3" class="col-md-3 col-6" >
         <div class="mb-4 homepage__items" v-if="index3 < 4">
           <img width="100%" :src="item.b1_image1.url"/>
           <div class="homepage__items--overlay">
@@ -588,7 +588,7 @@ export default {
     align-items: center;
   }
   & .homepage__categories-sn--category {
-    margin: 0 12.5px 12px;
+    margin: 0 10px 12px;
   }
   & .homepage__categories-sn--text {
     font-size: 16px;
@@ -598,7 +598,8 @@ export default {
 
   /* MARKETPLACE SECTION */
   & .homepage__marketplace-section {
-    padding: 120px 0 120px;
+    padding-top: 120px;
+    padding-bottom: 120px;
   }
   & .homepage__marketplace-section h1 {
     margin-bottom: 24px;
@@ -657,6 +658,9 @@ export default {
   #homepage .homepage__categories a {
     font-size: 10px;
     margin: 0 10px;
+  }
+  #homepage .homepage__marketplace-section p {
+    width: 80%;
   }
 }
 
