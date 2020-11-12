@@ -233,13 +233,13 @@ footer .navbar-brand {
 
 @media only screen and (max-width: 400px) {
   .footer__column-content:not(:last-child) {
-    padding-right: 30px;
+    padding-right: 25px;
   }
 }
 
 @media only screen and (max-width: 359px) {
   .footer__column-content {
-    font-size: 10px;
+    font-size: 9px;
   }
 }
 </style>

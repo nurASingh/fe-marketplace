@@ -241,7 +241,7 @@ export default {
 <style lang="scss">
 /* NAVBAR PADDING AND WIDTH */
 nav.navbar {
-  width: 100vw;
+  width: 100%;
   padding-right: 50px;
   padding-left: 50px;
   position: absolute!important;
@@ -291,7 +291,7 @@ nav .navbar__default-account-icon {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  color: $info;
+  color: #50B1B5;
 }
 
 nav .navbar__account {
@@ -309,9 +309,8 @@ nav .navbar__login .nav-link {
 }
 
 /* NAV LOGO */
-nav a.navbar-brand {
-  height: 80px;
-  width: auto;
+nav .navbar-brand {
+  height: 84px;
 }
 
 /* DROPDOWN MENUS */

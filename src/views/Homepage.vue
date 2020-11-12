@@ -5,9 +5,9 @@
         <prismic-rich-text class="title-container"
           :field="content.header"
         />
-        <div>
-          <button class="mr-3 button-primary"><span v-html="content.header_buttons[0].button1[0].text"></span></button>
-          <button class="ml-3 button-secondary"><span v-html="content.header_buttons[0].button2[0].text"></span></button>
+        <div class="homepage__buttons--container">
+          <button class="button-primary"><span v-html="content.header_buttons[0].button1[0].text"></span></button>
+          <button class="button-secondary"><span v-html="content.header_buttons[0].button2[0].text"></span></button>
         </div>
     </div>
   </div>
@@ -76,18 +76,18 @@
   </div>
   <div class="container"><div class="homepage__divider"></div></div>
   <!-- Applications Section -->
-  <div class="container d-flex justify-content-between homepage__applications">
+  <div class="container d-flex justify-content-lg-between justify-content-center homepage__applications">
     <div class="homepage__applications--whitespace d-lg-block d-none"></div>
     <div>
       <h3>Featured Applications</h3>
     </div>
-    <div class="homepage__applications--view-all">
+    <div class="homepage__applications--view-all d-lg-block d-none">
       <a class="text-info">View all applications <b-icon icon="caret-right-fill"/></a>
     </div>
   </div>
   <div class="container my-5" v-if="content">
     <div class="row">
-      <div v-for="(item, index1) in block2Items" :key="index1" class="col-md-3 col-6">
+      <div v-for="(item, index1) in block2Items" :key="index1" class="col-md-3 col-6 homepage__applications--item">
         <div class="mb-4">
           <img width="50%" :src="content.block1[index1].b1_image1.url"/>
           <img width="50%" :src="content.block1[index1 + 1].b1_image1.url"/>
@@ -95,6 +95,10 @@
           <div class="text-center" v-html="item.app_text[0].text"></div>
         </div>
       </div>
+    </div>
+    <!-- Mobile design for "View all applications" link -->
+    <div class="d-lg-none d-flex justify-content-end homepage__applications--view-all">
+      <a class="text-info">View all applications <b-icon icon="caret-right-fill"/></a>
     </div>
   </div>
 <!--
@@ -123,12 +127,12 @@
 -->
 <!-- Collections Section -->
 <div class="container"><div class="homepage__divider"></div></div>
-  <div class="container d-flex justify-content-between mb-5 homepage__collections">
+  <div class="container d-flex justify-content-lg-between justify-content-center mb-5 homepage__collections">
     <div class="homepage__collections--whitespace d-lg-block d-none"></div>
     <div>
       <h3>Featured Collections</h3>
     </div>
-    <div class="homepage__collections--view-all">
+    <div class="homepage__collections--view-all d-lg-block d-none">
       <a class="text-info">View all collections <b-icon icon="caret-right-fill"/></a>
     </div>
   </div>
@@ -145,6 +149,10 @@
             </div>
         </div>
       </div>
+    </div>
+    <!-- Mobile design for "View all collections" link -->
+    <div class="d-lg-none d-flex justify-content-end homepage__collections--view-all">
+      <a class="text-info">View all collections <b-icon icon="caret-right-fill"/></a>
     </div>
   </div>
   <div class="container"><div class="homepage__divider homepage__divider--categories"></div></div>
@@ -181,7 +189,7 @@
         <prismic-rich-text
           :field="content.trading[0].trading_info"
         />
-        <div>
+        <div class="homepage__buttons--container">
           <button class="button-primary"><span v-html="content.trading_buttons[0].button1[0].text"></span></button>
           <button class="button-secondary"><span v-html="content.trading_buttons[0].button2[0].text"></span></button>
         </div>
@@ -189,7 +197,7 @@
   </div>
   <!-- news and blog section -->
   <div class="container homepage__blog-section">
-    <h2 class="text-center mb-5">News and Blogs</h2>
+    <h3 class="text-center mb-5">News and Blogs</h3>
     <div class="row">
       <div v-for="(item, index2) in content.blogs" :key="index2" class="col-md-3 col-sm-6 col-xs-12" >
         <div class="mb-5">
@@ -310,6 +318,17 @@ export default {
 /* $info --> #50B1B5 */
 #homepage {
 
+  /* 1ST SECTION STYLE */
+  & .title-container h1 {
+    margin-bottom: 24px;
+  }
+  & .title-container h2 {
+    margin-bottom: 38px;
+  }
+  & .homepage__buttons--container .button-primary {
+    margin-right: 18px;
+  }
+
   /* MAIN SEARCH BAR */
   & .main-search {
     margin-top: -28.5px;
@@ -339,6 +358,7 @@ export default {
     border-top: none;
     border-right: none;
     border-bottom: none;
+    border-radius: 0 !important;
     z-index: 2;
   }
   & .input-group input:focus {
@@ -528,13 +548,10 @@ export default {
     margin-bottom: 42px;
   }
 
-  & .homepage__applications a {
-    font-size: 11px;
-    font-weight: 700;
-  }
-
   & .homepage__applications--view-all {
     align-self: center;
+    font-size: 11px;
+    font-weight: 700;
   }
 
   & .homepage__applications--whitespace {
@@ -542,18 +559,32 @@ export default {
     visibility: hidden;
   }
 
+  & .homepage__applications--item div.text-center div {
+    font-size: 13px;
+    font-weight: 500;
+    margin: 20px 0 8px;
+  }
+
+  & .homepage__applications--item p {
+    font-size: 10px;
+    font-weight: 300;
+    text-align: center;
+  }
+
+    & .homepage__applications--item p span {
+    font-size: 10px;
+    font-weight: 700;
+  }
+
   /* COLLECTIONS SECTION */
   & .homepage__collections {
     margin-bottom: 42px;
   }
 
-  & .homepage__collections a {
-    font-size: 11px;
-    font-weight: 700;
-  }
-
   & .homepage__collections--view-all {
     align-self: center;
+    font-size: 11px;
+    font-weight: 700;
   }
 
   & .homepage__collections--whitespace {
@@ -624,7 +655,7 @@ export default {
   & .homepage__trading-banner h1 {
     margin-bottom: 24px;
   }
-  & .homepage__trading-banner div button:first-child {
+  & .homepage__trading-banner .homepage__buttons--container .button-primary {
     margin-right: 20px;
     margin-top: 22px;
   }
@@ -639,27 +670,43 @@ export default {
     font-weight: 500;
   }
 
-  /* MIKE'S STYLE */
-  & .title-container h1, .title-container h2 {
-    font-family: 'Montserrat', Arial, Helvetica, sans-serif;
-  }
-  & .title-container h1 {
-    margin-bottom: 24px;
-  }
-  & .title-container h2 {
-    margin-bottom: 38px;
-  }
-
 }
 
 /* MOBILE DESIGN */
 @media only screen and (max-width: 499px) {
-  #homepage .homepage__categories a {
+  #homepage {
+
+  /* CATEGORIES SECTION */
+  & .homepage__categories a {
     font-size: 10px;
     margin: 0 10px;
   }
-  #homepage .homepage__marketplace-section p {
+
+  /* MARKETPLACE SECTION */
+  & .homepage__marketplace-section p {
+    width: 100%;
+  }
+
+  /* BUTTONS ON 1ST SECTION AND TRADING BANNER */
+  & .homepage__buttons--container {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+  }
+  & .homepage__buttons--container .button-primary, .homepage__trading-banner .homepage__buttons--container .button-primary {
+    width: 156px;
+    margin-bottom: 14px;
+    margin-right: 0;
+  }
+  & .homepage__buttons--container .button-secondary {
+    width: 126px;
+  }
+
+  /* BLOG SECTION */
+  & .homepage__blog-section {
     width: 80%;
+  }
+
   }
 }
 

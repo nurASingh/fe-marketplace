@@ -141,6 +141,39 @@ body {
   color: #000;
 }
 
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Montserrat', Arial, Helvetica, sans-serif;
+}
+h1 {
+  font-size: 40px;
+  font-weight: 200;
+  letter-spacing: 0px;
+  text-transform: capitalize;
+}
+h2 {
+  font-size: 17px;
+  font-weight: 400;
+  letter-spacing: 0px;
+  text-transform: capitalize;
+  white-space: normal;
+}
+h3 {
+  font-size: 16px;
+  font-weight: 500;
+  letter-spacing: 0px;
+}
+h4 {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0px;
+}
+p {
+  text-align: left;
+  font-size: 12px;
+  font-weight: 300;
+  letter-spacing: 0px;
+}
+
 .no-scroll {
   overflow: hidden;
 }
@@ -202,41 +235,6 @@ body {
 }
 .dropdown-toggle::after {
   color: $info;
-}
-
-h1 {
-  font-size: 40px;
-  font-weight: 200;
-  letter-spacing: 0px;
-  text-transform: capitalize;
-  opacity: 1;
-}
-h2 {
-  font-size: 17px;
-  font-weight: 400;
-  letter-spacing: 0px;
-  text-transform: capitalize;
-  opacity: 1;
-  white-space: normal;
-}
-h3 {
-  font-size: 16px;
-  font-weight: 500;
-  letter-spacing: 0px;
-  opacity: 1;
-}
-h4 {
-  font-size: 15px;
-  font-weight: 700;
-  letter-spacing: 0px;
-  opacity: 1;
-}
-p {
-  text-align: left;
-  font-size: 12px;
-  font-weight: 300;
-  letter-spacing: 0px;
-  opacity: 1;
 }
 .quote {
   text-align: center;
@@ -404,23 +402,19 @@ a:focus {
   }
 }
 
-//MOBILE TEXT
-@media only screen and (max-width:768px) {
-  .textOnMobile { flex: 0 0 90%; max-width: 90%; }
-  .textOnMobile h2 { text-align: center; }
-  .textOnMobile { margin: 0 auto; }
+// MOBILE TEXT
+@media only screen and (max-width: 426px) {
+  h1 {
+    font-size: 22px;
+  }
+  h2 {
+    font-size: 17px;
+  }
+  h3 {
+    font-size: 14px;
+  }
 }
 
-@media only screen and (max-width:414px) {
-  .textOnMobile h1 { font-size: 14px; }
-  .textOnMobile h2 { font-size: 30px; }
-  .textOnMobile p { font-size: 12px; }
-}
-
-@media only screen and (max-width:320px) {
-  .textOnMobile h2 { font-size: 22px; }
-  .textOnMobile p { font-size: 10px; }
-}
 .wallet-play-mode {
   border: 2pt solid $yellow;
   border-radius: 15px;
