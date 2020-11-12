@@ -49,7 +49,7 @@
       <div :class="isActive('applications')"><a href="#" @click.prevent="category = 'applications'">Applications</a></div>
     </div>
     <div class="row mb-4">
-      <div v-for="(item, index) in block1Items" :key="index" class="col-lg-3 col-md-4 col-xs-6" >
+      <div v-for="(item, index) in block1Items" :key="index" class="col-lg-3 col-md-4 col-6" >
         <!--<div @mouseleave="hoverOut()" @mouseover="hoverIn(index)" class="mb-4">-->
           <div class="mb-4 homepage__items">
             <img width="100%" :src="item.b1_image1.url"/>
@@ -87,7 +87,7 @@
   </div>
   <div class="container my-5" v-if="content">
     <div class="row">
-      <div v-for="(item, index1) in block2Items" :key="index1" class="col-md-3 col-sm-6 col-xs-12" >
+      <div v-for="(item, index1) in block2Items" :key="index1" class="col-md-3 col-sm-6 col-12" >
         <div class="mb-4">
           <img width="50%" :src="content.block1[index1].b1_image1.url"/>
           <img width="50%" :src="content.block1[index1 + 1].b1_image1.url"/>
@@ -134,7 +134,7 @@
   </div>
   <div class="container my-5" v-if="content">
     <div class="row">
-      <div v-for="(item, index3) in block1Items" :key="index3" class="col-md-3 col-sm-6 col-xs-12" >
+      <div v-for="(item, index3) in block1Items" :key="index3" class="col-md-3 col-sm-6 col-12" >
         <div class="mb-4 homepage__items" v-if="index3 < 4">
           <img width="100%" :src="item.b1_image1.url"/>
           <div class="homepage__items--overlay">
@@ -495,6 +495,7 @@ export default {
   & .homepage__items--amount {
     font-size: 12px;
     font-weight: 600;
+    align-self: center;
   }
 
   & .homepage__items--by {
