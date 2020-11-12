@@ -8,6 +8,7 @@
     <div class="col-6">
       <h3>{{asset.title}}</h3>
       <h3>{{asset.description}}</h3>
+      <!--
       <div v-if="isOwner">
         <h3>Owner: {{asset.artist}}</h3>
         <b-button class="mt-3 btn-lg" v-b-toggle.collapse-1 variant="info" style="text-transform: capitalize; font-size: 14px;">Set Price</b-button>
@@ -21,8 +22,9 @@
           </b-card>
         </b-collapse>
       </div>
-      <div v-else>
-        <h3>{{asset.artist}}</h3>
+      -->
+      <div>
+        <h3>{{asset.owner}}</h3>
       </div>
     </div>
   </div>

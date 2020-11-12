@@ -47,8 +47,8 @@ const utils = {
     return {
       owner: td.decode(o.value.data.owner.buffer),
       contractId: td.decode(o.value.data['app-contract-id'].buffer),
-      status: o.value.data.status.value,
-      storageModel: o.value.data['storage-model'].value
+      status: o.value.data.status.value.toNumber(),
+      storageModel: o.value.data['storage-model'].value.toNumber()
     }
   },
   toObjectAsset: function (o) {

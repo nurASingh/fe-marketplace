@@ -15,9 +15,8 @@
               <p>App Name: <router-link :to="'/my-app/' + project.projectId">{{project.title}}</router-link></p>
               <p>Contract Id: <br/><span style="font-size: 12px;">{{project.projectId}}</span></p>
               <p>Owner: {{project.owner}}</p>
-              <p>TxId: {{project.txId}}</p>
               <p>Description: {{project.description}}</p>
-              <div v-if="project.txId">
+              <div v-if="project.interface">
                 <div><span>Contract: Deployed</span></div>
               </div>
               <p>

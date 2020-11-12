@@ -16,7 +16,7 @@
             <p class="text1">Created on</p>
             <p class="text2">{{created(asset.created)}}</p>
             <p class="text1" v-if="biddingEndsDisplay">Bidding Ends</p>
-            <p class="text2">{{biddingEndsDisplay}}</p>
+            <p class="text2">{{biddingEndsDisplay()}}</p>
 
           </div>
           <!--
