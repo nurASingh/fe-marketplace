@@ -1,27 +1,62 @@
 <template>
-<div class="container" style="margin: 150px 0;">
-  <div class="row p-3">
-    <div class="col-3 border p-3">
-      <h3>Projects</h3>
-      <project-list :resultSet="resultSet" @set-filter="setProjectFilter"/>
+<div class="container-fluid px-0" style="margin-top: 128px">
+  <div class="d-flex justify-content-start">
+    <div class="mp-nav w-25 p-4 px-5">
+      <marketplace-side-menu/>
     </div>
-    <div class="col-9 p-3 border">
-      <h1>Marketplace</h1>
-      <result-grid :resultSet="resultSet" />
-      <!--
-      <div class="row">
-        <div class="col-3" v-for="(result, index) in resultSet" :key="index">
-          <div v-if="result">
-            <router-link :to="'/assets/' + result.assetHash"><img width="100%" :src="result.assetUrl"/></router-link>
-            <div class="tagline"><span class="tagline1">{{result.title}}</span></div>
-            <div class="tagline"><span class="tagline1">{{truncateAssetHash(result.assetHash)}}</span></div>
-            <div class="tagline"><span class="tagline1">{{owner(result.artist)}}</span></div>
-            <div class="tagline"><span class="tagline1">{{truncateProjectId(result.projectId)}}</span></div>
-            <div class="tagline">{{created(result.created)}}</div>
-          </div>
+    <div class="w-75 p-2">
+      <div class="d-flex justify-content-between border-bottom mx-5 mt-2 pb-3">
+        <div>
+          <span class="text-center-300 mr-4">View</span>
+          <b-dropdown caret>
+            <!-- Using 'button-content' slot -->
+            <template class="bg-white" v-slot:button-content>
+              <span>Popular</span>
+            </template>
+            <div class="dropdown__whitespace"></div>
+            <div class="dropdown__filler"></div>
+            <div class="dropdown__items">
+              <b-dropdown-item></b-dropdown-item>
+              <b-dropdown-item>Application</b-dropdown-item>
+              <b-dropdown-item>Artist</b-dropdown-item>
+              <b-dropdown-item>Collection</b-dropdown-item>
+              <b-dropdown-item>On Auction</b-dropdown-item>
+              <b-dropdown-item>On Sale</b-dropdown-item>
+            </div>
+          </b-dropdown>
+        </div>
+        <div>
+          <b-dropdown caret>
+            <!-- Using 'button-content' slot -->
+            <template v-slot:button-content>
+              <span>Sort by</span>
+            </template>
+            <div class="dropdown__whitespace"></div>
+            <div class="dropdown__filler"></div>
+            <div class="dropdown__items">
+              <b-dropdown-item></b-dropdown-item>
+              <b-dropdown-item>Application</b-dropdown-item>
+              <b-dropdown-item>Artist</b-dropdown-item>
+              <b-dropdown-item>Collection</b-dropdown-item>
+              <b-dropdown-item>On Auction</b-dropdown-item>
+              <b-dropdown-item>On Sale</b-dropdown-item>
+            </div>
+          </b-dropdown>
+        </div>
+        <div class="w-50">
+          <b-input-group>
+            <b-form-input type="number" v-model="query" class="input" placeholder="Looking for something in particular?"></b-form-input>
+            <template class="position: absolute; left: -20px;" v-slot:append>
+              <a href="#" @click.prevent="doSearch"><b-icon icon="search"/></a>
+            </template>
+          </b-input-group>
+        </div>
+        <div>
         </div>
       </div>
-      -->
+      <div class="p-5">
+        <result-grid :resultSet="resultSet" />
+      </div>
     </div>
   </div>
 </div>
@@ -30,18 +65,19 @@
 <script>
 import moment from 'moment'
 import { APP_CONSTANTS } from '@/app-constants'
-import ProjectList from '@/components/agora/ProjectList'
 import ResultGrid from '@/components/agora/ResultGrid'
+import MarketplaceSideMenu from '@/components/agora/MarketplaceSideMenu'
 
 export default {
   name: 'Marketplace',
   components: {
-    ProjectList,
-    ResultGrid
+    ResultGrid,
+    MarketplaceSideMenu
   },
   data () {
     return {
-      results: null
+      results: null,
+      query: null
     }
   },
   mounted () {
@@ -88,4 +124,7 @@ export default {
 }
 </script>
 <style lang="scss">
+.mp-nav {
+  background: #F5F5F5;
+}
 </style>

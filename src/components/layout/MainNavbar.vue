@@ -1,6 +1,6 @@
 <template>
 <div class="d-flex justify-content-center">
-<b-navbar id="navbar" :style="bannerImage" toggleable="xl" class="my-nav mx-0">
+<b-navbar id="navbar" :style="bannerImage" toggleable="xl" class="my-nav">
 
   <b-navbar-brand><router-link class="navbar-brand" to="/"><img :src="logo" alt="risidio-logo"/></router-link></b-navbar-brand>
   <b-navbar-toggle target="nav-collapse" @click="mobileMenuExpandClass(); noScroll();">
@@ -178,7 +178,6 @@ export default {
         return
       }
       return {
-        padding: '0 0 0 0',
         height: '128px',
         width: '100%',
         'background-repeat': 'no-repeat',
@@ -200,7 +199,7 @@ export default {
     },
     stxAddress () {
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
-      if (profile.wallet.keyInfo.address) {
+      if (profile.wallet && profile.wallet.keyInfo.address) {
         return profile.wallet.keyInfo.address.substring(0, 5) + '...' + profile.wallet.keyInfo.address.substring(profile.wallet.keyInfo.address.length - 5)
       }
       return 'n/a'

@@ -7,6 +7,7 @@
   </div>
   <div v-else>
     <!-- <router-link class="mr-3" to="/admin-app"><b-icon icon="eye"></b-icon></router-link> -->
+    <img :src="loopie"/>
     <a href="#" @click.prevent="$emit('set-filter', contractId)">{{projectName()}}</a>
   </div>
 </div>
@@ -22,6 +23,7 @@ export default {
   props: ['contractId'],
   data () {
     return {
+      loopie: require('@/assets/img/Loopbomb Logo.svg')
     }
   },
   methods: {
