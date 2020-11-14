@@ -6,7 +6,7 @@
     <div v-else>
       <router-view v-if="showNavbar" @updateEventCode="updateEventCode" name="header" style="width: 100%; z-index: 200; position: absolute; top: 0;"/>
     </div>
-    <router-view @updateEventCode="updateEventCode" @toggle-on-navbar="toggleOnNavbar" @toggle-off-navbar="toggleOffNavbar"/>
+    <router-view @updateEventCode="updateEventCode" @toggle-on-navbar="toggleOnNavbar" style="height: 100vh;" @toggle-off-navbar="toggleOffNavbar"/>
     <router-view name="footer" :class="(adminPage) ? 'app-footer' : ''"/>
     <notifications :duration="10000" classes="r-notifs" position="bottom right" width="30%"/>
   </div>
@@ -32,7 +32,10 @@ export default {
   },
   watch: {
     '$route' () {
-      this.adminPage = this.$route.name.indexOf('-app') > -1
+      this.adminPage = this.$route.name.indexOf('-app') > -1 ||
+        this.$route.name === 'account' ||
+        this.$route.name === 'wallet'
+      if (this.adminPage) this.showNavbar = false
     }
   },
   mounted () {

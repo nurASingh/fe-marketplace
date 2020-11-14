@@ -16,23 +16,11 @@
   <!-- Mobile Design for login menu -->
   <b-navbar-nav class="navbar__login d-xl-none">
     <b-nav-item v-if="loggedIn">
-        <div v-if="avatar" v-b-toggle.login-sidebar class="navbar__account"><span v-html="avatar"></span><span class="text-info navbar__account--text">Account</span></div>
-        <div v-else v-b-toggle.login-sidebar class="navbar__account"><span><b-icon icon="person-fill" class="navbar__default-account-icon"/></span><span class="text-info navbar__account--text">Account</span></div>
-        <b-sidebar id="login-sidebar" right bg-variant="white" width="232px">
-          <div class="">
-            <div class="login-sidebar__username login-sidebar--border-bottom"><div>Hi, <span class="text-info">{{ username }}</span></div></div>
-            <div class="login-sidebar__item-group login-sidebar--border-bottom">
-              <div>Balance: {{ balance }}</div>
-              <div>Addr: {{ stxAddress }}</div>
-            </div>
-            <div class="login-sidebar__item-group login-sidebar--border-bottom">
-              <div><router-link to="/admin-app"><i class="far fa-play-circle"></i> Connect Project</router-link></div>
-              <div><router-link to="/my-assets"><i class="far fa-folder-open"></i> My Collectibles</router-link></div>
-            </div>
-            <div class="login-sidebar__item-group"><span @click="logout()"><i class="fas fa-sign-out-alt"></i> Logout</span></div>
-          </div>
-        </b-sidebar>
-      </b-nav-item>
+      <div v-if="avatar" v-b-toggle.login-sidebar class="navbar__account"><span v-html="avatar"></span><span class="text-info navbar__account--text">Account</span></div>
+      <div v-else v-b-toggle.login-sidebar class="navbar__account"><span><b-icon icon="person-fill" class="navbar__default-account-icon"/></span><span class="text-info navbar__account--text">Account</span></div>
+      <side-bar />
+    </b-nav-item>
+    <b-nav-item @click.prevent="startLogin()" href="#" v-else><button class="login-button button-secondary">Login</button></b-nav-item>
   </b-navbar-nav>
 
   <b-collapse id="nav-collapse" is-nav>
@@ -85,37 +73,13 @@
       <b-nav-item>How It Works</b-nav-item>
       <b-nav-item>About Risidio</b-nav-item>
       <b-nav-item>Help</b-nav-item>
-      <!-- <b-nav-item-dropdown class="text-white ml-3" right v-if="loggedIn" no-caret>
-        <template v-slot:button-content class="v-nav-user">
-          <b-avatar class="bg-info"></b-avatar>
-        </template>
-        <b-dropdown-item><span>{{ username }}</span></b-dropdown-item>
-        <b-dropdown-divider></b-dropdown-divider>
-        <b-dropdown-item><span>Balance: {{ balance }}</span></b-dropdown-item>
-        <b-dropdown-item><span>Addr: {{ stxAddress }}</span></b-dropdown-item>
-        <b-dropdown-divider></b-dropdown-divider>
-        <b-dropdown-item><router-link to="/admin-app"><i class="far fa-play-circle"></i> Connect Project</router-link></b-dropdown-item>
-        <b-dropdown-item><router-link to="/my-assets"><i class="far fa-folder-open"></i> My Collectibles</router-link></b-dropdown-item>
-        <b-dropdown-item><span @click="logout()"><i class="fas fa-sign-out-alt"></i> Logout</span></b-dropdown-item>
-      </b-nav-item-dropdown>-->
     </b-navbar-nav>
 
     <b-navbar-nav class="navbar__login d-flex">
       <b-nav-item class="navbar__login--loogedin" v-if="loggedIn">
         <div v-if="avatar" v-b-toggle.login-sidebar class="navbar__account d-flex align-items-center"><span v-html="avatar"></span><span class="text-info navbar__account--text">Account</span></div>
         <div v-else v-b-toggle.login-sidebar class="navbar__account d-flex align-items-center"><span><b-icon icon="person-fill" class="navbar__default-account-icon"/></span><span class="text-info navbar__account--text">Account</span></div>
-        <b-sidebar id="login-sidebar" right bg-variant="white" width="232px">
-          <div class="login-sidebar__username login-sidebar--border-bottom"><div>Hi, <span class="text-info">{{ username }}</span></div></div>
-            <div class="login-sidebar__item-group login-sidebar--border-bottom">
-              <div>Balance: {{ balance }}</div>
-              <div>Addr: {{ stxAddress }}</div>
-            </div>
-            <div class="login-sidebar__item-group login-sidebar--border-bottom">
-              <div><router-link to="/admin-app"><i class="far fa-play-circle"></i> Connect Project</router-link></div>
-              <div><router-link to="/my-assets"><i class="far fa-folder-open"></i> My Collectibles</router-link></div>
-            </div>
-            <div class="login-sidebar__item-group"><span @click="logout()"><i class="fas fa-sign-out-alt"></i>Logout</span></div>
-        </b-sidebar>
+        <side-bar />
       </b-nav-item>
       <b-nav-item @click.prevent="startLogin()" href="#" v-else><button class="login-button button-secondary">Login</button></b-nav-item>
     </b-navbar-nav>
@@ -126,10 +90,12 @@
 
 <script>
 import { APP_CONSTANTS } from '@/app-constants'
+import SideBar from './SideBar'
 
 export default {
   name: 'MainNavbar',
   components: {
+    SideBar
   },
   data () {
     return {
@@ -342,21 +308,6 @@ nav .navbar__applications-item .dropdown-menu li:not(:last-child):not(:first-chi
 }
 #login-sidebar header button svg {
   font-size: 15px;
-}
-.login-sidebar--border-bottom {
-  border-bottom: 1px solid #E3E3E3;
-}
-.login-sidebar__username {
-  height: 82px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-.login-sidebar__username span {
-  font-weight: 700;
-}
-.login-sidebar__username div {
-  margin-bottom: 38px;
 }
 .login-sidebar__item-group {
   padding: 30px 40px;

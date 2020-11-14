@@ -2,9 +2,9 @@
 <div class="row">
   <side-menu class="col-3 mr-0 pr-0 pt-5"/>
   <div class="col-9 pt-5 admin-app" v-if="loaded">
-    <title-bar class="container" v-on="$listeners"/>
+    <title-bar title="For Developers" class="container" v-on="$listeners"/>
     <div class="container" @click="$emit('toggle-off-navbar')">
-      <h1>Deploy Contract</h1>
+      <p class="text-40-300">Deploy Contract</p>
       <p class="mb-4">Contract id: {{projectId}} <router-link class="mr-3" :to="'/connect-app/' + projectId"><b-icon icon="pencil"/></router-link></p>
       <div class="row">
         <div class="col-4">

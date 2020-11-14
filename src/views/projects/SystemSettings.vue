@@ -2,8 +2,9 @@
 <div class="row">
   <side-menu class="col-3 mr-0 pr-0 pt-5"/>
   <div class="col-9 pt-5 admin-app">
-    <title-bar class="container" v-on="$listeners"/>
+    <title-bar title="For Developers" class="container" v-on="$listeners"/>
     <div class="container" @click="$emit('toggle-off-navbar')">
+      <p class="text-40-300">System Settings</p>
     <b-tabs
       nav-class="font-weight-bold text-uppercase text-info"
       nav-wrapper-class="font-weight-bold text-uppercase bg-info text-info"

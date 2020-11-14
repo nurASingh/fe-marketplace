@@ -3,10 +3,10 @@
   <div class="row mb-5">
     <side-menu class="col-3 mr-0 pr-0 pt-5"/>
     <div class="col-9 pt-5">
-      <title-bar class="container" v-on="$listeners"/>
+      <title-bar title="For Developers" class="container" v-on="$listeners"/>
       <div class="container" @click="$emit('toggle-off-navbar')">
         <div class="pl-4">
-          <p class="text-light">My Application</p>
+          <p class="text-40-300">My Application</p>
           <div class="row my-5">
             <div class="col-4">
               <img width="250px" height="250px" :src="project.imageUrl"/>

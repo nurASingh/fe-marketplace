@@ -13,6 +13,8 @@ import AssetDetails from '../views/AssetDetails.vue'
 import Marketplace from '../views/Marketplace.vue'
 import FourOFour from '../views/FourOFour.vue'
 
+import Account from '../views/Account.vue'
+import Wallet from '../views/Wallet.vue'
 import ApplicationAdministration from '../views/projects/ApplicationAdministration.vue'
 import MyApplications from '../views/projects/MyApplications.vue'
 import MyApplication from '../views/projects/MyApplication.vue'
@@ -34,6 +36,16 @@ const routes: Array<RouteConfig> = [
     path: '/admin-app',
     name: 'admin-app',
     components: { default: ApplicationAdministration, header: MainNavbar, footer: MainFooter }
+  },
+  {
+    path: '/account',
+    name: 'account',
+    components: { default: Account, header: MainNavbar, footer: MainFooter }
+  },
+  {
+    path: '/wallet',
+    name: 'wallet',
+    components: { default: Wallet, header: MainNavbar, footer: MainFooter }
   },
   {
     path: '/my-app-settings',

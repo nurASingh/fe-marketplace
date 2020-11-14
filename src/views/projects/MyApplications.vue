@@ -2,10 +2,10 @@
 <div class="row">
   <side-menu class="col-3 mr-0 pr-0 pt-5"/>
   <div class="col-9 pt-5 admin-app">
-    <title-bar class="container" v-on="$listeners"/>
+    <title-bar title="For Developers" class="container" v-on="$listeners"/>
     <div class="container" @click="$emit('toggle-off-navbar')">
       <div class="pl-4" v-if="myProjects.length > 0">
-        <p class="text-light">My Applications</p>
+        <p class="text-40-300">My Application</p>
         <div v-for="(project, index) in myProjects" :key="index">
           <div class="row my-5">
             <div class="col-4">

@@ -46,7 +46,7 @@
         <div class="w-50">
           <b-input-group>
             <b-form-input type="number" v-model="query" class="input" placeholder="Looking for something in particular?"></b-form-input>
-            <template class="position: absolute; left: -20px;" v-slot:append>
+            <template v-slot:append>
               <a href="#" @click.prevent="doSearch"><b-icon icon="search"/></a>
             </template>
           </b-input-group>

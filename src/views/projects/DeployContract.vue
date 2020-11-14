@@ -2,11 +2,11 @@
 <div class="row">
   <side-menu class="col-3 mr-0 pr-0 pt-5"/>
   <div class="col-9 pt-5 admin-app" v-if="loaded">
-    <title-bar class="container" v-on="$listeners"/>
+    <title-bar title="For Developers" class="container" v-on="$listeners"/>
     <div class="container" @click="$emit('toggle-off-navbar')">
       <div class="row">
         <div class="col-12">
-          <h1>Upload Contract</h1>
+          <p class="text-40-300">Upload Contract</p>
           <p style="font-size: 10px;">Contract id: {{projectId}} <router-link class="mr-3" :to="'/connect-app/' + projectId"><b-icon icon="pencil"/></router-link></p>
             <deploy-contract-from-file :project="project" @deployed="deployed"/>
         </div>
