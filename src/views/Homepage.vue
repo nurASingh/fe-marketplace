@@ -621,6 +621,12 @@ export default {
     width: 141px;
     background-color: rgba(80, 177, 181, 0.1);
   }
+  & .button-primary--alternative-marketplace a {
+    color: #fff;
+  }
+  & .button-secondary--alternative-marketplace a {
+    color: #50B1B5;
+  }
 
   /* TRADING SECTION */
   & .homepage__trading-banner h1 {
