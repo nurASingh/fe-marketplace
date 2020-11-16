@@ -227,7 +227,7 @@ footer .navbar-brand {
 
 @media only screen and (max-width: 500px) {
   .footer__column-content:not(:last-child) {
-    padding-right: 50px;
+    padding-right: 40px;
   }
 }
 
