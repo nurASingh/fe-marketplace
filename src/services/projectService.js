@@ -101,10 +101,12 @@ const projectService = {
     })
   },
   saveProject: function (rootFile) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       rootFile.updated = moment({}).valueOf()
       userSession.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false }).then(() => {
         resolve(rootFile)
+      }).catch((error) => {
+        reject(error)
       })
     })
   }

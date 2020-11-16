@@ -59,13 +59,6 @@
       </div>
     </div>
   </div>
-  <b-modal scrollable id="app-modal" title="Saving Application Details">
-    <div class="row">
-      <div class="col-12 my-1">
-        <p>{{result}}</p>
-      </div>
-    </div>
-  </b-modal>
 </div>
 </template>
 
@@ -90,7 +83,7 @@ export default {
       projectId: null,
       loaded: false,
       dims: { width: 250, height: 250 },
-      result: 'Saving to your decentralised storage - wo\'t be long.',
+      result: 'Saving data to your storage - back in a mo!',
       project: {
         logo: require('@/assets/img/Group 15980.svg'),
         projectId: null,
@@ -201,14 +194,18 @@ export default {
       if (this.files && this.files.length === 1) {
         imageData = utils.getBase64FromImageUrl(this.files[0].dataUrl)
       }
-      this.$bvModal.show('app-modal')
+      this.showWaitingModal = true
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
       this.project.owner = profile.username
-      this.$store.dispatch(APP_CONSTANTS.DISP_SAVE_PROJECT, { project: this.project, imageData: imageData }).then((project) => {
-        this.$router.push('/my-app/' + project.projectId)
-        this.$bvModal.hide('app-modal')
+      this.$root.$emit('bv::show::modal', 'waiting-modal')
+      this.$store.dispatch(APP_CONSTANTS.DISP_SAVE_PROJECT, { project: this.project, imageData: imageData }).then(() => {
+        // this.$router.push('/my-app/' + project.projectId)
+        this.$root.$emit('bv::hide::modal', 'waiting-modal')
+        this.$root.$emit('bv::show::modal', 'success-modal')
+        this.$store.commit('setModalMessage', 'Application is now connected to the Stacks blockchain.')
       }).catch((error) => {
         // this.$notify({ type: 'error', title: 'Transfers', text: 'Error message: ' + error })
+        this.$store.commit('setModalMessage', 'Error occurred processing transaction.')
         this.result = error
       })
     }
@@ -245,5 +242,5 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss" >
 </style>

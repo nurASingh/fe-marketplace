@@ -31,13 +31,12 @@
         <template v-slot:button-content class="">
           <span>Gallery</span>
         </template>
-        <b-dropdown-item>Type of Collectables</b-dropdown-item>
-        <b-dropdown-item>All</b-dropdown-item>
-        <b-dropdown-item>Popular</b-dropdown-item>
-        <b-dropdown-item>On Sale</b-dropdown-item>
-        <b-dropdown-item>On Auction</b-dropdown-item>
-        <b-dropdown-item>On Offer</b-dropdown-item>
-        <b-dropdown-item>Recently Added</b-dropdown-item>
+        <b-dropdown-item>Type of Collectibles</b-dropdown-item>
+        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'all' })">All</a></b-dropdown-item>
+        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'popular' })">Popular</a></b-dropdown-item>
+        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'recent' })">Recently Added</a></b-dropdown-item>
+        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'on-auction' })">On Auction</a></b-dropdown-item>
+        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'on-sale' })">On Sale</a></b-dropdown-item>
       </b-nav-item-dropdown>
       <b-nav-item>Collections</b-nav-item>
       <b-nav-item>Artists</b-nav-item>
@@ -48,31 +47,28 @@
         </template>
         <div class="row">
           <div class="col-6">
-            <b-dropdown-item>Type of Collectables</b-dropdown-item>
-            <b-dropdown-item>All</b-dropdown-item>
-            <b-dropdown-item>Popular</b-dropdown-item>
-            <b-dropdown-item>On Sale</b-dropdown-item>
-            <b-dropdown-item>On Auction</b-dropdown-item>
-            <b-dropdown-item>On Offer</b-dropdown-item>
-            <b-dropdown-item>Recently Added</b-dropdown-item>
+            <b-dropdown-item>Type of Collectibles</b-dropdown-item>
+            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'all' })">All</a></b-dropdown-item>
+            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'popular' })">Popular</a></b-dropdown-item>
+            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'recent' })">Recently Added</a></b-dropdown-item>
+            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'on-auction' })">On Auction</a></b-dropdown-item>
+            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'on-sale' })">On Sale</a></b-dropdown-item>
           </div>
           <div class="col-6">
-            <b-dropdown-item>Type of Collectables</b-dropdown-item>
-            <b-dropdown-item>All</b-dropdown-item>
-            <b-dropdown-item>Popular</b-dropdown-item>
-            <b-dropdown-item>On Sale</b-dropdown-item>
-            <b-dropdown-item>On Auction</b-dropdown-item>
-            <b-dropdown-item>On Offer</b-dropdown-item>
-            <b-dropdown-item>Recently Added</b-dropdown-item>
+            <b-dropdown-item>Type of Collectibles</b-dropdown-item>
+            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'all' })">All</a></b-dropdown-item>
+            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'popular' })">Popular</a></b-dropdown-item>
+            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'recent' })">Recently Added</a></b-dropdown-item>
+            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'on-auction' })">On Auction</a></b-dropdown-item>
+            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'on-sale' })">On Sale</a></b-dropdown-item>
           </div>
         </div>
       </b-nav-item-dropdown>
-      <b-nav-item class="text-info">Become a Contributer</b-nav-item>
+      <b-nav-item class="text-info"><router-link class="text-white" to="/community">Become a Contributer</router-link></b-nav-item>
     </b-navbar-nav>
     <b-navbar-nav class="ml-xl-auto align-items-xl-center">
-      <b-nav-item>How It Works</b-nav-item>
-      <b-nav-item>About Risidio</b-nav-item>
-      <b-nav-item>Help</b-nav-item>
+      <b-nav-item><router-link class="text-white" to="/admin-app">How It Works</router-link></b-nav-item>
+      <b-nav-item><router-link class="text-white" to="/community">Help</router-link></b-nav-item>
     </b-navbar-nav>
 
     <b-navbar-nav class="navbar__login d-flex">
@@ -368,6 +364,7 @@ nav .navbar-toggler {
     -ms-transition: height 0.5s ease-out;
     -o-transition: height 0.5s ease-out;
     transition: height 0.5s ease-out;
+    margin-top: 128px;
   }
 
   .navbar-collapse.collapse {

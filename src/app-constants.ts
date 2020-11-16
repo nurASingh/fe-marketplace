@@ -1,4 +1,6 @@
 export const APP_CONSTANTS = {
+  KEY_MODAL_MESSAGE: 'getModalMessage',
+  KEY_CATEGORIES: 'getCategories',
   KEY_CONFIGURATION_LOGIN: 'getConfigurationLogin',
   KEY_CONFIGURATION: 'getConfiguration',
   KEY_SECTION_HEIGHT: 'getSectionHeight',
@@ -12,6 +14,7 @@ export const APP_CONSTANTS = {
   KEY_SEARCH_RESULTS: 'searchStore/getSearchResults',
   KEY_MY_PROJECT: 'projectStore/getProject',
   KEY_MY_PROJECTS: 'projectStore/getProjects',
+  KEY_CONTRACT: 'projectStore/getContract',
   KEY_PROFILE: 'authStore/getMyProfile',
   KEY_EVENT_CODE: 'getEventCode',
   SET_EVENT_CODE: 'setEventCode',

@@ -7,7 +7,7 @@ const projectStore = {
   namespaced: true,
   state: {
     rootFile: null,
-    connectedProjects: null
+    contracts: []
   },
   getters: {
     getProjects: (state: any) => {
@@ -24,8 +24,11 @@ const projectStore = {
         }
       }
     },
-    getConnectedProjects: (state: any) => {
-      return state.connectedProjects || []
+    getContract: (state: any) => projectId => {
+      const index = state.contracts.findIndex((o) => o.projectId === projectId)
+      if (index > -1) {
+        return state.contracts[index]
+      }
     }
   },
   mutations: {
@@ -36,12 +39,11 @@ const projectStore = {
       state.connectedProjects = connectedProjects
     },
     addContractData (state, data) {
-      const index = state.rootFile.projects.findIndex((o) => o.projectId === data.projectId)
+      const index = state.contracts.findIndex((o) => o.projectId === data.projectId)
       if (index > -1) {
-        const project = state.rootFile.projects[index]
-        project.info = data.info
-        project.interface = data.interface
-        state.rootFile.projects.splice(index, 1, project)
+        state.contracts.splice(index, 1, data)
+      } else {
+        state.contracts.splice(0, 0, data)
       }
     }
   },
@@ -58,10 +60,10 @@ const projectStore = {
                 if (intface) {
                   commit('addContractData', { projectId: project.projectId, interface: intface })
                 }
-              }).catch((error) => {
+              }).catch(() => {
                 project.txId = null
                 dispatch('updateProject', project)
-                reject(error)
+                resolve(rootFile)
               })
             })
             commit('rootFile', rootFile)
@@ -107,13 +109,17 @@ const projectStore = {
           if (index > -1) {
             const project = state.rootFile.projects[index]
             project.projectId = (data.contractId) ? data.contractId : project.projectId
-            project.txId = data.txId
+            project.txId = null
+            project.info = null
+            project.interface = null
             // searchIndexService.removeRecord('project', data.projectId)
             state.rootFile.projects.splice(index, 1, project)
             projectService.saveProject(state.rootFile).then((rootFile) => {
               commit('rootFile', rootFile)
               // searchIndexService.addRecord(project)
               resolve(project)
+            }).catch((error) => {
+              console.log('Error in updateProject: ' + error)
             })
           } else {
             reject(new Error('project not initialised?'))

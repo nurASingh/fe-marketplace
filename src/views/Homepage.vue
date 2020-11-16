@@ -6,40 +6,15 @@
           :field="content.header"
         />
         <div class="homepage__buttons--container">
-          <button class="button-primary"><span v-html="content.header_buttons[0].button1[0].text"></span></button>
-          <button class="button-secondary"><span v-html="content.header_buttons[0].button2[0].text"></span></button>
+          <button class="button-primary"><router-link class="text-white" to="/marketplace">Explore Our Gallery</router-link></button>
+          <button class="button-secondary"><router-link class="text-white" to="/community">Find Out More</router-link></button>
         </div>
     </div>
   </div>
   <!-- Items Section -->
   <div class="container" v-if="content" :key="componentKey">
     <div class="d-flex justify-content-center main-search">
-      <div class="text-center no-wrap main-search--border">
-        <b-input-group>
-          <template v-slot:append>
-            <a href="#"  @click.prevent="doSearch"><b-icon icon="search"/></a>
-          </template>
-          <template v-slot:prepend>
-            <b-dropdown caret>
-              <!-- Using 'button-content' slot -->
-              <template v-slot:button-content>
-                <span>Search by</span>
-              </template>
-              <div class="dropdown__whitespace"></div>
-              <div class="dropdown__filler"></div>
-              <div class="dropdown__items">
-                <b-dropdown-item></b-dropdown-item>
-                <b-dropdown-item>Application</b-dropdown-item>
-                <b-dropdown-item>Artist</b-dropdown-item>
-                <b-dropdown-item>Collection</b-dropdown-item>
-                <b-dropdown-item>On Auction</b-dropdown-item>
-                <b-dropdown-item>On Sale</b-dropdown-item>
-              </div>
-            </b-dropdown>
-          </template>
-          <b-form-input v-model="query"  size="sm" class="mr-sm-2" placeholder="Looking for something in particular?"></b-form-input>
-        </b-input-group>
-      </div>
+      <search-bar :showPrepend="true" v-on="$listeners"/>
     </div>
     <div class="d-flex justify-content-center homepage__categories">
       <div :class="isActive('discover')"><a href="#" @click.prevent="category = 'discover'">Discover</a></div>
@@ -72,7 +47,7 @@
     </div>
   </div>
   <div class="d-flex justify-content-center homepage__categories--more-button">
-    <button class="button-primary">See more collectables</button>
+    <button class="button-primary">See more collectibles</button>
   </div>
   <div class="container"><div class="homepage__divider"></div></div>
   <!-- Applications Section -->
@@ -177,8 +152,8 @@
           :field="content.info"
         />
         <div>
-          <button class="button-primary button-primary--alternative-marketplace">How It Works</button>
-          <button class="button-secondary button-secondary--alternative-marketplace">About Risidio</button>
+          <button class="button-primary button-primary--alternative-marketplace"><router-link to="/admin-app">How It Works</router-link></button>
+          <button class="button-secondary button-secondary--alternative-marketplace"><router-link to="/community">Get Involved</router-link></button>
         </div>
       </div>
     </div>
@@ -213,10 +188,12 @@
 
 <script>
 import { APP_CONSTANTS } from '@/app-constants'
+import SearchBar from '@/components/agora/SearchBar'
 
 export default {
   name: 'Homepage',
   components: {
+    SearchBar
   },
   data () {
     return {
@@ -237,12 +214,6 @@ export default {
     hoverOut () {
       this.dHover = [false, false, false, false, false, false, false, false, false, false, false, false]
       this.componentKey += 1
-    },
-    doSearch () {
-      if (this.$route.name !== 'marketplace') {
-        this.$router.push('/marketplace')
-      }
-      this.$store.dispatch('searchStore/findBySearchTerm', this.query)
     },
     isActive (category) {
       if (this.category === category) {

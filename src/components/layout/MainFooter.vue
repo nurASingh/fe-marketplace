@@ -17,7 +17,7 @@
             </div>
             <div class="footer__column-content">
               <div>About</div>
-              <div>How it works</div>
+              <div><router-link to="/admin-app">How It Works</router-link></div>
               <div>Payments Methods</div>
               <div>Cryptocurrencies</div>
               <div>FAQs</div>

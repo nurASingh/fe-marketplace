@@ -35,10 +35,10 @@
           </div>
         </div>
         <div class="text-center col-md-2 d-md-block d-sm-none d-xs-none">
-          <div class="pt-2 login-sidebar__username login-sidebar--border-bottom">
+          <div class="login-sidebar__username login-sidebar--border-bottom">
             <div>
               <div v-if="avatar"><span v-html="avatar"></span></div>
-              <div v-else><span><b-icon class="avatar" font-scale="10" icon="person"/></span></div>
+              <div v-else><span><b-avatar size="144px" variant="info"></b-avatar></span></div>
             </div>
           </div>
         </div>

@@ -5,68 +5,66 @@
     <div class="col-9 pt-5">
       <title-bar title="For Developers" class="container" v-on="$listeners"/>
       <div class="container" @click="$emit('toggle-off-navbar')">
-        <div class="pl-4">
-          <p class="text-40-300">My Application</p>
-          <div class="row my-5">
-            <div class="col-4">
-              <img width="250px" height="250px" :src="project.imageUrl"/>
-            </div>
-            <div class="col-8">
-              <p>App Name: {{project.title}}</p>
-              <p>Contract Id: <br/><span style="font-size: 12px;">{{project.projectId}}</span></p>
-              <p>Owner: {{project.owner}}</p>
-              <p>Description: {{project.description}}</p>
-              <p>TxId: {{project.txId}}</p>
-              <div v-if="project.interface">
-                <div class="text-light" v-if="appmapProject">
-                  Application registered (id={{appmapProject.appCounter}})
+        <p class="text-17-500">Your Application</p>
+        <b-card no-body class="overflow-hidden" >
+          <b-row no-gutters>
+            <b-col md="4">
+              <b-card-img :src="project.imageUrl" alt="Image" class="rounded-0"></b-card-img>
+            </b-col>
+            <b-col md="8">
+              <b-card-body>
+                <div class="d-flex justify-content-between">
+                  <p class="text-30-500">{{project.title}}</p>
+                  <router-link :to="'/connect-app/' + project.projectId"><b-icon icon="pencil"/></router-link>
                 </div>
-                <div v-else>
-                  connect app:
-                  <a href="#" class="mr-3" @click.prevent="connectApp('risidio')">risidio</a>
-                  <a href="#" class="" @click.prevent="connectApp('stacks')">stacks</a>
-                </div>
-              </div>
-            </div>
-            <a href="#" class="mr-3" @click.prevent="openApp(project)">edit</a>
-            <a v-if="!project.interface" href="#" class="" @click.prevent="deleteApp(project)">delete</a>
+                <b-card-text>
+                  <div class="mb-2 contract-id">{{project.projectId}}</div>
+                  <p class="mb-2 text1">{{project.owner}}</p>
+                  <p class="mb-2 text1">{{project.description}}</p>
+                  <div v-if="contractInterface">
+                    <div class="mb-2 text1"><span>Contract found on the <a class="text-info" :href="openContractUrl()" target="_blank">Stacks Blockchain</a>  <a href="#" @click="showContractData = !showContractData">show contract</a></span></div>
+                    <div class="mb-2 text1" v-if="appmapProject">
+                      Application is registered with the marketplace (#{{appmapProject.appCounter}})
+                    </div>
+                    <div v-if="showContractData">
+                      <pre class="source-code">{{project.codeBody}}</pre>
+                    </div>
+                    <div class="mt-4 mb-2 text1" v-else>
+                      <b-button @click.prevent="connectApp('risidio')" variant="info">Connect App to Marketplace</b-button>
+                      <!-- <a href="#" class="" @click.prevent="connectApp('stacks')">stacks</a> -->
+                    </div>
+                  </div>
+                  <div class="mt-4 mb-2 text1" v-else>
+                    <b-button @click.prevent="deleteApp(project)" class="text-info" variant="outline-info">Delete Application</b-button>
+                  </div>
+                </b-card-text>
+              </b-card-body>
+            </b-col>
+          </b-row>
+        </b-card>
+        <div class="w-75 mt-4 text-light">
+          <div v-if="contractInterface">
           </div>
-          <div class="text-light" v-if="project.interface">
-            Explorer: <a :href="openContractUrl()" target="_blank">{{project.projectId}}</a>
-            <div v-if="showContractData">
-              <pre class="source-code">{{project.codeBody}}</pre>
-            </div>
-          </div>
-          <div v-else>
-            <div class="mb-5">
-              <h2>Deploy a contract</h2>
-              <h4>Contract Id: <br/>{{project.projectId}}</h4>
-              <p>Click 'I need a contract' to customise a smart contract template and deploy to the Stacks blockchain.
+          <div class="my-4" v-else>
+            <div>
+              <p class="text-12-700">Deploy a contract</p>
+              <p class="text2">Click 'I need a contract' to customise a smart contract template and deploy to the Stacks blockchain.
                 If you have a contract which conforms to the interface click 'I have a contract'.</p>
-              <b-button :to="'/upload-contract/' + project.projectId" variant="info" class="mt-3 mr-3 btn-lg" style="text-transform: capitalize; font-size: 14px;">I Have a Contract</b-button>
-              <b-button :to="'/customise-contract/' + project.projectId" variant="warning" class="mt-3 btn-lg" style="text-transform: capitalize; font-size: 14px;">I Need a Contract</b-button>
+              <b-button class="mr-3" :to="'/upload-contract/' + project.projectId" variant="info">I Have a Contract</b-button>
+              <b-button :to="'/customise-contract/' + project.projectId" variant="outline-info" class="text-info">I Need a Contract</b-button>
             </div>
           </div>
           <div class="text-light" v-if="appmapProject">
-            <div>{{appmapProject.baseTokenUri}}
-              <div v-for="(asset, index) in appmapProject.assets" :key="index">
-                <pre>Owner: {{asset.owner}}</pre>
-                <pre>Asset hash: {{asset.assetHash}}</pre>
-              </div>
+            <div>{{appmapProject.baseTokenUri}}</div>
+            <div v-for="(asset, index) in appmapProject.assets" :key="index">
+              <pre>Owner: {{asset.owner}}</pre>
+              <pre>Asset hash: {{asset.assetHash}}</pre>
             </div>
           </div>
-
         </div>
       </div>
     </div>
   </div>
-  <b-modal scrollable id="app-modal" title="Connecting Contract">
-    <div class="row">
-      <div class="col-12 my-1">
-        <p>{{result}}</p>
-      </div>
-    </div>
-  </b-modal>
 </div>
 </template>
 
@@ -144,12 +142,15 @@ export default {
       data.functionArgs = bufArr
       **/
       const method = (data.provider === 'risidio') ? 'stacksStore/callContractRisidio' : 'stacksStore/callContractBlockstack'
+      this.$root.$emit('bv::show::modal', 'waiting-modal')
       this.$store.dispatch(method, data).then((result) => {
         this.result = result
-        this.$bvModal.show('app-modal')
+        this.$root.$emit('bv::hide::modal', 'waiting-modal')
+        this.$root.$emit('bv::show::modal', 'success-modal')
+        this.$store.commit('setModalMessage', 'Application is now connected to the Stacks blockchain.')
       }).catch((error) => {
         this.result = error
-        this.$bvModal.show('app-modal')
+        this.$store.commit('setModalMessage', 'Error occurred processing transaction.')
       })
     },
     /**
@@ -190,6 +191,10 @@ export default {
     appmapProject () {
       const appmap = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_PROJECT](this.projectId)
       return appmap
+    },
+    contractInterface () {
+      const contract = this.$store.getters[APP_CONSTANTS.KEY_CONTRACT](this.projectId)
+      return contract
     }
   }
 }

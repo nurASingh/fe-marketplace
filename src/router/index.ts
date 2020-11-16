@@ -11,6 +11,7 @@ import AssetSaleData from '../views/my-assets/AssetSaleData.vue'
 import Homepage from '../views/Homepage.vue'
 import AssetDetails from '../views/AssetDetails.vue'
 import Marketplace from '../views/Marketplace.vue'
+import Community from '../views/Community.vue'
 import FourOFour from '../views/FourOFour.vue'
 
 import Account from '../views/Account.vue'
@@ -31,6 +32,11 @@ const routes: Array<RouteConfig> = [
     path: '/',
     name: 'homepage',
     components: { default: Homepage, header: MainNavbar, footer: MainFooter }
+  },
+  {
+    path: '/community',
+    name: 'community',
+    components: { default: Community, header: MainNavbar, footer: MainFooter }
   },
   {
     path: '/admin-app',

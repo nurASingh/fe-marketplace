@@ -30,20 +30,13 @@
         </b-form>
       </div>
   </div>
-  <b-modal scrollable id="modal-1" title="Contract Deployed">
-    <div class="row" v-if="deployedProject">
-      <div class="col-12 my-1">
-        <div class="mb-3">Deployed {{deployedProject.projectId}}</div>
-        <div class="mb-3">Tx: {{deployedProject.txId}}</div>
-      </div>
-    </div>
-  </b-modal>
 </div>
 </template>
 
 <script>
 import DeployContractFromFile from '@/components/admin/DeployContractFromFile'
 import { APP_CONSTANTS } from '@/app-constants'
+
 const mac = JSON.parse(process.env.VUE_APP_WALLET_MAC || '')
 
 export default {
@@ -68,7 +61,8 @@ export default {
     },
     deployed: function (data) {
       this.deployedProject = data.project
-      this.$bvModal.show('modal-1')
+      this.$root.$emit('bv::show::modal', 'success-modal')
+      this.$store.commit('setModalMessage', 'Contract has been deployed to Stacks blockchain.')
       this.$store.dispatch('applicationStore/lookupApplications')
     },
     useMyAddress: function () {

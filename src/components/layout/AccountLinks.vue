@@ -21,13 +21,13 @@
     <div class="text2 mb-2">
       <router-link to="/admin-app"><b-icon class="mr-2" icon="gear" /> Developers</router-link>
     </div>
-    <div class="text-xlight mb-0 ml-4">
+    <div class="text-xlight mb-2 ml-4">
       <router-link to="/admin-app">Connect Application</router-link>
     </div>
-    <div class="text-xlight mb-0 ml-4">
+    <div class="text-xlight mb-2 ml-4">
       <span v-if="myProjects.length > 0"><router-link to="/my-apps">My Applications</router-link></span>
     </div>
-    <div class="text-xlight mb-0 ml-4">
+    <div class="text-xlight mb-2 ml-4">
       <span v-if="showSysLink"><router-link to="/my-app-settings">System Settings</router-link></span>
     </div>
   </div>

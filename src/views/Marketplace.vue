@@ -1,59 +1,11 @@
 <template>
-<div class="container-fluid px-0" style="margin-top: 128px">
+<div id="marketplace" class="container-fluid px-0" style="margin-top: 128px;">
   <div class="d-flex justify-content-start">
     <div class="mp-nav w-25 p-4 px-5">
-      <marketplace-side-menu/>
+      <marketplace-side-menu v-on="$listeners" style="min-height: 100vh;"/>
     </div>
     <div class="w-75 p-2">
-      <div class="d-flex justify-content-between border-bottom mx-5 mt-2 pb-3">
-        <div>
-          <span class="text-center-300 mr-4">View</span>
-          <b-dropdown caret>
-            <!-- Using 'button-content' slot -->
-            <template class="bg-white" v-slot:button-content>
-              <span>Popular</span>
-            </template>
-            <div class="dropdown__whitespace"></div>
-            <div class="dropdown__filler"></div>
-            <div class="dropdown__items">
-              <b-dropdown-item></b-dropdown-item>
-              <b-dropdown-item>Application</b-dropdown-item>
-              <b-dropdown-item>Artist</b-dropdown-item>
-              <b-dropdown-item>Collection</b-dropdown-item>
-              <b-dropdown-item>On Auction</b-dropdown-item>
-              <b-dropdown-item>On Sale</b-dropdown-item>
-            </div>
-          </b-dropdown>
-        </div>
-        <div>
-          <b-dropdown caret>
-            <!-- Using 'button-content' slot -->
-            <template v-slot:button-content>
-              <span>Sort by</span>
-            </template>
-            <div class="dropdown__whitespace"></div>
-            <div class="dropdown__filler"></div>
-            <div class="dropdown__items">
-              <b-dropdown-item></b-dropdown-item>
-              <b-dropdown-item>Application</b-dropdown-item>
-              <b-dropdown-item>Artist</b-dropdown-item>
-              <b-dropdown-item>Collection</b-dropdown-item>
-              <b-dropdown-item>On Auction</b-dropdown-item>
-              <b-dropdown-item>On Sale</b-dropdown-item>
-            </div>
-          </b-dropdown>
-        </div>
-        <div class="w-50">
-          <b-input-group>
-            <b-form-input type="number" v-model="query" class="input" placeholder="Looking for something in particular?"></b-form-input>
-            <template v-slot:append>
-              <a href="#" @click.prevent="doSearch"><b-icon icon="search"/></a>
-            </template>
-          </b-input-group>
-        </div>
-        <div>
-        </div>
-      </div>
+      <marketplace-filter-bar v-on="$listeners"/>
       <div class="p-5">
         <result-grid :resultSet="resultSet" />
       </div>
@@ -67,12 +19,14 @@ import moment from 'moment'
 import { APP_CONSTANTS } from '@/app-constants'
 import ResultGrid from '@/components/agora/ResultGrid'
 import MarketplaceSideMenu from '@/components/agora/MarketplaceSideMenu'
+import MarketplaceFilterBar from '@/components/agora/MarketplaceFilterBar'
 
 export default {
   name: 'Marketplace',
   components: {
     ResultGrid,
-    MarketplaceSideMenu
+    MarketplaceSideMenu,
+    MarketplaceFilterBar
   },
   data () {
     return {
@@ -82,16 +36,18 @@ export default {
   },
   mounted () {
     this.loading = false
-    this.findAssets()
+    if (this.$route.query && !this.$route.query.filter) {
+      this.findAssets()
+    }
+    const query = Object.assign({}, this.$route.query)
+    delete query.filter
+    this.$router.replace({ query }).catch(() => {
+      console.log('avoided duplicate navigation..')
+    })
   },
   methods: {
     findAssets () {
       this.$store.dispatch('searchStore/findBySearchTerm').then((results) => {
-        this.results = results
-      })
-    },
-    setProjectFilter (projectId) {
-      this.$store.dispatch('searchStore/findByProjectId', projectId).then((results) => {
         this.results = results
       })
     },
@@ -126,5 +82,68 @@ export default {
 <style lang="scss">
 .mp-nav {
   background: #F5F5F5;
+}
+#marketplace {
+  /* MAIN SEARCH BAR */
+  & .main-search {
+    margin-top: -5.5px;
+    z-index: 2;
+  }
+  & .main-search--border {
+    width: 100%;
+    max-width: 1000px;
+  }
+
+  /* MAIN SEARCH BAR -- INPUT */
+  & .input-group {
+    background: #FFFFFF;
+    border: 1px solid #F5F5F5;
+    align-items: center;
+    height: 47px;
+  }
+  & .input-group input {
+    font-size: 14px;
+    font-weight: 500;
+    color: #000;
+    height: 26px;
+    padding: 0.25rem 25px;
+    border: none;
+    z-index: 2;
+  }
+  & .input-group input:focus {
+    box-shadow: none;
+  }
+
+  /* MAIN SEARCH BAR -- BTN */
+  & .main-search .btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    font-weight: 600;
+    color: #000;
+    text-transform: none;
+    background: transparent;
+    border: none;
+    padding-left: 30px;
+    padding-right: 30px;
+    z-index: 2;
+  }
+  & .main-search .btn:focus {
+    box-shadow: none;
+  }
+  & .main-search .btn.dropdown-toggle::after {
+    font-size: 16px;
+  }
+
+  /* MAIN SEARCH BAR -- LOOP ICON */
+  & .input-group-append svg {
+    font-size: 20px;
+    font-weight: bold;
+    color: #50B1B5;
+    margin-right: 22px;
+    margin-left: 1px;
+  }
+
 }
 </style>

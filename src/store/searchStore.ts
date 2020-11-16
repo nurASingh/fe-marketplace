@@ -10,6 +10,8 @@ const connectSearchResultToAssets = function (commit, resultSet) {
       store.dispatch('stacksStore/matchAssetIndex', result).then((data) => {
         result.index = data.value.data.index.value
         commit('addSearchResult', result)
+      }).catch(() => {
+        console.log('no index for ' + result.title)
       })
     }
   })
