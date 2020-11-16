@@ -2,7 +2,7 @@
 <div class="">
   <div class="">
       <label style="cursor: pointer;">
-        <b-button v-html="contentModel.title" @click="chooseFiles()"></b-button> <input type="file" hidden id="file-input" @change.prevent="loadMediaObjects"/>
+        <b-button variant="info" v-html="contentModel.title" @click="chooseFiles()"></b-button> <input type="file" hidden id="file-input" @change.prevent="loadMediaObjects"/>
       </label>
     <div class="invalid-feedback d-block" v-if="showError">
       {{contentModel.errorMessage}}

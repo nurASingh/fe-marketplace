@@ -3,15 +3,33 @@ import searchIndexService from '@/services/searchIndexService'
 import store from '.'
 import { APP_CONSTANTS } from '@/app-constants'
 
+const connectSearchResultToAssets = function (commit, resultSet) {
+  resultSet.forEach((result) => {
+    commit('addSearchResult', result)
+    if (result.assetHash && !result.tokenId) {
+      store.dispatch('stacksStore/matchAssetIndex', result).then((data) => {
+        result.index = data.value.data.index.value
+        commit('addSearchResult', result)
+      }).catch(() => {
+        console.log('no index for ' + result.title)
+      })
+    }
+  })
+}
+
 const searchStore = {
   namespaced: true,
   state: {
     searchResults: null,
-    projects: null
+    projects: null,
+    currentSearch: null
   },
   getters: {
     getSearchResults: (state: any) => {
       return state.searchResults
+    },
+    getCurrentSearch: (state: any) => {
+      return state.currentSearch
     },
     getAsset: (state: any) => (assetHash: string) => {
       if (assetHash && state.searchResults && state.searchResults.length > 0) {
@@ -27,6 +45,9 @@ const searchStore = {
   mutations: {
     setSearchResults: (state: any, searchResults: any) => {
       state.searchResults = searchResults
+    },
+    setCurrentSearch: (state: any, currentSearch: any) => {
+      state.currentSearch = currentSearch
     },
     addSearchResult: (state: any, result: any) => {
       if (!state.searchResults) {
@@ -71,9 +92,10 @@ const searchStore = {
     },
     findArtworkById ({ commit }: any, assetHash: string) {
       return new Promise((resolve, reject) => {
-        searchIndexService.findArtworkById(assetHash).then((results) => {
-          commit('addSearchResult', results[0])
-          resolve(results[0])
+        searchIndexService.findArtworkById(assetHash).then((resultSet) => {
+          connectSearchResultToAssets(commit, resultSet)
+          commit('addSearchResult', resultSet[0])
+          resolve(resultSet[0])
         }).catch((error) => {
           reject(new Error('Unable index record: ' + error))
         })
@@ -82,13 +104,7 @@ const searchStore = {
     findAssets ({ commit }: any) {
       return new Promise((resolve, reject) => {
         searchIndexService.findAssets().then((resultSet) => {
-          resultSet.forEach((result) => {
-            commit('addSearchResult', result)
-            store.dispatch('stacksStore/matchAssetIndex', result).then((data) => {
-              result.index = data.value.data.index.value
-              commit('addSearchResult', result)
-            })
-          })
+          connectSearchResultToAssets(commit, resultSet)
           commit('setSearchResults', resultSet)
           resolve(resultSet)
         }).catch((error) => {
@@ -111,6 +127,7 @@ const searchStore = {
         if (query && query.length > 0) {
           query += '*'
           searchIndexService.findArtworkByTitleOrDescriptionOrCategoryOrKeyword(query).then((resultSet) => {
+            connectSearchResultToAssets(commit, resultSet)
             commit('setSearchResults', resultSet)
             resolve(resultSet)
           }).catch((error) => {
@@ -119,6 +136,7 @@ const searchStore = {
         } else {
           query += '*'
           searchIndexService.findAssets().then((resultSet) => {
+            connectSearchResultToAssets(commit, resultSet)
             commit('setSearchResults', resultSet)
             resolve(resultSet)
           }).catch((error) => {
@@ -137,10 +155,21 @@ const searchStore = {
         })
       })
     },
+    findByObject ({ commit }: any, category: any) {
+      return new Promise((resolve, reject) => {
+        searchIndexService.findByObject(category.name).then((resultSet) => {
+          commit('setSearchResults', resultSet)
+          resolve(resultSet)
+        }).catch((error) => {
+          reject(new Error('Unable index record: ' + error))
+        })
+      })
+    },
     findByOwner ({ commit }: any) {
       return new Promise((resolve, reject) => {
         const profile = store.getters[APP_CONSTANTS.KEY_PROFILE]
         searchIndexService.findByOwner(profile.username).then((resultSet) => {
+          connectSearchResultToAssets(commit, resultSet)
           commit('setSearchResults', resultSet)
           resolve(resultSet)
         }).catch((error) => {

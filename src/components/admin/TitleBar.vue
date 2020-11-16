@@ -1,6 +1,6 @@
 <template>
-<div class="d-flex justify-content-between border-bottom pb-4 mb-5">
-  <h1>For Developers</h1>
+<div class="d-flex justify-content-between border-bottom pb-3 mb-3">
+  <h1 class="text-17-500">{{title}}</h1>
   <div class="account-menu"><b-icon @click="$emit('toggle-on-navbar')" icon="list"/></div>
 </div>
 </template>
@@ -11,6 +11,7 @@ export default {
   name: 'TitleBar',
   components: {
   },
+  props: ['title'],
   data () {
     return {
     }

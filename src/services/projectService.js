@@ -39,7 +39,7 @@ const projectService = {
     })
   },
   fetchUserProjects: function (username) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       userSession.getFile(PROJECT_ROOT_PATH, { username: username, decrypt: false }).then((file) => {
         if (!file) {
           resolve()
@@ -47,6 +47,8 @@ const projectService = {
           const rootFile = JSON.parse(file)
           resolve(rootFile.projects)
         }
+      }).catch((error) => {
+        reject(error)
       })
     })
   },
@@ -99,10 +101,12 @@ const projectService = {
     })
   },
   saveProject: function (rootFile) {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       rootFile.updated = moment({}).valueOf()
       userSession.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false }).then(() => {
         resolve(rootFile)
+      }).catch((error) => {
+        reject(error)
       })
     })
   }

@@ -3,19 +3,19 @@
   <div class="row">
     <side-menu class="col-3 mr-0 pr-0 pt-5"/>
     <div class="col-9 py-5 admin-app">
-      <title-bar class="container" v-on="$listeners"/>
+      <title-bar title="For Developers" class="container" v-on="$listeners"/>
       <div class="container" @click="$emit('toggle-off-navbar')">
-        <h1>Connect Your Own Application</h1>
-        <p>About your application</p>
+        <p class="text-40-300">Connect Your Own Application</p>
+        <p class="text2">About your application</p>
         <div class="row">
           <div class="col-md-4 col-sm-12">
             <div class="mb-2">
-              <div :style="bannerImage" v-if="files && files.length === 0" class="d-flex align-items-center flex-column m-2 p-2 bg-white border" style="width: 250px; height: 250px;">
+              <div :style="bannerImage" v-if="files && files.length === 0" class="d-flex align-items-center flex-column m-2 p-2 bg-white border" style="max-width: 250px; min-height: 250px;">
                 <div class="mt-5 my-auto text-center">
                   <app-logo-upload class="" :dims="dims" :contentModel="contentModel1" :showFiles="true" :mediaFiles="mediaFiles1" :limit="1" :sizeLimit="2000000" :mediaTypes="'image'" @updateMedia="setByEventLogo1($event)"/>
                 </div>
               </div>
-              <div v-else :style="bannerImage" class="d-flex align-items-end flex-column" style="width: 250px; height: 250px;">
+              <div v-else :style="bannerImage" class="d-flex align-items-end flex-column" style="max-width: 250px; min-height: 250px;">
                 <span class="bg-dark p-1 mt-auto" style="position: relative; bottom: 0;">
                   <a class="text-white" href="#" @click.prevent="files = []" v-if="files && files.length > 0">change</a>
                 </span>
@@ -25,21 +25,23 @@
           <div class="col-md-8 col-sm-12">
             <b-form>
               <div class="mb-4">
-                <div class="">Name</div>
+                <div class="text2">Name of Application</div>
                 <b-input
                   id="title"
                   v-model="project.title"
                   ></b-input>
               </div>
               <div class="mb-4">
-                <div class="">Description</div>
-                <b-input
+                <div class="text2">Short Description</div>
+                <b-textarea
                   ref="description"
                   v-model="project.description"
-                  ></b-input>
+                  rows="5"
+                  style="padding: 20px 20px;"
+                  ></b-textarea>
               </div>
               <div class="mb-4">
-                <div class="">Contract Id <a v-if="!project.txId" href="#" @click.prevent="useMyAddress()">(use my address)</a></div>
+                <div class="text2">Contract Id <a v-if="!project.txId" href="#" @click.prevent="useMyAddress()">(use my address)</a></div>
                 <b-input
                   id="projectId"
                   ref="projectId"
@@ -49,7 +51,7 @@
               </div>
               <div class="mb-2" v-if="valid">
                 <b-button variant="info" class="mt-3 mr-3 btn-lg" style="text-transform: capitalize; font-size: 14px;" @click.prevent="saveApplication()">Save Application</b-button>
-                <b-button variant="danger" class="mt-3 btn-lg" style="text-transform: capitalize; font-size: 14px;" to="/admin-app">Back</b-button>
+                <!-- <b-button variant="danger" class="mt-3 btn-lg" style="text-transform: capitalize; font-size: 14px;" to="/admin-app">Back</b-button> -->
               </div>
             </b-form>
           </div>
@@ -57,13 +59,6 @@
       </div>
     </div>
   </div>
-  <b-modal scrollable id="app-modal" title="Saving Application Details">
-    <div class="row">
-      <div class="col-12 my-1">
-        <p>{{result}}</p>
-      </div>
-    </div>
-  </b-modal>
 </div>
 </template>
 
@@ -88,7 +83,7 @@ export default {
       projectId: null,
       loaded: false,
       dims: { width: 250, height: 250 },
-      result: 'Saving to your decentralised storage - wo\'t be long.',
+      result: 'Saving data to your storage - back in a mo!',
       project: {
         logo: require('@/assets/img/Group 15980.svg'),
         projectId: null,
@@ -199,14 +194,18 @@ export default {
       if (this.files && this.files.length === 1) {
         imageData = utils.getBase64FromImageUrl(this.files[0].dataUrl)
       }
-      this.$bvModal.show('app-modal')
+      this.showWaitingModal = true
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
       this.project.owner = profile.username
-      this.$store.dispatch(APP_CONSTANTS.DISP_SAVE_PROJECT, { project: this.project, imageData: imageData }).then((project) => {
-        this.$router.push('/my-app/' + project.projectId)
-        this.$bvModal.hide('app-modal')
+      this.$root.$emit('bv::show::modal', 'waiting-modal')
+      this.$store.dispatch(APP_CONSTANTS.DISP_SAVE_PROJECT, { project: this.project, imageData: imageData }).then(() => {
+        // this.$router.push('/my-app/' + project.projectId)
+        this.$root.$emit('bv::hide::modal', 'waiting-modal')
+        this.$root.$emit('bv::show::modal', 'success-modal')
+        this.$store.commit('setModalMessage', 'Application is now connected to the Stacks blockchain.')
       }).catch((error) => {
         // this.$notify({ type: 'error', title: 'Transfers', text: 'Error message: ' + error })
+        this.$store.commit('setModalMessage', 'Error occurred processing transaction.')
         this.result = error
       })
     }
@@ -228,8 +227,8 @@ export default {
       }
       return {
         padding: '0 0 0 0',
-        height: '250px',
-        width: '250px',
+        'max-height': '250px',
+        'max-width': '250px',
         'background-repeat': 'no-repeat',
         'background-image': `url(${this.files[0].dataUrl})`,
         'background-position': 'center center',
@@ -243,5 +242,5 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss" >
 </style>

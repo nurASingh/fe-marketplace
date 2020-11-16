@@ -1,0 +1,76 @@
+<template>
+<div>
+  <div class="login-sidebar__item-group login-sidebar--border-bottom">
+    <div class="text2"><router-link to="/account"><b-icon class="mr-2" icon="person"></b-icon> Account</router-link></div>
+    <div class="text2 mb-2"><router-link to="/wallet"><b-icon class="mr-2" icon="wallet2"></b-icon> Wallet</router-link></div>
+    <div class="text-xlight mb-0 ml-4 d-flex justify-content-between">
+      <span>Balance</span>
+      <div><span>STX</span> <span class="text-info">{{ balance }}</span></div>
+    </div>
+    <div class="text-xlight ml-4 d-flex justify-content-between">
+      <span>Address</span>
+      <span>{{ stxAddress }}</span>
+    </div>
+  </div>
+  <div class="login-sidebar__item-group login-sidebar--border-bottom">
+    <div class="text2"><router-link to="#"><b-icon class="mr-2" icon="heart" /> Favourites</router-link></div>
+    <div class="text2"><router-link to="/my-assets"><b-icon class="mr-2" icon="collection" /> My Collectibles</router-link></div>
+    <div class="text2"><router-link to="#"><b-icon class="mr-2" icon="gift" /> My Offers</router-link></div>
+  </div>
+  <div class="login-sidebar__item-group login-sidebar--border-bottom">
+    <div class="text2 mb-2">
+      <router-link to="/admin-app"><b-icon class="mr-2" icon="gear" /> Developers</router-link>
+    </div>
+    <div class="text-xlight mb-2 ml-4">
+      <router-link to="/admin-app">Connect Application</router-link>
+    </div>
+    <div class="text-xlight mb-2 ml-4">
+      <span v-if="myProjects.length > 0"><router-link to="/my-apps">My Applications</router-link></span>
+    </div>
+    <div class="text-xlight mb-2 ml-4">
+      <span v-if="showSysLink"><router-link to="/my-app-settings">System Settings</router-link></span>
+    </div>
+  </div>
+</div>
+</template>
+
+<script>
+import { APP_CONSTANTS } from '@/app-constants'
+
+export default {
+  name: 'AccountLinks',
+  components: {
+  },
+  data () {
+    return {
+    }
+  },
+  methods: {
+  },
+  computed: {
+    balance () {
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      return (profile && profile.wallet) ? profile.wallet.balance : 0
+    },
+    stxAddress () {
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      if (profile.wallet && profile.wallet.keyInfo.address) {
+        return profile.wallet.keyInfo.address.substring(0, 5) + '...' + profile.wallet.keyInfo.address.substring(profile.wallet.keyInfo.address.length - 5)
+      }
+      return 'n/a'
+    },
+    myProjects () {
+      const projects = this.$store.getters[APP_CONSTANTS.KEY_MY_PROJECTS]
+      return projects
+    },
+    showSysLink () {
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      return (profile) ? profile.superAdmin : false
+    }
+
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+</style>

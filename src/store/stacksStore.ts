@@ -345,14 +345,14 @@ const stacksStore = {
         const headers = {
           'Content-Type': 'application/json'
         }
-        axios.post(STACKS_API + path, txoptions.postData, { headers: headers }).then(response => {
+        axios.post(MESH_API + '/v2/accounts', txoptions).then(response => {
           dispatch('fetchMacsWalletInfo')
           resolveReadOnly(resolve, reject, data.functionName, response)
-        }).catch(() => {
-          axios.post(MESH_API + '/v2/accounts', txoptions).then(response => {
+        }).catch((error) => {
+          axios.post(STACKS_API + path, txoptions.postData, { headers: headers }).then(response => {
             dispatch('fetchMacsWalletInfo')
             resolveReadOnly(resolve, reject, data.functionName, response)
-          }).catch((error) => {
+          }).catch(() => {
             resolveError(reject, error)
           })
         })
@@ -362,21 +362,33 @@ const stacksStore = {
       return new Promise((resolve, reject) => {
         const contractAddress = projectId.split('.')[0]
         const contractName = projectId.split('.')[1]
-        axios.get(STACKS_API + '/v2/contracts/interface/' + contractAddress + '/' + contractName + '?proof=0').then(response => {
+        const txoptions = {
+          path: '/v2/contracts/interface/' + contractAddress + '/' + contractName + '?proof=0',
+          httpMethod: 'GET'
+        }
+        axios.post(MESH_API + '/v2/accounts', txoptions).then(response => {
           store.commit('projectStore/addContractData', { projectId: projectId, interface: response.data })
           commit('setResult', { projectId: projectId, interface: response.data })
           resolve({ projectId: projectId, interface: response.data })
-        }).catch((error) => {
-          resolveError(reject, error)
+        }).catch(() => {
+          axios.get(STACKS_API + '/v2/contracts/interface/' + contractAddress + '/' + contractName + '?proof=0').then(response => {
+            store.commit('projectStore/addContractData', { projectId: projectId, interface: response.data })
+            commit('setResult', { projectId: projectId, interface: response.data })
+            resolve({ projectId: projectId, interface: response.data })
+          }).catch((error) => {
+            resolveError(reject, error)
+          })
         })
       })
     },
-    matchAssetIndex ({ commit }, result) {
+    matchAssetIndex ({ dispatch }, result) {
       return new Promise((resolve, reject) => {
-        // const bCV1 = `${serializeCV(bufferCV(result.assetHash))}`
+        // const functionArg = `0x${serializeCV(bufferCV(Buffer.from(result.assetHash)))}`
         const bCV = bufferCV(Buffer.from(result.assetHash))
         const sCV = serializeCV(bCV)
-        const functionArg = '0x' + sCV
+        const functionArg = `0x${sCV}`
+        // const functionArgs = [`0x${serializeCV(bufferCV(result.assetHash)).toString('hex')}`]
+
         const functionArgs = [functionArg]
         if (result.projectId.indexOf('.') === -1) return
         const config = {
@@ -384,7 +396,7 @@ const stacksStore = {
           functionName: 'get-index',
           functionArgs: functionArgs
         }
-        store.dispatch('stacksStore/callContractReadOnly', config).then((data) => {
+        dispatch('callContractReadOnly', config).then((data) => {
           result.index = data.value.data.index.value
           resolve(data)
         }).catch((error) => {

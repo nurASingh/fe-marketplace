@@ -2,73 +2,66 @@
 <div class="row">
   <side-menu class="col-3 mr-0 pr-0 pt-5"/>
   <div class="col-9 pt-5 admin-app" v-if="loaded">
-    <title-bar class="container" v-on="$listeners"/>
+    <title-bar title="For Developers" class="container" v-on="$listeners"/>
     <div class="container" @click="$emit('toggle-off-navbar')">
-      <h1>Deploy Contract</h1>
-      <p class="mb-4">Contract id: {{projectId}} <router-link class="mr-3" :to="'/connect-app/' + projectId"><b-icon icon="pencil"/></router-link></p>
-      <div class="row">
-        <div class="col-4">
-          <b-form>
-            <div class="">
-              <div class="">
-                <div class="mb-2 d-flex justify-content-between">
-                  <div>Token Name</div>
-                  <div><a href="#" class="mr-1" @click.prevent="useProject()">use project name</a></div>
-                </div>
-                <b-input v-model="params.token"></b-input>
-                <div class="mb-2 d-flex justify-content-between">
-                  <div>Contract Owner</div>
-                  <div><a href="#" class="mr-1" @click.prevent="useMyAddress()">mine</a> <a class="text-info" href="#" @click.prevent="useMacsAddress()">macs</a></div>
-                </div>
-                <b-input v-model="params.contractOwner"></b-input>
-                </div>
-                <div class="mb-2">
-                  <div class="mb-2">Mint Price (micro stacks)</div>
-                  <b-input v-model="params.mintPrice"></b-input>
-                </div>
-                <div class="mb-2">
-                  <div class="mb-2">Base URI</div>
-                  <b-input v-model="params.callBack"></b-input>
-                  <div class="mt-2 d-flex justify-content-end">
-                    <a href="#" class="wallet-use text-white"><span class="text-light">
-                      Provide your own callback or use our stateless open source search index
-                      to store and retrieve asset meta data.
-                      To add a record to our search index post an indexable model to:
-                      http://api.risidio.local/index/addRecord see our <a href="https://github.com/radicleart/ms-search" target="_blank">github repo</a> for more details.
-                      To retrieve a record (given the asset hash) get from
-                      https://api.risidio.com/index/v1/asset/:asset-hash</span></a>
-                  </div>
-                </div>
-                <p>Please check your contract carefully - click deploy when happy</p>
-                <div class="my-3">
-                  <b-button variant="info" class="btn-lg mr-3" style="text-transform: capitalize; font-size: 14px;" @click.prevent="deployContract()">Deploy Contract</b-button>
-                  <b-button variant="danger" class="btn-lg" style="text-transform: capitalize; font-size: 14px;" to="/admin-app">Back</b-button>
-                </div>
-              </div>
-          </b-form>
+      <b-form>
+        <p class="text-40-300">Deploy Contract</p>
+        <div class="mb-4 d-flex justify-content-between">
+          <div class="mb-2 contract-id">{{projectId}}</div>
+          <router-link class="mr-3 text-info" :to="'/connect-app/' + projectId"><b-icon icon="pencil"/></router-link>
         </div>
-          <div class="col-8">
-            <h6>Template</h6>
-            <standard-application-contract :contractSourceDisplay="contractSourceDisplay"/>
+        <div class="row">
+          <div class="col-md-6 col-xs-6">
+            <div class="mb-4">
+              <div class="d-flex justify-content-between">
+                <div class="text2">Token Name</div>
+                <div class="text2"><a href="#" class="mr-1" @click.prevent="useProject()">use project name</a></div>
+              </div>
+              <b-input v-model="params.token"></b-input>
+            </div>
+            <div class="mb-4">
+              <div class="d-flex justify-content-between">
+                <div class="text2">Contract Owner</div>
+                <div class="text2"><a href="#" class="mr-1" @click.prevent="useMyAddress()">mine</a> <a class="text-info" href="#" @click.prevent="useMacsAddress()">macs</a></div>
+              </div>
+              <b-input v-model="params.contractOwner"></b-input>
+            </div>
+          </div>
+          <div class="col-md-6 col-xs-6">
+            <div class="mb-4 text2">
+              <div class="">Mint Price (micro stacks)</div>
+              <b-input v-model="params.mintPrice"></b-input>
+            </div>
+            <div class="text2">
+              <div class="">Base URI</div>
+              <b-input v-model="params.callBack"></b-input>
+            </div>
           </div>
         </div>
+        <div class="row">
+          <div class="col-md-12">
+            <div class="mt-2 d-flex justify-content-end">
+              <a href="#" class="wallet-use text-white"><span class="text-light">
+                Note: Provide your own callback or use our stateless open source search index
+                to store and retrieve asset meta data.
+                To add a record to our search index post an indexable model to:
+                http://api.risidio.local/index/addRecord see our <a href="https://github.com/radicleart/ms-search" target="_blank">github repo</a> for more details.
+                To retrieve a record (given the asset hash) get from
+                https://api.risidio.com/index/v1/asset/:asset-hash</span></a>
+            </div>
+            <div class="my-3">
+              <b-button variant="info" class="mr-3" @click.prevent="deployContract()">Deploy Contract</b-button>
+              <b-icon variant="info" icon="caret-left-fill"/><router-link class="text-info" to="/admin-app">back</router-link>
+            </div>
+          </div>
+        </div>
+      </b-form>
+    </div>
+    <div class="col-12">
+      <h6>Template</h6>
+      <standard-application-contract :contractSourceDisplay="contractSourceDisplay"/>
     </div>
   </div>
-  <b-modal scrollable id="modal-1" title="Contract Deployed">
-    <div class="row" v-if="deployedProject">
-      <div class="col-12 my-1">
-        <div class="mb-3">Deployed {{deployedProject.projectId}}</div>
-        <div class="mb-3">Tx: {{deployedProject.txId}}</div>
-      </div>
-    </div>
-  </b-modal>
-  <b-modal id="modal-err" title="Contract Not Deployed">
-    <div class="row">
-      <div class="col-12 my-1">
-        <div class="mb-3">Error: {{result}}</div>
-      </div>
-    </div>
-  </b-modal>
 </div>
 </template>
 
@@ -90,7 +83,7 @@ export default {
     return {
       feeAmount: 3000,
       projectId: null,
-      project: null,
+      project: '',
       showContract: false,
       loaded: false,
       nonce: 0,
@@ -100,7 +93,7 @@ export default {
       result: null,
       params: {
         mintPrice: '100000',
-        token: null,
+        token: 'token_name',
         contractName: null,
         contractOwner: 'stacks-address',
         callBack: 'https://loopbomb.risidio.com/nft/v1/assets/'
@@ -254,12 +247,18 @@ export default {
       source = source.replaceAll('params.mintPrice', this.params.mintPrice)
       source = source.replaceAll('params.callBack', utils.stringToHex(this.params.callBack))
       projectPlus.codeBody = source
+      this.$store.commit('setModalMessage', 'Processing request..')
+      this.$root.$emit('bv::show::modal', 'waiting-modal')
+      this.showWaitingModal = true
       this.$store.dispatch('stacksStore/deployProjectContract', projectPlus).then((project) => {
         this.deployedProject = project
-        this.$bvModal.show('modal-1')
+        this.$root.$emit('bv::hide::modal', 'waiting-modal')
+        this.$root.$emit('bv::show::modal', 'success-modal')
+        this.$store.commit('setModalMessage', 'Contract has been deployed to Stacks blockchain.')
       }).catch((error) => {
         this.result = error
-        this.$bvModal.show('modal-err')
+        this.$store.commit('setModalMessage', 'There was an error deploying the contract.')
+        // this.showWaitingModal = false
       })
     }
   },

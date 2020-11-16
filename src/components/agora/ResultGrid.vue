@@ -1,6 +1,6 @@
 <template>
 <div class="row mb-4">
-  <div v-for="(result, index) in resultSet" :key="index" class="col-lg-4 col-sm-4 col-xs-6" >
+  <div v-for="(result, index) in resultSet" :key="index" class="col-md-3 col-sm-4 col-xs-6" >
     <result-item :result="result" />
   </div>
 </div>

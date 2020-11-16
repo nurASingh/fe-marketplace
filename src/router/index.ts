@@ -11,8 +11,13 @@ import AssetSaleData from '../views/my-assets/AssetSaleData.vue'
 import Homepage from '../views/Homepage.vue'
 import AssetDetails from '../views/AssetDetails.vue'
 import Marketplace from '../views/Marketplace.vue'
+import Community from '../views/Community.vue'
+import Collections from '../views/Collections.vue'
+import Creators from '../views/Creators.vue'
 import FourOFour from '../views/FourOFour.vue'
 
+import Account from '../views/Account.vue'
+import Wallet from '../views/Wallet.vue'
 import ApplicationAdministration from '../views/projects/ApplicationAdministration.vue'
 import MyApplications from '../views/projects/MyApplications.vue'
 import MyApplication from '../views/projects/MyApplication.vue'
@@ -31,9 +36,34 @@ const routes: Array<RouteConfig> = [
     components: { default: Homepage, header: MainNavbar, footer: MainFooter }
   },
   {
+    path: '/community',
+    name: 'community',
+    components: { default: Community, header: MainNavbar, footer: MainFooter }
+  },
+  {
+    path: '/collections',
+    name: 'collections',
+    components: { default: Collections, header: MainNavbar, footer: MainFooter }
+  },
+  {
+    path: '/creators',
+    name: 'creators',
+    components: { default: Creators, header: MainNavbar, footer: MainFooter }
+  },
+  {
     path: '/admin-app',
     name: 'admin-app',
     components: { default: ApplicationAdministration, header: MainNavbar, footer: MainFooter }
+  },
+  {
+    path: '/account',
+    name: 'account',
+    components: { default: Account, header: MainNavbar, footer: MainFooter }
+  },
+  {
+    path: '/wallet',
+    name: 'wallet',
+    components: { default: Wallet, header: MainNavbar, footer: MainFooter }
   },
   {
     path: '/my-app-settings',

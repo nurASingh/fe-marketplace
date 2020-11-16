@@ -1,7 +1,7 @@
 <template>
 <div>
   <div v-for="(project, index) in projects" :key="index">
-    <project-list-item v-on="$listeners" :contractId="project.contractId"/>
+    <project-list-item class="mb-2" v-on="$listeners" :contractId="project.contractId"/>
   </div>
 </div>
 </template>
@@ -23,10 +23,6 @@ export default {
   methods: {
   },
   computed: {
-    application () {
-      const application = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_PROJECT](this.contractId)
-      return (application && application.gaiaProject) ? application : null
-    },
     projects () {
       const appmap = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP]
       if (appmap) return appmap.apps

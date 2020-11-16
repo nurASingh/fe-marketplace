@@ -2,10 +2,10 @@
 <div class="row">
   <side-menu class="col-3 mr-0 pr-0 pt-5"/>
   <div class="col-9 pt-5 admin-app">
-    <title-bar class="container" v-on="$listeners"/>
+    <title-bar title="For Developers" class="container" v-on="$listeners"/>
     <div class="container" @click="$emit('toggle-off-navbar')">
-      <h2>Connect your Own application</h2>
-      <h2>How it works</h2>
+      <p class="text-40-300">Add Your Own Application</p>
+      <p class="text-12-700">How it works</p>
       <p class="w-75">
         Connect your digital collectibles application to
         provide a decentralised marketplace for your users.</p>

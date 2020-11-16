@@ -1,8 +1,9 @@
 <template>
-<div class="container" style="margin: 150px 0;">
-  <div class="row p-3">
-    <div class="col-12 p-3 border">
-      <h1>My Collectibles</h1>
+<div class="row">
+  <side-menu class="col-3 mr-0 pr-0 pt-5"/>
+  <div class="col-9 pt-5 admin-app">
+    <title-bar title="My Collectibles" class="container" v-on="$listeners"/>
+    <div class="container" @click="$emit('toggle-off-navbar')">
       <result-grid :resultSet="resultSet"/>
     </div>
   </div>
@@ -12,11 +13,15 @@
 <script>
 import { APP_CONSTANTS } from '@/app-constants'
 import ResultGrid from '@/components/agora/ResultGrid'
+import SideMenu from '@/components/admin/SideMenu'
+import TitleBar from '@/components/admin/TitleBar'
 
 export default {
   name: 'MyAssets',
   components: {
-    ResultGrid
+    ResultGrid,
+    SideMenu,
+    TitleBar
   },
   data () {
     return {
