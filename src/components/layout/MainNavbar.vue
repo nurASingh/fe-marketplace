@@ -35,8 +35,8 @@
         <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'all' })">All</a></b-dropdown-item>
         <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'popular' })">Popular</a></b-dropdown-item>
         <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'recent' })">Recently Added</a></b-dropdown-item>
-        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'on-auction' })">On Auction</a></b-dropdown-item>
-        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'on-sale' })">On Sale</a></b-dropdown-item>
+        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 'on-auction' })">On Auction</a></b-dropdown-item>
+        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 'buy-now' })">Buy Now</a></b-dropdown-item>
       </b-nav-item-dropdown>
       <b-nav-item><router-link class="text-white" to="/collections">Collections</router-link></b-nav-item>
       <b-nav-item><router-link class="text-white" to="/creators">Creators</router-link></b-nav-item>
@@ -51,16 +51,16 @@
             <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'all' })">All</a></b-dropdown-item>
             <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'popular' })">Popular</a></b-dropdown-item>
             <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'recent' })">Recently Added</a></b-dropdown-item>
-            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'on-auction' })">On Auction</a></b-dropdown-item>
-            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'on-sale' })">On Sale</a></b-dropdown-item>
+            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 'on-auction' })">On Auction</a></b-dropdown-item>
+            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 'buy-now' })">Buy Now</a></b-dropdown-item>
           </div>
           <div class="col-6">
             <b-dropdown-item>Type of Collectibles</b-dropdown-item>
             <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'all' })">All</a></b-dropdown-item>
             <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'popular' })">Popular</a></b-dropdown-item>
             <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'recent' })">Recently Added</a></b-dropdown-item>
-            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'on-auction' })">On Auction</a></b-dropdown-item>
-            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'on-sale' })">On Sale</a></b-dropdown-item>
+            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 'on-auction' })">On Auction</a></b-dropdown-item>
+            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 'buy-now' })">Buy Now</a></b-dropdown-item>
           </div>
         </div>
       </b-nav-item-dropdown>

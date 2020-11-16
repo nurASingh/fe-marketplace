@@ -50,7 +50,7 @@ export default {
   mounted () {
     this.loading = false
     this.assetHash = this.$route.params.assetHash
-    this.$store.dispatch('searchStore/findArtworkById', this.assetHash)
+    this.$store.dispatch('searchStore/findAssetById', this.assetHash)
   },
   methods: {
     projectName (projectId) {

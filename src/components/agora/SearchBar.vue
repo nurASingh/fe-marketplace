@@ -19,7 +19,7 @@
           <b-dropdown-item>Artist</b-dropdown-item>
           <b-dropdown-item>Collection</b-dropdown-item>
           <b-dropdown-item>On Auction</b-dropdown-item>
-          <b-dropdown-item>On Sale</b-dropdown-item>
+          <b-dropdown-item>Buy Now</b-dropdown-item>
         </div>
         -->
       </b-dropdown>

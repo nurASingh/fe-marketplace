@@ -84,6 +84,8 @@ export default {
         return 'No results: for ' + currentSearch.filter + ' <span class="text-info">' + currentSearch.category.displayName + '</span>'
       } else if (currentSearch.filter === 'application') {
         return 'No results: for ' + currentSearch.filter + ' <span class="text-info">' + currentSearch.contractId + '</span>'
+      } else if (currentSearch.filter === 'sale-type') {
+        return 'No results: for <span class="text-info">' + currentSearch.saleType + '</span>'
       } else {
         return 'No results: for <span class="text-info">' + currentSearch.filter + '</span>'
       }

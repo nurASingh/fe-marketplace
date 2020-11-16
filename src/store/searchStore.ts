@@ -90,9 +90,9 @@ const searchStore = {
         })
       })
     },
-    findArtworkById ({ commit }: any, assetHash: string) {
+    findAssetById ({ commit }: any, assetHash: string) {
       return new Promise((resolve, reject) => {
-        searchIndexService.findArtworkById(assetHash).then((resultSet) => {
+        searchIndexService.findAssetById(assetHash).then((resultSet) => {
           connectSearchResultToAssets(commit, resultSet)
           commit('addSearchResult', resultSet[0])
           resolve(resultSet[0])
@@ -126,7 +126,7 @@ const searchStore = {
       return new Promise((resolve, reject) => {
         if (query && query.length > 0) {
           query += '*'
-          searchIndexService.findArtworkByTitleOrDescriptionOrCategoryOrKeyword(query).then((resultSet) => {
+          searchIndexService.findByTitleOrDescriptionOrCategoryOrKeyword(query).then((resultSet) => {
             connectSearchResultToAssets(commit, resultSet)
             commit('setSearchResults', resultSet)
             resolve(resultSet)
@@ -148,6 +148,16 @@ const searchStore = {
     findByProjectId ({ commit }: any, projectId: string) {
       return new Promise((resolve, reject) => {
         searchIndexService.findByProjectId(projectId).then((resultSet) => {
+          commit('setSearchResults', resultSet)
+          resolve(resultSet)
+        }).catch((error) => {
+          reject(new Error('Unable index record: ' + error))
+        })
+      })
+    },
+    findBySaleType ({ commit }: any, saleType: string) {
+      return new Promise((resolve, reject) => {
+        searchIndexService.findBySaleType(saleType).then((resultSet) => {
           commit('setSearchResults', resultSet)
           resolve(resultSet)
         }).catch((error) => {

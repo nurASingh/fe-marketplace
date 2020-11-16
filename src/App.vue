@@ -81,6 +81,10 @@ export default {
         this.$store.dispatch('searchStore/findByObject', data.category)
       } else if (data.filter === 'text-search') {
         this.$store.dispatch('searchStore/findBySearchTerm', data.query)
+      } else if (data.filter === 'sale-type') {
+        this.$store.dispatch('searchStore/findBySaleType', data.saleType)
+      } else {
+        this.$store.dispatch('searchStore/findBySearchTerm')
       }
       this.$store.commit(APP_CONSTANTS.SET_CURRENT_SEARCH, data)
       if (this.$route.name !== 'marketplace') {
