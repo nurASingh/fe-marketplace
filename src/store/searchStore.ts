@@ -21,11 +21,15 @@ const searchStore = {
   namespaced: true,
   state: {
     searchResults: null,
-    projects: null
+    projects: null,
+    currentSearch: null
   },
   getters: {
     getSearchResults: (state: any) => {
       return state.searchResults
+    },
+    getCurrentSearch: (state: any) => {
+      return state.currentSearch
     },
     getAsset: (state: any) => (assetHash: string) => {
       if (assetHash && state.searchResults && state.searchResults.length > 0) {
@@ -41,6 +45,9 @@ const searchStore = {
   mutations: {
     setSearchResults: (state: any, searchResults: any) => {
       state.searchResults = searchResults
+    },
+    setCurrentSearch: (state: any, currentSearch: any) => {
+      state.currentSearch = currentSearch
     },
     addSearchResult: (state: any, result: any) => {
       if (!state.searchResults) {
@@ -141,6 +148,16 @@ const searchStore = {
     findByProjectId ({ commit }: any, projectId: string) {
       return new Promise((resolve, reject) => {
         searchIndexService.findByProjectId(projectId).then((resultSet) => {
+          commit('setSearchResults', resultSet)
+          resolve(resultSet)
+        }).catch((error) => {
+          reject(new Error('Unable index record: ' + error))
+        })
+      })
+    },
+    findByObject ({ commit }: any, category: any) {
+      return new Promise((resolve, reject) => {
+        searchIndexService.findByObject(category.name).then((resultSet) => {
           commit('setSearchResults', resultSet)
           resolve(resultSet)
         }).catch((error) => {

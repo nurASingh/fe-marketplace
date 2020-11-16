@@ -3,7 +3,7 @@
   <div class="">
     <div class="w-75 p-2">
       <div class="p-5">
-        <p class="text-40-300">Community @ Risidio</p>
+        <p class="text-40-300">Auctioneers @ Risidio</p>
       </div>
     </div>
   </div>

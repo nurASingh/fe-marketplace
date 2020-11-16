@@ -38,8 +38,8 @@
         <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'on-auction' })">On Auction</a></b-dropdown-item>
         <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'on-sale' })">On Sale</a></b-dropdown-item>
       </b-nav-item-dropdown>
-      <b-nav-item>Collections</b-nav-item>
-      <b-nav-item>Artists</b-nav-item>
+      <b-nav-item><router-link class="text-white" to="/collections">Collections</router-link></b-nav-item>
+      <b-nav-item><router-link class="text-white" to="/creators">Creators</router-link></b-nav-item>
       <b-nav-item-dropdown caret class="dropdown-menu-wide navbar__applications-item">
         <!-- Using 'button-content' slot -->
         <template v-slot:button-content>

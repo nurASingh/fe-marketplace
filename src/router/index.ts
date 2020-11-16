@@ -12,6 +12,8 @@ import Homepage from '../views/Homepage.vue'
 import AssetDetails from '../views/AssetDetails.vue'
 import Marketplace from '../views/Marketplace.vue'
 import Community from '../views/Community.vue'
+import Collections from '../views/Collections.vue'
+import Creators from '../views/Creators.vue'
 import FourOFour from '../views/FourOFour.vue'
 
 import Account from '../views/Account.vue'
@@ -37,6 +39,16 @@ const routes: Array<RouteConfig> = [
     path: '/community',
     name: 'community',
     components: { default: Community, header: MainNavbar, footer: MainFooter }
+  },
+  {
+    path: '/collections',
+    name: 'collections',
+    components: { default: Collections, header: MainNavbar, footer: MainFooter }
+  },
+  {
+    path: '/creators',
+    name: 'creators',
+    components: { default: Creators, header: MainNavbar, footer: MainFooter }
   },
   {
     path: '/admin-app',

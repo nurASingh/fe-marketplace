@@ -78,10 +78,11 @@ export default {
       if (data.filter === 'application') {
         this.$store.dispatch('searchStore/findByProjectId', data.contractId)
       } else if (data.filter === 'category') {
-        this.$store.dispatch('searchStore/findByCategory', data.category)
+        this.$store.dispatch('searchStore/findByObject', data.category)
       } else if (data.filter === 'text-search') {
         this.$store.dispatch('searchStore/findBySearchTerm', data.query)
       }
+      this.$store.commit(APP_CONSTANTS.SET_CURRENT_SEARCH, data)
       if (this.$route.name !== 'marketplace') {
         this.$router.push('/marketplace?filter=' + data.filter)
       }

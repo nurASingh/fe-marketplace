@@ -7,7 +7,8 @@
     <div class="w-75 p-2">
       <marketplace-filter-bar v-on="$listeners"/>
       <div class="p-5">
-        <result-grid :resultSet="resultSet" />
+        <result-grid :resultSet="resultSet" v-if="resultSet && resultSet.length > 0"/>
+        <div v-else v-html="currentSearch">No results: {{currentSearch}}</div>
       </div>
     </div>
   </div>
@@ -75,6 +76,17 @@ export default {
   computed: {
     resultSet () {
       return this.$store.getters[APP_CONSTANTS.KEY_SEARCH_RESULTS]
+    },
+    currentSearch () {
+      const currentSearch = this.$store.getters[APP_CONSTANTS.KEY_CURRENT_SEARCH]
+      if (!currentSearch) return ''
+      if (currentSearch.filter === 'category') {
+        return 'No results: for ' + currentSearch.filter + ' <span class="text-info">' + currentSearch.category.displayName + '</span>'
+      } else if (currentSearch.filter === 'application') {
+        return 'No results: for ' + currentSearch.filter + ' <span class="text-info">' + currentSearch.contractId + '</span>'
+      } else {
+        return 'No results: for <span class="text-info">' + currentSearch.filter + '</span>'
+      }
     }
   }
 }
