@@ -136,11 +136,11 @@
     <div class="container">
       <h2 class="text-white text-center">Categories</h2>
       <div class="row justify-content-center">
-        <div class="homepage__categories-sn--category"><img src="" alt=""><div class="homepage__categories-sn--text">Digital Art</div></div>
-        <div class="homepage__categories-sn--category"><img src="" alt=""><div class="homepage__categories-sn--text">Trading Cards</div></div>
-        <div class="homepage__categories-sn--category"><img src="" alt=""><div class="homepage__categories-sn--text">Certificates</div></div>
-        <div class="homepage__categories-sn--category"><img src="" alt=""><div class="homepage__categories-sn--text">Digital Property</div></div>
-        <div class="homepage__categories-sn--category"><img src="" alt=""><div class="homepage__categories-sn--text">Gaming</div></div>
+        <div class="homepage__categories-sn--category"><img :src="content.categories[0].category_icon.url" :alt="content.categories[0].category_icon.alt"><div class="homepage__categories-sn--text">Digital Art</div></div>
+        <div class="homepage__categories-sn--category"><img :src="content.categories[1].category_icon.url" :alt="content.categories[1].category_icon.alt"><div class="homepage__categories-sn--text">Trading Cards</div></div>
+        <div class="homepage__categories-sn--category"><img :src="content.categories[2].category_icon.url" :alt="content.categories[2].category_icon.alt"><div class="homepage__categories-sn--text">Certificates</div></div>
+        <div class="homepage__categories-sn--category"><img :src="content.categories[3].category_icon.url" :alt="content.categories[3].category_icon.alt"><div class="homepage__categories-sn--text">Digital Property</div></div>
+        <div class="homepage__categories-sn--category"><img :src="content.categories[4].category_icon.url" :alt="content.categories[4].category_icon.alt"><div class="homepage__categories-sn--text">Gaming</div></div>
       </div>
     </div>
   </section>
@@ -662,6 +662,9 @@ export default {
   /* MARKETPLACE SECTION */
   & .homepage__marketplace-section p {
     width: 100%;
+  }
+  & .homepage__marketplace-section button {
+    width: 122px;
   }
 
   /* BUTTONS ON 1ST SECTION AND TRADING BANNER */

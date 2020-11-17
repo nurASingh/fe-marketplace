@@ -211,6 +211,9 @@ nav.navbar {
 }
 
 /* NAV ITEMS STYLE */
+nav a {
+  color: #000;
+}
 nav ul {
   font-size: 12px;
 }
@@ -323,7 +326,6 @@ nav .navbar-toggler {
 
   /* MOBILE NAVBAR LOGIN */
   nav .login-button {
-    width: 100%;
     margin-left: 0px;
     font-size: 14px;
   }
@@ -345,7 +347,6 @@ nav .navbar-toggler {
 
   /* MOBILE COLLAPSE MENU */
   .navbar__mobile-design {
-    background-color: #2C0D99;
     position: fixed !important;
     right: 0;
     left: 0;
@@ -364,7 +365,6 @@ nav .navbar-toggler {
     -ms-transition: height 0.5s ease-out;
     -o-transition: height 0.5s ease-out;
     transition: height 0.5s ease-out;
-    margin-top: 128px;
   }
 
   .navbar-collapse.collapse {
@@ -386,7 +386,7 @@ nav .navbar-toggler {
   }
 
   #nav-collapse .navbar-nav:first-child {
-    margin-top: 115px;
+    margin-top: 130px;
   }
 
   #nav-collapse .navbar-nav .nav-item {
@@ -400,27 +400,35 @@ nav .navbar-toggler {
   }
 
   /* MOBILE DROPDOWN MENU */
-  #nav-collapse .navbar-nav .dropdown-menu {
-    padding: 0;
-    margin: 0;
-    font-size: 14px;
-    background: transparent;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-  }
+  #nav-collapse {
 
-  #nav-collapse .navbar-nav .dropdown-menu .dropdown-item {
-    color: #fff !important;
-    margin-left: 20px;
-  }
+    & .navbar-nav .dropdown-menu {
+      padding: 0;
+      margin: 0;
+      font-size: 14px;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+    }
 
-  #nav-collapse .navbar-nav .dropdown-menu .dropdown-item:first-child {
-    margin-top: 20px;
-  }
+    & .navbar-nav .dropdown-menu .dropdown-item {
+      color: #fff;
+      margin-left: 20px;
+    }
 
-  #nav-collapse .navbar-nav .dropdown-menu .dropdown-item:hover, .navbar-nav .dropdown-menu .dropdown-item:focus  {
-    background-color: transparent;
+    & .navbar-nav .dropdown-menu .dropdown-item a {
+      color: #fff;
+    }
+
+    & .navbar-nav .dropdown-menu .dropdown-item:first-child {
+      margin-top: 20px;
+    }
+
+    & .navbar-nav .dropdown-menu .dropdown-item:hover, .navbar-nav .dropdown-menu .dropdown-item:focus  {
+      background-color: transparent;
+    }
+
   }
 
 }
@@ -435,6 +443,13 @@ nav .navbar-toggler {
 
   #nav-collapse .navbar-nav {
     padding: 0 20px;
+  }
+}
+
+@media only screen and (max-width: 359px) {
+
+  nav .navbar-brand img {
+    width: 140px;
   }
 }
 

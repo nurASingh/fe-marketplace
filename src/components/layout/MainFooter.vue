@@ -135,6 +135,10 @@ footer .container {
   padding-bottom: 50px;
 }
 
+footer a {
+  color: #fff;
+}
+
 /* FOOTER LOGO COLUMN */
 .footer-logo {
   width: auto;
