@@ -155,7 +155,7 @@ const searchStore = {
         })
       })
     },
-    findBySaleType ({ commit }: any, saleType: string) {
+    findBySaleType ({ commit }: any, saleType: number) {
       return new Promise((resolve, reject) => {
         searchIndexService.findBySaleType(saleType).then((resultSet) => {
           commit('setSearchResults', resultSet)

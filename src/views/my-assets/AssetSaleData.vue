@@ -34,7 +34,7 @@
         <div class="row" style="position: absolute; bottom: -30px; right: 50px;">
           <div class="col-12">
             <div class="mt-auto">
-              <b-button style="min-width: 141px; position: relative: top: -20px;" size="sm" class="mb-2 mr-3" variant="info" @click="submitSell">Submit</b-button>
+              <b-button style="min-width: 141px; position: relative: top: -20px;" size="lg" class="mb-3" variant="info" @click="submitSell">Submit</b-button>
             </div>
           </div>
         </div>

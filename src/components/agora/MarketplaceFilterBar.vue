@@ -12,8 +12,8 @@
       <div class="dropdown__items">
         <b-dropdown-item></b-dropdown-item>
         <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'recent' })">Recently Added</a></b-dropdown-item>
-        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 'on-auction' })">On Auction</a></b-dropdown-item>
-        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 'buy-now' })">Buy Now</a></b-dropdown-item>
+        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 2 })">On Auction</a></b-dropdown-item>
+        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 1 })">Buy Now</a></b-dropdown-item>
       </div>
     </b-dropdown>
   </div>
@@ -30,8 +30,8 @@
         <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'application' })">Application</a></b-dropdown-item>
         <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'artist' })">Artist</a></b-dropdown-item>
         <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'collection' })">Collection</a></b-dropdown-item>
-        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 'on-auction' })">On Auction</a></b-dropdown-item>
-        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 'buy-now' })">Buy Now</a></b-dropdown-item>
+        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 2 })">On Auction</a></b-dropdown-item>
+        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 1 })">Buy Now</a></b-dropdown-item>
       </div>
     </b-dropdown>
   </div>

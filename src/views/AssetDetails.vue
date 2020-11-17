@@ -62,7 +62,16 @@ export default {
     },
     saleType () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      return (asset.saleData) ? asset.saleData.saleType.replace('-', ' ') : 'pre-sale'
+      if (asset.saleData) {
+        if (asset.saleData.saleType === 0) {
+          return 'Pre Sale'
+        } else if (asset.saleData.saleType === 1) {
+          return 'Buy Now'
+        } else if (asset.saleData.saleType === 2) {
+          return 'On Auction'
+        }
+      }
+      return 'pre-sale'
     },
     username () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)

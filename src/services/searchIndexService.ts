@@ -106,9 +106,9 @@ const searchIndexService = {
       })
     })
   },
-  findBySaleType: function (owner: string) {
+  findBySaleType: function (saleType: number) {
     return new Promise(function (resolve, reject) {
-      axios.get(SEARCH_API_PATH + '/findBySaleType' + '?q=' + owner).then((result) => {
+      axios.get(SEARCH_API_PATH + '/findBySaleType/' + saleType).then((result) => {
         resolve(result.data.details)
       }).catch((error) => {
         reject(new Error('Unable index record: ' + error))
