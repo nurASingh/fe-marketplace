@@ -59,11 +59,6 @@ export default {
     this.loading = false
   },
   methods: {
-    deleteApp (project) {
-      this.$store.dispatch('projectStore/deleteProject', project.projectId).then((results) => {
-        this.results = results
-      })
-    },
     deployed (project) {
       return project.info || project.interface
     },

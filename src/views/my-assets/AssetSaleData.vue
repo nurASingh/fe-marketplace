@@ -71,7 +71,7 @@ export default {
   mounted () {
     this.loading = false
     this.assetHash = this.$route.params.assetHash
-    this.$store.dispatch('searchStore/findAssetById', this.assetHash)
+    this.$store.dispatch('searchStore/findAssetByHash', this.assetHash)
   },
   methods: {
     submitSell () {

@@ -1,6 +1,6 @@
 import dataUriToBuffer from 'data-uri-to-buffer'
 import {
-  ClarityValue
+  hexToCV
 } from '@stacks/transactions'
 
 const utils = {
@@ -22,13 +22,6 @@ const utils = {
       img.src = url
     })
   },
-  getClarityValueArray: function (functionArgs) {
-    const clarityValueArgs: ClarityValue[] = new Array(functionArgs.length)
-    for (let i = 0; i < functionArgs.length; i++) {
-      clarityValueArgs[i] = functionArgs[i]
-    }
-    return clarityValueArgs
-  },
   getBase64FromImageUrl: function (dataURL) {
     const imageBuffer = dataUriToBuffer(dataURL)
     // const rawImage = dataURL.replace(/^data:image\/(png|jpg);base64,/, '')
@@ -42,26 +35,33 @@ const utils = {
     }
     return '0x' + arr.join('')
   },
-  toObjectApplication: function (o) {
+  fromHex: function (method, rawResponse) {
     const td = new TextDecoder('utf-8')
-    return {
-      owner: td.decode(o.value.data.owner.buffer),
-      contractId: td.decode(o.value.data['app-contract-id'].buffer),
-      status: o.value.data.status.value.toNumber(),
-      storageModel: o.value.data['storage-model'].value.toNumber()
+    const res = hexToCV(rawResponse)
+    if (method === 'get-mint-price') {
+      return res.value.value.toNumber()
+    } else if (method === 'get-index') {
+      return res.value.value.toNumber()
+    } else if (method === 'get-mint-counter') {
+      return res.value.value.toNumber()
+    } else if (method === 'get-app-counter') {
+      return res.value.value.toNumber()
+    } else if (method === 'get-app') {
+      return {
+        owner: td.decode(res.value.data.owner.buffer),
+        contractId: td.decode(res.value.data['app-contract-id'].buffer),
+        status: res.value.data.status.value.toNumber(),
+        storageModel: res.value.data['storage-model'].value.toNumber()
+      }
+    } else if (method === 'get-token-info') {
+      return {
+        owner: td.decode(res.value.data.owner.buffer),
+        assetHash: res.value.data['asset-hash'].buffer.toString('hex'),
+        bh: res.value.data.date.value
+      }
+    } else if (method === 'get-base-token-uri') {
+      return td.decode(res.buffer)
     }
-  },
-  toObjectAsset: function (o) {
-    const td = new TextDecoder('utf-8')
-    return {
-      owner: td.decode(o.value.data.owner.buffer),
-      assetHash: o.value.data['asset-hash'].buffer.toString('hex'),
-      bh: o.value.data.date.value
-    }
-  },
-  toObjectString: function (o) {
-    const td = new TextDecoder('utf-8')
-    return td.decode(o.buffer)
   }
 }
 export default utils

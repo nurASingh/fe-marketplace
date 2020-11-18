@@ -26,12 +26,12 @@
                     <div class="mb-2 text1" v-if="appmapProject">
                       Application is registered with the marketplace (#{{appmapProject.appCounter}})
                     </div>
-                    <div v-if="showContractData">
-                      <pre class="source-code">{{project.codeBody}}</pre>
-                    </div>
                     <div class="mt-4 mb-2 text1" v-else>
                       <b-button @click.prevent="connectApp('risidio')" variant="info">Connect App to Marketplace</b-button>
                       <!-- <a href="#" class="" @click.prevent="connectApp('stacks')">stacks</a> -->
+                    </div>
+                    <div v-if="showContractData">
+                      <pre class="source-code">{{project.codeBody}}</pre>
                     </div>
                   </div>
                   <div class="mt-4 mb-2 text1" v-else>
@@ -107,16 +107,14 @@ export default {
     **/
   },
   methods: {
+    deleteApp (project) {
+      this.$store.dispatch('projectStore/deleteProject', project.projectId).then(() => {
+        this.$router.push('/my-apps')
+      })
+    },
     connectApp: function (provider) {
       const appmapContractId = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_CONTRACT_ID]
       const owner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].username
-      // const cvOwner = bufferCVFromString(owner) // (Buffer.from(owner, 'hex'))
-      // const cvProjId = bufferCVFromString(this.projectId) // bufferCV(Buffer.from(utils.stringToHex(this.projectId)))
-      // const storage = intCV(0x00)
-
-      // const functionArgs = [cvOwner, cvProjId] // , cvProjId] // , intCV(0x00)]
-      // const functionArgs = ClarityValue[bufferCV(Buffer.from('somestring'))]
-      // const functionArgs = utils.getClarityValueArray([cvOwner, cvProjId, intCV(0x00)]) // [cvOwner, cvProjId, intCV(0x00)]
       const functionArgs = [bufferCV(Buffer.from(owner)), bufferCV(Buffer.from(this.projectId)), intCV(0)]
       const data = {
         contractAddress: appmapContractId.split('.')[0],

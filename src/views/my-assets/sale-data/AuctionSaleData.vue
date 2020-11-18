@@ -58,7 +58,7 @@ export default {
   mounted () {
     this.loading = false
     this.assetHash = this.$route.params.assetHash
-    const asset = this.$store.dispatch('searchStore/findAssetById', this.assetHash)
+    const asset = this.$store.dispatch('searchStore/findAssetByHash', this.assetHash)
     if (asset.saleData && asset.saleData.biddingEndTime) {
       this.biddingEndTime = moment(asset.saleData.biddingEndTime).format()
     } else {

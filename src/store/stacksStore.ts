@@ -1,11 +1,11 @@
 import store from '@/store'
+import utils from '@/services/utils'
 import { APP_CONSTANTS } from '@/app-constants'
 import {
   makeContractCall,
   broadcastTransaction,
   makeContractDeploy,
   callReadOnlyFunction,
-  deserializeCV,
   bufferCV, serializeCV
 } from '@stacks/transactions'
 import { openContractCall } from '@stacks/connect'
@@ -14,7 +14,6 @@ import {
 } from '@stacks/network'
 import axios from 'axios'
 import BigNum from 'bn.js'
-import { BufferReader } from '@blockstack/stacks-transactions/lib/bufferReader'
 
 let STX_CONTRACT_ADDRESS = process.env.VUE_APP_STACKS_CONTRACT_ADDRESS
 let STX_CONTRACT_NAME = process.env.VUE_APP_STACKS_CONTRACT_NAME
@@ -26,19 +25,6 @@ const MESH_API = process.env.VUE_APP_API_MESH
 const network = new StacksTestnet()
 network.coreApiUrl = STACKS_API
 
-/**
-const getStacksAccount = function (appPrivateKey) {
-  const privateKey = createStacksPrivateKey(appPrivateKey)
-  const publicKey = getPublicKey(privateKey)
-  const address = addressFromPublicKeys(
-    AddressVersion.TestnetSingleSig,
-    AddressHashMode.SerializeP2PKH,
-    1,
-    [publicKey]
-  )
-  return { privateKey, address }
-}
-**/
 const setAddresses = function () {
   const config = store.getters[APP_CONSTANTS.KEY_CONFIGURATION]
   if (config && config.addresses) {
@@ -46,42 +32,6 @@ const setAddresses = function () {
     STX_CONTRACT_NAME = config.addresses.stxContractName
   }
 }
-
-function unwrapStrings (tuple, type) {
-  const names = tuple.match(/0x\w+/g) || []
-  if (!type) {
-    return Buffer.from('0x' + names[0].substring(2), 'hex').toString()
-  } else {
-    console.log(tuple)
-    const part1 = tuple.substring(4)
-    const resultData = parseInt('0x' + part1)
-    // const resultData = Result.unwrapInt(names[0])
-    // return Buffer.from(names[0].substring(2), 'hex')
-    // const resultData = deserializeCV(Buffer.from(names[0].substring(2), 'hex'))
-    // const resultData = resultValue as UIntCV
-    return resultData
-    // name = new Uint8Array(Buffer.from(names[0].substring(2), 'hex'))
-    // const buffer1 = Buffer.from(name)
-    // let val = buffer1.readUInt32LE(0)
-    // if (val) val++
-    // name = Buffer.from(names[0].substring(2), 'hex')
-    // const length = name.length
-    // const buffer = Buffer.from(name)
-    // const result = buffer.readUIntBE(0, length)
-    // return result
-    // name = new Float64Array(name)
-  }
-  // return name
-}
-/**
-function DoubleToIEEE(f) {
-  var buf = new ArrayBuffer(8);
-  var float = new Float64Array(buf);
-  var uint = new Uint32Array(buf);
-  float[0] = f;
-  return uint;
-}
-**/
 
 const getAmountStx = function (amountMicroStx) {
   try {
@@ -131,27 +81,6 @@ const resolveError = function (reject, error) {
     reject(error.message)
   } else {
     reject(error)
-  }
-}
-const resolveReadOnly = function (resolve, reject, functionName, response) {
-  if (!response.data.okay) {
-    reject(new Error(response.data.cause))
-  } else {
-    const resp = Buffer.from(response.data.result.slice(2), 'hex')
-    const br = new BufferReader(resp)
-    const debr = deserializeCV(br)
-    if (debr) {
-      resolve(debr)
-    } else {
-      if (functionName === 'get-mint-price') {
-        const res = getAmountStx(parseInt(response.data.result, 16))
-        resolve(res)
-      } else {
-        console.log(response)
-        const res = unwrapStrings(response.data.result, 'uint')
-        resolve(res)
-      }
-    }
   }
 }
 const stacksStore = {
@@ -347,11 +276,13 @@ const stacksStore = {
         }
         axios.post(MESH_API + '/v2/accounts', txoptions).then(response => {
           dispatch('fetchMacsWalletInfo')
-          resolveReadOnly(resolve, reject, data.functionName, response)
+          data.result = utils.fromHex(data.functionName, response.data.result)
+          resolve(data.result)
         }).catch((error) => {
           axios.post(STACKS_API + path, txoptions.postData, { headers: headers }).then(response => {
             dispatch('fetchMacsWalletInfo')
-            resolveReadOnly(resolve, reject, data.functionName, response)
+            data.result = utils.fromHex(data.functionName, response.data.result)
+            resolve(data.result)
           }).catch(() => {
             resolveError(reject, error)
           })
@@ -426,7 +357,7 @@ const stacksStore = {
           codeBody: project.codeBody,
           senderKey: mac.keyInfo.privateKey,
           nonce: new BigNum(sender.nonce++), // watch for nonce increments if this works - may need to restart mocknet!
-          fee: new BigNum(4000), // set a tx fee if you don't want the builder to estimate
+          fee: new BigNum(4300), // set a tx fee if you don't want the builder to estimate
           network
         }
         makeContractDeploy(txOptions).then((transaction) => {

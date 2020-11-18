@@ -23,12 +23,12 @@
         <p class="text-40-300">{{asset.title}}</p>
         <p class="text-11-500 bg-secondary text-white text-center pt-3" style="text-transform: capitalize; width: 100px; height: 42px;">{{saleType()}}</p>
       </div>
-      <p class="text1">From <strong>{{projectName(asset.projectId)}}</strong></p>
-      <!--
-      <div v-if="isOwner">
-        <h3>Owner: {{asset.artist}}</h3>
+      <div class="mb-2 d-flex justify-content-between">
+        <p class="text1">From <strong>{{projectName(asset.projectId)}}</strong></p>
+        <div v-if="isOwner">
+          <p class="text1"><router-link :to="'/my-assets/' + asset.assetHash">manage your asset</router-link></p>
+        </div>
       </div>
-      -->
     </div>
   </div>
 </div>
@@ -49,7 +49,7 @@ export default {
   mounted () {
     this.loading = false
     this.assetHash = this.$route.params.assetHash
-    this.$store.dispatch('searchStore/findAssetById', this.assetHash)
+    this.$store.dispatch('searchStore/findAssetByHash', this.assetHash)
   },
   methods: {
     projectName (projectId) {

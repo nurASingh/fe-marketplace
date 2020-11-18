@@ -142,7 +142,7 @@ const searchIndexService = {
       })
     })
   },
-  findAssetById: function (assetHash: string) {
+  findAssetByHash: function (assetHash: string) {
     return new Promise(function (resolve, reject) {
       axios.get(SEARCH_API_PATH + '/v1/asset/' + assetHash).then((result) => {
         resolve(result.data.details)

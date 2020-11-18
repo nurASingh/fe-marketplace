@@ -9,13 +9,13 @@
       <div class="col-6">
         <div class="text-white d-flex flex-column align-items-start" :style="calcHeight">
           <div>
-            <p class="text1">Collectible name</p>
+            <p class="text1 text-white">Collectible name</p>
             <p class="text2">{{asset.title}} / {{nftIndex}}</p>
-            <p class="text1">Created with</p>
+            <p class="text1 text-white">Created with</p>
             <p class="text2">{{projectName(asset.projectId)}}</p>
-            <p class="text1">Created on</p>
+            <p class="text1 text-white">Created on</p>
             <p class="text2">{{created(asset.created)}}</p>
-            <p class="text1" v-if="biddingEndsDisplay">Bidding Ends</p>
+            <p class="text1 text-white" v-if="biddingEndsDisplay">Bidding Ends</p>
             <p class="text2">{{biddingEndsDisplay()}}</p>
 
           </div>
@@ -50,7 +50,7 @@ export default {
   mounted () {
     this.loading = false
     this.assetHash = this.$route.params.assetHash
-    this.$store.dispatch('searchStore/findAssetById', this.assetHash)
+    this.$store.dispatch('searchStore/findAssetByHash', this.assetHash)
   },
   methods: {
     projectName (projectId) {

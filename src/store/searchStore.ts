@@ -90,9 +90,9 @@ const searchStore = {
         })
       })
     },
-    findAssetById ({ commit }: any, assetHash: string) {
+    findAssetByHash ({ commit }: any, assetHash: string) {
       return new Promise((resolve, reject) => {
-        searchIndexService.findAssetById(assetHash).then((resultSet) => {
+        searchIndexService.findAssetByHash(assetHash).then((resultSet) => {
           connectSearchResultToAssets(commit, resultSet)
           commit('addSearchResult', resultSet[0])
           resolve(resultSet[0])
