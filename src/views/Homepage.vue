@@ -310,55 +310,7 @@ export default {
     max-width: 800px;
   }
 
-  /* MAIN SEARCH BAR -- INPUT */
-  & .input-group {
-    background: #FFFFFF;
-    border: 1px solid #F5F5F5;
-    border-radius: 36px;
-    align-items: center;
-    height: 57px;
-    box-shadow: 0px 3px 6px #00000029;
-  }
-  & .input-group input {
-    font-size: 11px;
-    font-weight: 300;
-    color: #000;
-    height: 26px;
-    padding: 0.25rem 25px;
-    border-left: 1px solid #E5E5E5;
-    border-top: none;
-    border-right: none;
-    border-bottom: none;
-    border-radius: 0 !important;
-    z-index: 2;
-  }
-  & .input-group input:focus {
-    box-shadow: none;
-  }
-
-  /* MAIN SEARCH BAR -- BTN */
-  & .main-search .btn {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    font-size: 12px;
-    font-weight: 600;
-    color: #000;
-    text-transform: none;
-    background: transparent;
-    border: none;
-    padding-left: 30px;
-    padding-right: 30px;
-    z-index: 2;
-  }
-  & .main-search .btn:focus {
-    box-shadow: none;
-  }
-  & .main-search .btn.dropdown-toggle::after {
-    font-size: 16px;
-  }
-
-  /* MAIN SEARCH BAR -- DROPDOWN MENU */
+  /* MAIN SEARCH BAR -- DROPDOWN MENU
   & .input-group .dropdown-menu {
     width: 177px;
     margin: 0;
@@ -406,6 +358,7 @@ export default {
     border-top: 1px solid #F5F5F5;
     padding-top: 18px;
   }
+  */
 
   /* MAIN SEARCH BAR -- LOOP ICON */
   & .input-group-append svg {
@@ -690,6 +643,7 @@ export default {
   }
 }
 
+/* CATEGORIES SECTION */
 @media only screen and (max-width: 359px) {
   #homepage .homepage__categories a {
     font-size: 10px;

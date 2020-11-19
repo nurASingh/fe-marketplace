@@ -50,7 +50,7 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 #homepage {
   /* 1ST SECTION STYLE */
   & .title-container h1 {
@@ -71,6 +71,30 @@ export default {
   & .main-search--border {
     width: 100%;
     max-width: 800px;
+  }
+  & .input-group {
+    background: #FFFFFF;
+    border: 1px solid #F5F5F5;
+    border-radius: 36px;
+    align-items: center;
+    height: 57px;
+    box-shadow: 0px 3px 6px #00000029;
+  }
+  & .input-group input {
+    font-size: 11px;
+    font-weight: 300;
+    color: #000;
+    height: 26px;
+    padding: 0.25rem 25px;
+    border-left: 1px solid #E5E5E5;
+    border-top: none;
+    border-right: none;
+    border-bottom: none;
+    border-radius: 0 !important;
+    z-index: 2;
+  }
+  & .input-group input:focus {
+    box-shadow: none;
   }
   & .main-search .btn {
     display: flex;

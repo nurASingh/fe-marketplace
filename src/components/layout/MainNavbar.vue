@@ -291,30 +291,6 @@ nav .navbar__applications-item .dropdown-menu li:not(:last-child):not(:first-chi
   margin-bottom: 15px;
 }
 
-/* SIDEBAR */
-#login-sidebar {
-  height: 101vh;
-}
-#login-sidebar:hover {
-  cursor: default;
-}
-#login-sidebar header {
-  padding: 11.5px;
-}
-#login-sidebar header button {
-  margin: 0 0 0 auto;
-  font-size: 1px;
-}
-#login-sidebar header button svg {
-  font-size: 15px;
-}
-.login-sidebar__item-group {
-  padding: 30px 40px;
-}
-.login-sidebar__item-group div:not(:last-child) {
-  margin-bottom: 20px;
-}
-
 /* MOBILE DESIGN */
 nav .navbar-toggler {
   border: none;
