@@ -27,9 +27,9 @@
       <div class="dropdown__filler"></div>
       <div class="dropdown__items">
         <b-dropdown-item></b-dropdown-item>
-        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'application' })">Application</a></b-dropdown-item>
-        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'artist' })">Artist</a></b-dropdown-item>
-        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'collection' })">Collection</a></b-dropdown-item>
+        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sort-by-application' })">Application</a></b-dropdown-item>
+        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sort-by-artist' })">Artist</a></b-dropdown-item>
+        <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sort-by-collection' })">Collection</a></b-dropdown-item>
         <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 2 })">On Auction</a></b-dropdown-item>
         <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 1 })">Buy Now</a></b-dropdown-item>
       </div>

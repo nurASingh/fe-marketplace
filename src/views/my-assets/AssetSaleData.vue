@@ -7,7 +7,7 @@
         <div class="row">
           <div class="col-4">
             <p class="text2">Collectible name</p>
-            <p class="text1">{{asset.title}}</p>
+            <p class="text1">#{{asset.nftIndex}} {{asset.title}}</p>
           </div>
           <div class="col-6">
             <div class="d-flex flex-column align-items-start">
@@ -18,9 +18,9 @@
             </div>
           </div>
         </div>
-        <buy-now-sale-data :submitData="submitDataBuyNow" @setSaleData="setSaleData" class="row" v-if="saleType === 'buy-now'" />
-        <auction-sale-data :submitData="submitDataAuction" @setSaleData="setSaleData" class="row" v-else-if="saleType === 'auction'" />
-        <offer-sale-data :submitData="submitDataOffer" @setSaleData="setSaleData" class="row" v-else-if="saleType === 'offers'"/>
+        <buy-now-trade-info :submitData="submitDataBuyNow" @setTradeInfo="setTradeInfo" class="row" v-if="saleType === 'buy-now'" />
+        <auction-trade-info :submitData="submitDataAuction" @setTradeInfo="setTradeInfo" class="row" v-else-if="saleType === 'auction'" />
+        <offer-trade-info :submitData="submitDataOffer" @setTradeInfo="setTradeInfo" class="row" v-else-if="saleType === 'offers'"/>
         <div class="row" style="position: absolute; bottom: 50px;">
           <div class="col-12">
             <p class="text1">Available for</p>
@@ -46,17 +46,16 @@
 
 <script>
 import { APP_CONSTANTS } from '@/app-constants'
-import AuctionSaleData from './sale-data/AuctionSaleData'
-import BuyNowSaleData from './sale-data/BuyNowSaleData'
-import OfferSaleData from './sale-data/OfferSaleData'
-import { intCV, bufferCV } from '@stacks/transactions'
+import AuctionTradeInfo from '@/components/bidding/AuctionTradeInfo'
+import BuyNowTradeInfo from '@/components/bidding/BuyNowTradeInfo'
+import OfferTradeInfo from '@/components/bidding/OfferTradeInfo'
 
 export default {
-  name: 'AssetSaleData',
+  name: 'AssetTradeInfo',
   components: {
-    OfferSaleData,
-    AuctionSaleData,
-    BuyNowSaleData
+    OfferTradeInfo,
+    AuctionTradeInfo,
+    BuyNowTradeInfo
   },
   data () {
     return {
@@ -81,22 +80,14 @@ export default {
         this.submitDataAuction++
       }
     },
-    setSaleData (saleData) {
+    setTradeInfo (tradeInfo) {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
       if (!asset.nftIndex || asset.projectId.indexOf('.') < 0) {
         this.$notify({ type: 'error', title: 'Not Registered', text: 'This item isn\'t registered on-chain.' })
         return
       }
-      asset.saleData = saleData
-      const owner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].username
-      const functionArgs = [bufferCV(Buffer.from(owner)), bufferCV(Buffer.from(asset.projectId)), intCV(0)]
-      const data = {
-        contractAddress: asset.projectId.split('.')[0],
-        contractName: asset.projectId.split('.')[1],
-        functionName: 'set-sale-data',
-        functionArgs: functionArgs
-      }
-      this.$store.dispatch('stacksStore/callContractRisidio', data).then((result) => {
+      asset.tradeInfo = tradeInfo
+      this.$store.dispatch('stacksStore/setTradeInfo', asset).then((result) => {
         this.result = result
         this.$bvModal.show('app-modal')
       }).catch((error) => {

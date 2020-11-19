@@ -57,6 +57,8 @@ export default {
   },
   mounted () {
     this.loading = false
+    this.$store.dispatch('stacksStore/fetchMacsWalletInfo')
+    this.$store.dispatch('applicationStore/lookupApplications')
   },
   methods: {
     deployed (project) {

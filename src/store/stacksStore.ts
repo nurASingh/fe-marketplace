@@ -6,7 +6,7 @@ import {
   broadcastTransaction,
   makeContractDeploy,
   callReadOnlyFunction,
-  bufferCV, serializeCV
+  uintCV, bufferCV
 } from '@stacks/transactions'
 import { openContractCall } from '@stacks/connect'
 import {
@@ -119,6 +119,7 @@ const stacksStore = {
           macsWallet.nonce = response.data.nonce
           macsWallet.balance = getAmountStx(parseInt(response.data.balance, 16))
           commit('setMacsWallet', macsWallet)
+          store.dispatch('applicationStore/lookupApplications')
           resolve(macsWallet)
         }).catch(() => {
           const macsWallet = state.macsWallet
@@ -312,29 +313,6 @@ const stacksStore = {
         })
       })
     },
-    matchAssetIndex ({ dispatch }, result) {
-      return new Promise((resolve, reject) => {
-        // const functionArg = `0x${serializeCV(bufferCV(Buffer.from(result.assetHash)))}`
-        const bCV = bufferCV(Buffer.from(result.assetHash))
-        const sCV = serializeCV(bCV)
-        const functionArg = `0x${sCV}`
-        // const functionArgs = [`0x${serializeCV(bufferCV(result.assetHash)).toString('hex')}`]
-
-        const functionArgs = [functionArg]
-        if (result.projectId.indexOf('.') === -1) return
-        const config = {
-          contractId: (result.projectId) ? result.projectId : '',
-          functionName: 'get-index',
-          functionArgs: functionArgs
-        }
-        dispatch('callContractReadOnly', config).then((data) => {
-          result.index = data.value.data.index.value
-          resolve(data)
-        }).catch((error) => {
-          resolveError(reject, error)
-        })
-      })
-    },
     lookupContractInfo ({ commit }, projectId) {
       return new Promise((resolve, reject) => {
         const address = STACKS_API.replace('20443', '3999')
@@ -378,6 +356,28 @@ const stacksStore = {
           })
         }).catch((error) => {
           resolveError(reject, error)
+        })
+      })
+    },
+    setTradeInfo ({ dispatch }, asset) {
+      return new Promise((resolve, reject) => {
+        // (asset-hash (buff 32)) (sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint)
+        const buffer = bufferCV(Buffer.from(asset.assetHash, 'hex')) // Buffer.from(hash.toString(CryptoJS.enc.Hex), 'hex')
+        const saleType = uintCV(asset.tradeInfo.saleType)
+        const incrementPrice = uintCV(asset.tradeInfo.incrementPrice)
+        const reservePrice = uintCV(asset.tradeInfo.reservePrice)
+        const buyNowOrStartingPrice = uintCV(asset.tradeInfo.buyNowOrStartingPrice)
+        const functionArgs = [buffer, saleType, incrementPrice, reservePrice, buyNowOrStartingPrice]
+        const data = {
+          contractAddress: asset.projectId.split('.')[0],
+          contractName: asset.projectId.split('.')[1],
+          functionName: 'set-sale-data',
+          functionArgs: functionArgs
+        }
+        dispatch('callContractRisidio', data).then((result) => {
+          resolve(result)
+        }).catch((error) => {
+          reject(error)
         })
       })
     }

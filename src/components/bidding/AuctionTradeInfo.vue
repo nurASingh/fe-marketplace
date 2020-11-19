@@ -4,7 +4,7 @@
     <div role="group">
       <label for="input-live"><span class="text2">Starting Price</span></label>
       <b-input-group>
-        <b-form-input type="number" v-model="saleData.startingPrice" class="input" placeholder="STX"></b-form-input>
+        <b-form-input type="number" v-model="tradeInfo.buyNowOrStartingPrice" class="input" placeholder="STX"></b-form-input>
       </b-input-group>
     </div>
   </div>
@@ -12,16 +12,16 @@
     <div role="group">
       <label for="input-live"><span class="text2">Reserve Price</span></label>
       <b-input-group>
-        <b-form-input type="number" v-model="saleData.reservePrice" class="input" placeholder="STX"></b-form-input>
+        <b-form-input type="number" v-model="tradeInfo.reservePrice" class="input" placeholder="STX"></b-form-input>
       </b-input-group>
 
       <label for="input-live"><span class="text2">Increment</span></label>
       <b-input-group>
-        <b-form-input type="number" v-model="saleData.incrementPrice" class="input" placeholder="STX"></b-form-input>
+        <b-form-input type="number" v-model="tradeInfo.incrementPrice" class="input" placeholder="STX"></b-form-input>
       </b-input-group>
 
       <label for="input-live"><span class="text2">Bidding Ends</span></label>
-      <datetime type="datetime" input-id="biddingEndTime" v-model="saleData.biddingEndTime">
+      <datetime type="datetime" input-id="biddingEndTime" v-model="tradeInfo.biddingEndTime">
         <input id="biddingEndTime">
       </datetime>
     </div>
@@ -46,10 +46,10 @@ export default {
   },
   data () {
     return {
-      saleData: {
-        saleType: 'auction',
+      tradeInfo: {
+        saleType: 2,
         incrementPrice: 1,
-        startingPrice: null,
+        buyNowOrStartingPrice: null,
         reservePrice: null,
         biddingEndTime: null
       }
@@ -59,36 +59,36 @@ export default {
     this.loading = false
     this.assetHash = this.$route.params.assetHash
     const asset = this.$store.dispatch('searchStore/findAssetByHash', this.assetHash)
-    if (asset.saleData && asset.saleData.biddingEndTime) {
-      this.biddingEndTime = moment(asset.saleData.biddingEndTime).format()
+    if (asset.tradeInfo && asset.tradeInfo.biddingEndTime) {
+      this.biddingEndTime = moment(asset.tradeInfo.biddingEndTime).format()
     } else {
       const dd = moment({}).add(2, 'days')
       dd.hour(10)
       dd.minute(0)
-      this.saleData.biddingEndTime = dd.format()
+      this.tradeInfo.biddingEndTime = dd.format()
     }
   },
   methods: {
     submit: function () {
-      if (!this.saleData.incrementPrice || this.saleData.incrementPrice < 0) {
+      if (!this.tradeInfo.incrementPrice || this.tradeInfo.incrementPrice < 0) {
         this.$notify({ type: 'error', title: 'Increment', text: 'Please enter the increment for bidding.' })
         return
-      } else if (!this.saleData.startingPrice || this.saleData.startingPrice < 0) {
+      } else if (!this.tradeInfo.buyNowOrStartingPrice || this.tradeInfo.buyNowOrStartingPrice < 0) {
         this.$notify({ type: 'error', title: 'Starting Price', text: 'Please enter the starting price for bidding.' })
         return
-      } else if (!this.saleData.reservePrice || this.saleData.reservePrice < 0) {
+      } else if (!this.tradeInfo.reservePrice || this.tradeInfo.reservePrice < 0) {
         this.$notify({ type: 'error', title: 'Reserve Price', text: 'Please enter the reserve.' })
         return
       }
-      if (!this.saleData.reservePrice || this.saleData.reservePrice < 0) {
+      if (!this.tradeInfo.reservePrice || this.tradeInfo.reservePrice < 0) {
         this.$notify({ type: 'error', title: 'Reserve Price', text: 'Please enter the reserve.' })
         return
       }
-      this.$emit('setSaleData', this.saleData)
+      this.$emit('setTradeInfo', this.tradeInfo)
     },
     checkEndTime () {
       const now = moment({}).valueOf()
-      const diff = this.saleData.biddingEndTime - now
+      const diff = this.tradeInfo.biddingEndTime - now
       return diff > 0
     }
   },

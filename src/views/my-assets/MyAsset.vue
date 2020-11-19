@@ -10,7 +10,7 @@
         <div class="text-white d-flex flex-column align-items-start" :style="calcHeight">
           <div>
             <p class="text1 text-white">Collectible name</p>
-            <p class="text2">{{asset.title}} / {{nftIndex}}</p>
+            <p class="text2">#{{asset.nftIndex}} {{asset.title}}</p>
             <p class="text1 text-white">Created with</p>
             <p class="text2">{{projectName(asset.projectId)}}</p>
             <p class="text1 text-white">Created on</p>
@@ -24,7 +24,7 @@
             <button @click.prevent="download()" class="button-secondary"><span>Download</span></button>
           </div>
           -->
-          <div class="mt-auto">
+          <div class="mt-auto" v-if="asset.nftIndex">
             <button class="mb-3 button-primary"><router-link :to="'/asset-sale-data/' + assetHash">Sell Collectible</router-link></button>
           </div>
         </div>
@@ -62,8 +62,8 @@ export default {
     biddingEndsDisplay () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
       let bd
-      if (asset.saleData && asset.saleData.biddingEnds) {
-        bd = moment(this.item.saleData.biddingEnds).format('LLLL')
+      if (asset.tradeInfo && asset.tradeInfo.biddingEndTime) {
+        bd = moment(this.item.tradeInfo.biddingEndTime).format('LLLL')
       }
       return bd
     },
@@ -98,17 +98,6 @@ export default {
     }
   },
   computed: {
-    nftIndex () {
-      const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      const application = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_PROJECT](asset.projectId)
-      if (application && application.assets && application.assets.length > 0) {
-        const asset = application.assets.find(o => o.assetHash === this.assetHash)
-        if (asset) {
-          return asset.nftIndex
-        }
-      }
-      return null
-    },
     calcHeight () {
       const img1 = document.getElementById('img1')
       if (img1) {

@@ -57,7 +57,7 @@ const utils = {
       return {
         owner: td.decode(res.value.data.owner.buffer),
         assetHash: res.value.data['asset-hash'].buffer.toString('hex'),
-        bh: res.value.data.date.value
+        date: res.value.data.date.value.toNumber()
       }
     } else if (method === 'get-base-token-uri') {
       return td.decode(res.buffer)

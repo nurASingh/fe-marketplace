@@ -3,18 +3,27 @@ import searchIndexService from '@/services/searchIndexService'
 import store from '.'
 import { APP_CONSTANTS } from '@/app-constants'
 
-const connectSearchResultToAssets = function (commit, resultSet) {
-  resultSet.forEach((result) => {
-    commit('addSearchResult', result)
-    if (result.assetHash && !result.tokenId) {
-      store.dispatch('stacksStore/matchAssetIndex', result).then((data) => {
-        result.index = data.value.data.index.value
-        commit('addSearchResult', result)
-      }).catch(() => {
-        console.log('no index for ' + result.title)
-      })
+const sortResults = function (state, resultSet) {
+  const currentSearch = (state.currentSearch) ? state.currentSearch : { filter: 'recent' }
+  resultSet = resultSet.sort(function compare (a, b) {
+    if (currentSearch.filter === 'recent') {
+      if (!b.nftIndex || !a.nftIndex) return -1
+      if (parseInt(a.nftIndex) > parseInt(b.nftIndex)) return -1
+      if (parseInt(a.nftIndex) < parseInt(b.nftIndex)) return 1
+      return 0
+    } else if (currentSearch.filter === 'sort-by-application') {
+      if (!b.projectId || !a.projectId) return -1
+      if (a.projectId > b.projectId) return -1
+      if (a.projectId < b.projectId) return 1
+      return 0
+    } else if (currentSearch.filter === 'sort-by-artist') {
+      if (!b.artist) return -1
+      if (a.artist > b.artist) return 1
+      if (a.artist < b.artist) return -1
+      return 0
     }
   })
+  return resultSet
 }
 
 const searchStore = {
@@ -26,7 +35,10 @@ const searchStore = {
   },
   getters: {
     getSearchResults: (state: any) => {
-      return state.searchResults
+      if (state.searchResults) {
+        return sortResults(state, state.searchResults)
+      }
+      // return state.searchResults
     },
     getCurrentSearch: (state: any) => {
       return state.currentSearch
@@ -92,10 +104,9 @@ const searchStore = {
     },
     findAssetByHash ({ commit }: any, assetHash: string) {
       return new Promise((resolve, reject) => {
-        searchIndexService.findAssetByHash(assetHash).then((resultSet) => {
-          connectSearchResultToAssets(commit, resultSet)
-          commit('addSearchResult', resultSet[0])
-          resolve(resultSet[0])
+        searchIndexService.findAssetByHash(assetHash).then((response: any) => {
+          commit('addSearchResult', response.data)
+          resolve(response.data)
         }).catch((error) => {
           reject(new Error('Unable index record: ' + error))
         })
@@ -104,7 +115,6 @@ const searchStore = {
     findAssets ({ commit }: any) {
       return new Promise((resolve, reject) => {
         searchIndexService.findAssets().then((resultSet) => {
-          connectSearchResultToAssets(commit, resultSet)
           commit('setSearchResults', resultSet)
           resolve(resultSet)
         }).catch((error) => {
@@ -127,7 +137,6 @@ const searchStore = {
         if (query && query.length > 0) {
           query += '*'
           searchIndexService.findByTitleOrDescriptionOrCategoryOrKeyword(query).then((resultSet) => {
-            connectSearchResultToAssets(commit, resultSet)
             commit('setSearchResults', resultSet)
             resolve(resultSet)
           }).catch((error) => {
@@ -136,7 +145,6 @@ const searchStore = {
         } else {
           query += '*'
           searchIndexService.findAssets().then((resultSet) => {
-            connectSearchResultToAssets(commit, resultSet)
             commit('setSearchResults', resultSet)
             resolve(resultSet)
           }).catch((error) => {
@@ -179,7 +187,6 @@ const searchStore = {
       return new Promise((resolve, reject) => {
         const profile = store.getters[APP_CONSTANTS.KEY_PROFILE]
         searchIndexService.findByOwner(profile.username).then((resultSet) => {
-          connectSearchResultToAssets(commit, resultSet)
           commit('setSearchResults', resultSet)
           resolve(resultSet)
         }).catch((error) => {

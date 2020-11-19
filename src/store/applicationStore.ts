@@ -1,6 +1,7 @@
 import projectService from '@/services/projectService.js'
 import store from '.'
 import { uintCV, intCV, bufferCV, serializeCV } from '@stacks/transactions'
+import searchIndexService from '@/services/searchIndexService'
 
 const KEY_GAIA_PROJECT = 'getGaiaProject'
 const mac = JSON.parse(process.env.VUE_APP_WALLET_MAC || '')
@@ -71,6 +72,18 @@ const applicationStore = {
       } else {
         state.appmap.apps.splice(index, 1, application)
       }
+    },
+    addClarityAssetToAppmap (state, data) {
+      const index1 = state.appmap.apps.findIndex((o) => o.appCounter === data.application.appCounter)
+      if (index1 > -1) {
+        const clarityAssets = data.application.clarityAssets
+        const index = clarityAssets.findIndex((o) => o.assetHash === data.asset.assetHash)
+        if (index < 0) {
+          clarityAssets.splice(0, 0, data.asset)
+        } else {
+          clarityAssets.splice(index, 1, data.asset)
+        }
+      }
     }
   },
   actions: {
@@ -124,18 +137,33 @@ const applicationStore = {
         })
       })
     },
-    lookupMintCounter ({ commit, dispatch }: any, application: any) {
+    lookupMintCounter ({ commit }: any, application: any) {
       return new Promise((resolve, reject) => {
         store.dispatch('stacksStore/callContractReadOnly', { contractId: application.contractId, functionName: 'get-mint-counter' }).then((mintCounter) => {
           application.mintCounter = mintCounter
+          application.clarityAssets = []
           commit('addAppToAppmap', application)
-          application.assets = []
+          resolve(application)
+          /**
+          application.clarityAssets = []
           for (let i = 0; i < application.mintCounter; i++) {
             dispatch('lookupMintedAssets', { application: application, index: i })
           }
+          **/
         }).catch((e) => {
           reject(e)
         })
+      })
+    },
+    indexMintedAssets ({ state, dispatch }: any) {
+      return new Promise((resolve) => {
+        state.appmap.apps.forEach((application) => {
+          application.numberCalls = 0
+          for (let i = 0; i < application.mintCounter; i++) {
+            dispatch('lookupMintedAssets', { application: application, index: i })
+          }
+        })
+        resolve('Indexing underway - please don\'t refresh or close this tab..')
       })
     },
     lookupMintedAssets: function ({ commit }: any, appdata: any) {
@@ -146,18 +174,20 @@ const applicationStore = {
           functionName: 'get-token-info',
           functionArgs: functionArgs
         }
-        store.dispatch('stacksStore/callContractReadOnly', config).then((asset) => {
-          const buffer = `0x${serializeCV(bufferCV(Buffer.from(asset.assetHash, 'hex'))).toString('hex')}` // Buffer.from(hash.toString(CryptoJS.enc.Hex), 'hex')
+        store.dispatch('stacksStore/callContractReadOnly', config).then((clarityAsset) => {
+          const buffer = `0x${serializeCV(bufferCV(Buffer.from(clarityAsset.assetHash, 'hex'))).toString('hex')}` // Buffer.from(hash.toString(CryptoJS.enc.Hex), 'hex')
           const myConfig = {
             contractId: appdata.application.contractId,
             functionName: 'get-index',
             functionArgs: [buffer]
           }
           store.dispatch('stacksStore/callContractReadOnly', myConfig).then((nftIndex) => {
-            asset.nftIndex = nftIndex
-            appdata.application.assets.push(asset)
-            commit('addAppToAppmap', appdata.application)
-            resolve(appdata.application)
+            clarityAsset.nftIndex = nftIndex
+            appdata.application.numberCalls++
+            commit('addClarityAssetToAppmap', { application: appdata.application, asset: clarityAsset })
+            if (appdata.application.numberCalls >= appdata.application.mintCounter) {
+              searchIndexService.addRecords(appdata.application)
+            }
           }).catch((e) => {
             reject(e)
           })

@@ -104,7 +104,7 @@ export default {
 ;; ---------------
 (define-non-fungible-token params.token uint)
 (define-map params.token-data ((index uint)) ((owner (buff 80)) (asset-hash (buff 32)) (date uint)))
-(define-map sale-data ((index uint)) ((sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint)))
+(define-map sale-data ((index uint)) ((sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint) (bidding-end-time uint)))
 (define-map params.token-lookup ((asset-hash (buff 32))) ((index uint)))
 
 (define-data-var administrator principal 'params.contractOwner)
@@ -151,18 +151,17 @@ export default {
         (nft-mint? params.token (var-get mint-counter) tx-sender)
         (map-insert params.token-data ((index (var-get mint-counter))) ((owner owner) (asset-hash asset-hash) (date block-height)))
         (map-insert params.token-lookup ((asset-hash asset-hash)) ((index (var-get mint-counter))))
-        (print (var-get mint-counter))
         (var-set mint-counter (+ (var-get mint-counter) u1))
         (ok (var-get mint-counter))
     )
 )
 
-(define-public (set-sale-data (asset-hash (buff 32)) (sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint))
-    (match (map-get? loopbomb-lookup ((asset-hash asset-hash)))
+(define-public (set-sale-data (asset-hash (buff 32)) (sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint) (bidding-end-time uint))
+    (match (map-get? params.token-lookup ((asset-hash asset-hash)))
         myIndex
         (if
             (try! (is-nft-owner (get index myIndex)))
-            (ok (map-insert sale-data {index: (get index myIndex)} ((sale-type sale-type) (increment-stx increment-stx) (reserve-stx reserve-stx) (amount-stx amount-stx))))
+            (ok (map-insert sale-data {index: (get index myIndex)} ((sale-type sale-type) (increment-stx increment-stx) (reserve-stx reserve-stx) (amount-stx amount-stx) (bidding-end-time bidding-end-time))))
             (err not-allowed)
         )
         (err not-found)
@@ -229,6 +228,7 @@ export default {
   },
   mounted () {
     this.projectId = this.$route.params.projectId
+    this.$store.dispatch('stacksStore/fetchMacsWalletInfo')
     this.$store.dispatch('projectStore/findProjectByProjectId', this.projectId).then((project) => {
       if (!project) {
         this.$router.push('/404')

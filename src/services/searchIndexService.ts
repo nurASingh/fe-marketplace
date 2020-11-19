@@ -16,26 +16,47 @@ const searchIndexService = {
     })
   },
 
-  addRecord: function (projectModel: any) {
+  addRecords: function (application: any) {
     return new Promise(function (resolve, reject) {
-      /**
-      const project: any = {
-        domain: projectModel.domain,
-        indexFiles: [{
-          indexFileName: PROJECT_ROOT_PATH,
-          indexObjType: 'project'
-        }],
-        owner: projectModel.owner,
-        projectId: projectModel.projectId,
-        storeageModel: 'gaia'
-      }
-      **/
-      axios.post(SEARCH_API_PATH + '/addRecord', projectModel).then((result) => {
+      axios.post(SEARCH_API_PATH + '/v1/application', application).then((result) => {
         resolve(result)
+      }).catch((error) => {
+        reject(new Error('Unable index record: ' + error))
       })
-        .catch((error) => {
-          reject(new Error('Unable index record: ' + error))
-        })
+    })
+  },
+
+  addRecord: function (indexable: any) {
+    return new Promise(function (resolve, reject) {
+      if (!indexable.domain) indexable.domain = location.hostname
+      if (!indexable.objType) indexable.objType = 'artwork'
+      if (indexable.keywords && !Array.isArray(indexable.keywords)) {
+        indexable.keywords = []
+      }
+      if (!indexable.privacy) {
+        indexable.privacy = 'public'
+      }
+      if (!indexable.category) {
+        indexable.category = {
+          id: 'zero',
+          name: 'artwork',
+          level: 1
+        }
+      }
+      indexable.tradeInfo = {
+        saleType: (indexable.tradeInfo) ? indexable.tradeInfo.saleType : 0,
+        amount: (indexable.tradeInfo) ? indexable.tradeInfo.amount : 0,
+        amountStx: (indexable.tradeInfo) ? indexable.tradeInfo.amountStx : 0,
+        saleCurrency: (indexable.tradeInfo) ? indexable.tradeInfo.fiatCurrency : 'EUR',
+        buyNowOrStartingPrice: (indexable.tradeInfo) ? indexable.tradeInfo.buyNowOrStartingPrice : 0,
+        reservePrice: (indexable.tradeInfo) ? indexable.tradeInfo.reservePrice : 0,
+        incrementPrice: (indexable.tradeInfo) ? indexable.tradeInfo.incrementPrice : 0
+      }
+      axios.post(SEARCH_API_PATH + '/addRecord', indexable).then((result) => {
+        resolve(result)
+      }).catch((error) => {
+        reject(new Error('Unable index record: ' + error))
+      })
     })
   },
 
@@ -144,8 +165,8 @@ const searchIndexService = {
   },
   findAssetByHash: function (assetHash: string) {
     return new Promise(function (resolve, reject) {
-      axios.get(SEARCH_API_PATH + '/v1/asset/' + assetHash).then((result) => {
-        resolve(result.data.details)
+      axios.get(SEARCH_API_PATH + '/v1/asset/' + assetHash).then((asset) => {
+        resolve(asset)
       }).catch((error) => {
         reject(new Error('Unable index record: ' + error))
       })

@@ -3,13 +3,13 @@
 <router-link :to="assetUrl">
   <div id="result-item" class="mb-4 ">
     <img width="100%" :src="result.assetUrl"/>
-    <div style="position: absolute; top: -20px; left: 15px; font-size: 2rem;"><b-badge variant="light">{{nftIndex}} <span class="sr-only">NFT</span></b-badge></div>
+    <!-- <div style="position: absolute; top: -20px; left: 15px; font-size: 2rem;"><b-badge variant="light">{{result.nftIndex}} <span class="sr-only">NFT</span></b-badge></div> -->
     <div style="position: absolute; top: 0px; right: 15px;"><a href="#" class="homepage__items--like-btn"><b-icon icon="heart"></b-icon></a></div>
     <!--<div class="homepage__items--description" v-if="dHover[index]" v-html="item.b1_text1[0].text"></div>-->
     <div class="homepage__items--overlay" style="position: absolute; top: -20px; right: 0px; left: 0px;">
       <div class="homepage__items--description">
         <div class="d-flex justify-content-between">
-          <div class="homepage__items--title">{{result.title}}</div>
+          <div class="homepage__items--title">#{{result.nftIndex}} {{result.title}}</div>
           <div class="homepage__items--amount" v-if="result.amountStx">Σ {{result.amountStx}}</div>
         </div>
         <div class="d-flex justify-content-between">
@@ -20,11 +20,11 @@
     </div>
   </div>
 </router-link>
+{{created(result.created)}} / {{created(result.updated)}}
 </div>
 </template>
 
 <script>
-import { APP_CONSTANTS } from '@/app-constants'
 import moment from 'moment'
 
 export default {
@@ -60,7 +60,7 @@ export default {
     // 91208c24998e8e264f5a8be992d80538b5e8bab9874863f816d603c6df0dca0d
     // b696f04cb51e99953f792703bfabd353b197643f024e7309b27074099ef69eab
     owner (id) {
-      return id.split('.')[0]
+      return (id && id.indexOf('.') > -1) ? id.split('.')[0] : '?'
     },
     created (created) {
       return moment(created).format('YYYY-MM-DD HH:mm:SS')
@@ -73,16 +73,6 @@ export default {
         assetUrl = '/my-assets/' + this.result.assetHash
       }
       return assetUrl
-    },
-    nftIndex () {
-      const application = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_PROJECT](this.result.projectId)
-      if (application && application.assets && application.assets.length > 0) {
-        const asset = application.assets.find(o => o.assetHash === this.result.assetHash)
-        if (asset) {
-          return asset.nftIndex
-        }
-      }
-      return null
     }
   }
 }

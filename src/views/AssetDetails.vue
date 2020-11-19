@@ -62,12 +62,12 @@ export default {
     },
     saleType () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      if (asset.saleData) {
-        if (asset.saleData.saleType === 0) {
+      if (asset.tradeInfo) {
+        if (asset.tradeInfo.saleType === 0) {
           return 'Pre Sale'
-        } else if (asset.saleData.saleType === 1) {
+        } else if (asset.tradeInfo.saleType === 1) {
           return 'Buy Now'
-        } else if (asset.saleData.saleType === 2) {
+        } else if (asset.tradeInfo.saleType === 2) {
           return 'On Auction'
         }
       }

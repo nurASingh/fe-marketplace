@@ -13,6 +13,7 @@
         Index:
         <a class="mx-2" href="#" @click.prevent="indexUsers(users)">all me</a>
         <a class="mx-2" href="#" @click.prevent="indexUsers(usersMin)">radicle_art</a>
+        <a class="mx-2" href="#" @click.prevent="indexMintedAssets()">Match NFT Index to Asset Hash</a>
       </div>
     </div>
     <div class="p-4">
@@ -137,6 +138,11 @@ export default {
     },
     indexUsers (users) {
       this.$store.dispatch('searchStore/indexUsers', users).then((result) => {
+        this.result = result
+      })
+    },
+    indexMintedAssets () {
+      this.$store.dispatch('applicationStore/indexMintedAssets').then((result) => {
         this.result = result
       })
     },
