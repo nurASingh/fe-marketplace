@@ -57,13 +57,10 @@ export default {
   },
   mounted () {
     this.loading = false
+    this.$store.dispatch('stacksStore/fetchMacsWalletInfo')
+    this.$store.dispatch('applicationStore/lookupApplications')
   },
   methods: {
-    deleteApp (project) {
-      this.$store.dispatch('projectStore/deleteProject', project.projectId).then((results) => {
-        this.results = results
-      })
-    },
     deployed (project) {
       return project.info || project.interface
     },

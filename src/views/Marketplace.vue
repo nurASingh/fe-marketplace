@@ -71,6 +71,14 @@ export default {
     },
     created (created) {
       return moment(created).format('YYYY-MM-DD HH:mm:SS')
+    },
+    convertSaleType (saleType) {
+      if (saleType === 1) {
+        return 'Buy Now'
+      } else if (saleType === 2) {
+        return 'On Auction'
+      }
+      return 'Any Sale Type'
     }
   },
   computed: {
@@ -83,9 +91,9 @@ export default {
       if (currentSearch.filter === 'category') {
         return 'No results: for ' + currentSearch.filter + ' <span class="text-info">' + currentSearch.category.displayName + '</span>'
       } else if (currentSearch.filter === 'application') {
-        return 'No results: for ' + currentSearch.filter + ' <span class="text-info">' + currentSearch.contractId + '</span>'
+        return 'No results: for ' + ' <span class="text-info">' + currentSearch.filter + '</span>'
       } else if (currentSearch.filter === 'sale-type') {
-        return 'No results: for <span class="text-info">' + currentSearch.saleType + '</span>'
+        return 'No results: for <span class="text-info">' + this.convertSaleType(currentSearch.saleType) + '</span>'
       } else {
         return 'No results: for <span class="text-info">' + currentSearch.filter + '</span>'
       }

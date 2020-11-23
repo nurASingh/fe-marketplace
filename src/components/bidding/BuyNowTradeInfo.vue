@@ -2,9 +2,9 @@
 <div class="row">
   <div class="col-12 mb-5">
     <div role="group">
-      <label for="input-live"><span class="text2">Buy Now Price</span></label>
+      <label for="input-live"><span class="text2">Buy Now Price (STX)</span></label>
       <b-input-group>
-        <b-form-input type="number" v-model="saleData.buyNowPrice" class="input" placeholder="STX"></b-form-input>
+        <b-form-input type="number" v-model="tradeInfo.buyNowOrStartingPrice" class="input" placeholder="STX"></b-form-input>
       </b-input-group>
     </div>
   </div>
@@ -25,19 +25,22 @@ export default {
   },
   data () {
     return {
-      saleData: {
-        saleType: 'buy-now',
-        buyNowPrice: null
+      tradeInfo: {
+        saleType: 1,
+        buyNowOrStartingPrice: 0,
+        incrementPrice: 0,
+        reservePrice: 0,
+        biddingEndTime: 0
       }
     }
   },
   methods: {
     submit: function () {
-      if (!this.saleData.buyNowPrice || this.saleData.buyNowPrice <= 0) {
+      if (!this.tradeInfo.buyNowOrStartingPrice || this.tradeInfo.buyNowOrStartingPrice <= 0) {
         this.$notify({ type: 'error', title: 'Price', text: 'Please enter the buy now price.' })
         return
       }
-      this.$emit('setSaleData', this.saleData)
+      this.$emit('setTradeInfo', this.tradeInfo)
     }
   },
   computed: {

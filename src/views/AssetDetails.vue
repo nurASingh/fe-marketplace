@@ -23,12 +23,17 @@
         <p class="text-40-300">{{asset.title}}</p>
         <p class="text-11-500 bg-secondary text-white text-center pt-3" style="text-transform: capitalize; width: 100px; height: 42px;">{{saleType()}}</p>
       </div>
-      <p class="text1">From <strong>{{projectName(asset.projectId)}}</strong></p>
-      <!--
-      <div v-if="isOwner">
-        <h3>Owner: {{asset.artist}}</h3>
+      <div class="mb-2 d-flex justify-content-between">
+        <p class="text1">From <strong>{{projectName(asset.projectId)}}</strong></p>
+        <div v-if="isOwner()">
+          <p class="text1"><router-link :to="'/my-assets/' + asset.assetHash">manage your asset</router-link></p>
+        </div>
       </div>
-      -->
+      <div class="mb-2 d-flex justify-content-between">
+        <div v-if="!isOwner()">
+          <div v-if="isBuyNow()"><b-button @click="buyNow()" variant="info">Buy Now</b-button></div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -49,7 +54,7 @@ export default {
   mounted () {
     this.loading = false
     this.assetHash = this.$route.params.assetHash
-    this.$store.dispatch('searchStore/findAssetById', this.assetHash)
+    this.$store.dispatch('searchStore/findAssetByHash', this.assetHash)
   },
   methods: {
     projectName (projectId) {
@@ -60,14 +65,37 @@ export default {
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
       return asset.artist === profile.username
     },
+    isBuyNow () {
+      const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
+      if (!asset.tradeInfo || !asset.tradeInfo.saleType === 1) return false
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      return profile.loggedIn && asset.tradeInfo.saleType === 1 && asset.tradeInfo.buyNowOrStartingPrice > 0
+    },
+    buyNow () {
+      const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      const purchaseInfo = {
+        buyer: profile.username,
+        asset: asset
+      }
+      this.$store.dispatch('stacksStore/buyNow').then((result) => {
+        this.result = result
+      })
+    },
+    isPlaceBid () {
+      const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
+      if (!asset.tradeInfo || !asset.tradeInfo.saleType === 2) return false
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      return profile.loggedIn && asset.tradeInfo.saleType === 2
+    },
     saleType () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      if (asset.saleData) {
-        if (asset.saleData.saleType === 0) {
+      if (asset.tradeInfo) {
+        if (asset.tradeInfo.saleType === 0) {
           return 'Pre Sale'
-        } else if (asset.saleData.saleType === 1) {
+        } else if (asset.tradeInfo.saleType === 1) {
           return 'Buy Now'
-        } else if (asset.saleData.saleType === 2) {
+        } else if (asset.tradeInfo.saleType === 2) {
           return 'On Auction'
         }
       }

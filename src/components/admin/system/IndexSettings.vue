@@ -3,6 +3,9 @@
   <div class="mb-4">
     <div class="d-flex justify-content-between">
       <div>
+        <a href="#" @click.prevent="showDomainForm = !showDomainForm">New Domain</a>
+      </div>
+      <div>
         Clear:
         <a class="mx-2" href="#" @click.prevent="clearAssets">assets</a>
         <a class="mx-2" href="#" @click.prevent="clearUsers">users</a>
@@ -13,37 +16,42 @@
         Index:
         <a class="mx-2" href="#" @click.prevent="indexUsers(users)">all me</a>
         <a class="mx-2" href="#" @click.prevent="indexUsers(usersMin)">radicle_art</a>
+        <a class="mx-2" href="#" @click.prevent="indexMintedAssets()">Match NFT Index to Asset Hash</a>
       </div>
     </div>
-    <div class="p-4">
-      <b-table striped hover
-        :items="values()"
-        :fields="fields()"
-        :sort-by.sync="sortBy"
-      >
-        <template #cell(assetUrl)="data">
-          <span v-html="data.value"></span>
-        </template>
-        <template #cell(zonefile)="data">
-          <span v-html="data.value"></span>
-        </template>
-      </b-table>
-      <div v-if="searchResults">{{searchResults[0]}}</div>
-    </div>
+  </div>
+  <domain-index-form v-if="showDomainForm" />
+  <div class="p-4" v-else>
+    <b-table striped hover
+      :items="values()"
+      :fields="fields()"
+      :sort-by.sync="sortBy"
+    >
+      <template #cell(assetUrl)="data">
+        <span v-html="data.value"></span>
+      </template>
+      <template #cell(zonefile)="data">
+        <span v-html="data.value"></span>
+      </template>
+    </b-table>
+    <div v-if="searchResults">{{searchResults[0]}}</div>
   </div>
 </div>
 </template>
 
 <script>
 import moment from 'moment'
+import DomainIndexForm from './DomainIndexForm'
 
 export default {
   name: 'IndexSettings',
   components: {
+    DomainIndexForm
   },
   data () {
     return {
       projectOption: 0,
+      showDomainForm: false,
       searchResults: null,
       result: null,
       searchType: null,
@@ -137,6 +145,11 @@ export default {
     },
     indexUsers (users) {
       this.$store.dispatch('searchStore/indexUsers', users).then((result) => {
+        this.result = result
+      })
+    },
+    indexMintedAssets () {
+      this.$store.dispatch('applicationStore/indexMintedAssets').then((result) => {
         this.result = result
       })
     },

@@ -218,6 +218,16 @@ const projectStore = {
           })
         })
       })
+    },
+    saveDomainIndex ({ commit }: any, domainIndex: any) {
+      return new Promise((resolve, reject) => {
+        projectService.saveDomainIndex(domainIndex).then((domainIndex: any) => {
+          commit('domainIndex', domainIndex)
+          resolve(domainIndex)
+        }).catch((err) => {
+          reject(err)
+        })
+      })
     }
   }
 }
