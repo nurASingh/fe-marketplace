@@ -15,6 +15,7 @@ import {
 import axios from 'axios'
 import BigNum from 'bn.js'
 import searchIndexService from '@/services/searchIndexService'
+import moment from 'moment'
 
 let STX_CONTRACT_ADDRESS = process.env.VUE_APP_STACKS_CONTRACT_ADDRESS
 let STX_CONTRACT_NAME = process.env.VUE_APP_STACKS_CONTRACT_NAME
@@ -45,7 +46,6 @@ const pollTxStatus = function (dispatch, txId) {
           const meth2 = 'tx_status'
           const hexResolved = utils.fromHex(response[meth2].hex)
           resolve(hexResolved)
-          dispatch('fetchMacsWalletInfo')
           clearInterval(intval)
         }
       }).catch((e) => {
@@ -232,16 +232,19 @@ const stacksStore = {
               'Content-Type': 'application/octet-stream'
             }
             axios.post(MESH_API + '/v2/broadcast', txdata, { headers: headers }).then(response => {
-              pollTxStatus(dispatch, response.data).then((hexResp) => {
-                resolve(hexResp)
+              pollTxStatus(dispatch, response.data).then(() => {
+                // what to do when tx confirms? resolve(hexResp)
               })
               dispatch('fetchMacsWalletInfo')
+              resolve(response.data)
             }).catch(() => {
               const useApi = STACKS_API + '/v2/transactions'
               axios.post(useApi, txdata).then((response) => {
-                pollTxStatus(dispatch, response.data).then((hexResp) => {
-                  resolve(hexResp)
+                pollTxStatus(dispatch, response.data).then(() => {
+                  // what to do when tx confirms? resolve(hexResp)
                 })
+                dispatch('fetchMacsWalletInfo')
+                resolve(response.data)
               }).catch((error) => {
                 resolveError(reject, error)
               })
@@ -397,7 +400,10 @@ const stacksStore = {
         }
         dispatch('callContractRisidio', data).then((result) => {
           asset.hexResp = result
-          searchIndexService.addRecord(asset).then(() => {
+          if (asset.tradeInfo.biddingEndTime && asset.tradeInfo.biddingEndTime.indexOf('-') > -1) {
+            asset.tradeInfo.biddingEndTime = moment(asset.tradeInfo.biddingEndTime).valueOf()
+          }
+          searchIndexService.addTradeInfo(asset).then(() => {
             console.log(asset)
             resolve(asset)
           }).catch((error) => {

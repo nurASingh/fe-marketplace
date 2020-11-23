@@ -26,6 +26,16 @@ const searchIndexService = {
     })
   },
 
+  addTradeInfo: function (asset: any) {
+    return new Promise(function (resolve, reject) {
+      axios.post(SEARCH_API_PATH + '/v1/trade-info/' + asset.assetHash, asset.tradeInfo).then((result) => {
+        resolve(result.data)
+      }).catch((error) => {
+        reject(new Error('Unable index record: ' + error))
+      })
+    })
+  },
+
   addRecord: function (indexable: any) {
     return new Promise(function (resolve, reject) {
       if (!indexable.domain) indexable.domain = location.hostname

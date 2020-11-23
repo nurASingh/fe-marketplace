@@ -4,7 +4,7 @@
     <div role="group">
       <label for="input-live"><span class="text2">Starting Price</span></label>
       <b-input-group>
-        <b-form-input type="number" v-model="tradeInfo.buyNowOrStartingPrice" class="input" placeholder="STX"></b-form-input>
+        <b-form-input v-model="tradeInfo.buyNowOrStartingPrice" class="input" placeholder="STX"></b-form-input>
       </b-input-group>
     </div>
   </div>
@@ -12,18 +12,19 @@
     <div role="group">
       <label for="input-live"><span class="text2">Reserve Price</span></label>
       <b-input-group>
-        <b-form-input type="number" v-model="tradeInfo.reservePrice" class="input" placeholder="STX"></b-form-input>
+        <b-form-input v-model="tradeInfo.reservePrice" class="input" placeholder="STX"></b-form-input>
       </b-input-group>
 
       <label for="input-live"><span class="text2">Increment</span></label>
       <b-input-group>
-        <b-form-input type="number" v-model="tradeInfo.incrementPrice" class="input" placeholder="STX"></b-form-input>
+        <b-form-input v-model="tradeInfo.incrementPrice" class="input" placeholder="STX"></b-form-input>
       </b-input-group>
 
       <label for="input-live"><span class="text2">Bidding Ends</span></label>
       <datetime type="datetime" input-id="biddingEndTime" v-model="tradeInfo.biddingEndTime">
         <input id="biddingEndTime">
       </datetime>
+      {{getLongTime()}}
     </div>
   </div>
 </div>
@@ -32,6 +33,7 @@
 <script>
 import moment from 'moment'
 import { Datetime } from 'vue-datetime'
+import { APP_CONSTANTS } from '@/app-constants'
 
 export default {
   name: 'SellAuction',
@@ -51,16 +53,18 @@ export default {
         incrementPrice: 1,
         buyNowOrStartingPrice: 0,
         reservePrice: 0,
-        biddingEndTime: 0
+        biddingEndTime: String(moment({}).valueOf())
       }
     }
   },
   mounted () {
     this.loading = false
     this.assetHash = this.$route.params.assetHash
-    const asset = this.$store.dispatch('searchStore/findAssetByHash', this.assetHash)
-    if (asset.tradeInfo && asset.tradeInfo.biddingEndTime) {
-      this.biddingEndTime = moment(asset.tradeInfo.biddingEndTime).format()
+    const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.$route.params.assetHash)
+    if (asset && asset.tradeInfo) this.tradeInfo = asset.tradeInfo
+
+    if (asset.tradeInfo && asset.tradeInfo.biddingEndTime > 0) {
+      this.tradeInfo.biddingEndTime = moment(asset.tradeInfo.biddingEndTime).format()
     } else {
       const dd = moment({}).add(2, 'days')
       dd.hour(10)
@@ -84,12 +88,20 @@ export default {
         this.$notify({ type: 'error', title: 'Reserve Price', text: 'Please enter the reserve.' })
         return
       }
+      this.tradeInfo.saleType = 2
+      this.tradeInfo.biddingEndTime = moment(this.tradeInfo.biddingEndTime).valueOf()
+      // const tradeInfo = this.tradeInfo
+      // tradeInfo.biddingEndTime = moment(this.tradeInfo.biddingEndTime).valueOf()
       this.$emit('setTradeInfo', this.tradeInfo)
+      this.tradeInfo.biddingEndTime = String(moment(this.tradeInfo.biddingEndTime).format())
     },
     checkEndTime () {
       const now = moment({}).valueOf()
       const diff = this.tradeInfo.biddingEndTime - now
       return diff > 0
+    },
+    getLongTime () {
+      return moment(this.tradeInfo.biddingEndTime).valueOf()
     }
   },
   computed: {

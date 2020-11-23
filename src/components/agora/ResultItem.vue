@@ -4,7 +4,7 @@
   <div id="result-item" class="mb-4 ">
     <img width="100%" :src="result.assetUrl"/>
     <!-- <div style="position: absolute; top: -20px; left: 15px; font-size: 2rem;"><b-badge variant="light">{{result.nftIndex}} <span class="sr-only">NFT</span></b-badge></div> -->
-    <div style="position: absolute; top: 0px; right: 15px;"><a href="#" class="homepage__items--like-btn"><b-icon icon="heart"></b-icon></a></div>
+    <div style="position: absolute; top: 0px; right: 15px;"><a href="#" :class="(amIOwner()) ? 'homepage__items--my-btn' : 'homepage__items--like-btn'"><b-icon icon="heart"></b-icon></a></div>
     <!--<div class="homepage__items--description" v-if="dHover[index]" v-html="item.b1_text1[0].text"></div>-->
     <div class="homepage__items--overlay" style="position: absolute; top: -20px; right: 0px; left: 0px;">
       <div class="homepage__items--description">
@@ -14,7 +14,7 @@
         </div>
         <div class="d-flex justify-content-between">
           <div class="homepage__items--by">By <span class="homepage__items--artist">{{owner(result.artist)}}</span></div>
-          <div class="homepage__items--price" v-if="result.buyNowOrStartingPrice">{{amountFiat}}</div>
+          <div class="homepage__items--price">{{saleType()}}</div>
         </div>
       </div>
     </div>
@@ -25,6 +25,7 @@
 </template>
 
 <script>
+import { APP_CONSTANTS } from '@/app-constants'
 import moment from 'moment'
 
 export default {
@@ -57,10 +58,23 @@ export default {
       const addr = assetHash.substring(0, 4)
       return addr + '...' + assetHash.substring(assetHash.length - 4)
     },
-    // 91208c24998e8e264f5a8be992d80538b5e8bab9874863f816d603c6df0dca0d
-    // b696f04cb51e99953f792703bfabd353b197643f024e7309b27074099ef69eab
+    amIOwner () {
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      return profile.username === this.result.owner
+    },
     owner (id) {
       return (id && id.indexOf('.') > -1) ? id.split('.')[0] : '?'
+    },
+    saleType () {
+      if (this.result.tradeInfo && this.result.tradeInfo.saleType === 0) {
+        return 'not selling'
+      } else if (this.result.tradeInfo && this.result.tradeInfo.saleType === 1) {
+        return 'buy now'
+      } else if (this.result.tradeInfo && this.result.tradeInfo.saleType === 2) {
+        return 'place bid'
+      } else if (this.result.tradeInfo && this.result.tradeInfo.saleType === 3) {
+        return 'make offer'
+      }
     },
     buyingPrice () {
       return (this.result.tradeInfo && this.result.tradeInfo.buyNowOrStartingPrice) ? this.result.tradeInfo.buyNowOrStartingPrice : 0
@@ -144,6 +158,17 @@ export default {
     color: #FFFFFF;
     font-size: 13px;
     background-color: #50B1B5;
+    padding: 10px 13px;
+    border-radius: 50%;
+    z-index: 3;
+  }
+  & .homepage__items--my-btn {
+    position: absolute;
+    top: 0;
+    right: 0;
+    color: #FFFFFF;
+    font-size: 13px;
+    background-color: #9d50b5;
     padding: 10px 13px;
     border-radius: 50%;
     z-index: 3;

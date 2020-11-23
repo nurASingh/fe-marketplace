@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import { APP_CONSTANTS } from '@/app-constants'
 
 export default {
   name: 'SellBuyNow',
@@ -33,6 +34,11 @@ export default {
         biddingEndTime: 0
       }
     }
+  },
+  mounted () {
+    const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.$route.params.assetHash)
+    if (asset && asset.tradeInfo) this.tradeInfo = asset.tradeInfo
+    return asset
   },
   methods: {
     submit: function () {

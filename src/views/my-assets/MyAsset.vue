@@ -15,6 +15,9 @@
             <p class="text2">{{projectName(asset.projectId)}}</p>
             <p class="text1 text-white">Created on</p>
             <p class="text2">{{created(asset.created)}}</p>
+            <p class="text1 text-white" v-if="asset.saleType === 1">Buy Now</p>
+            <p class="text1 text-white" v-if="asset.saleType === 2">On Auction</p>
+            <p class="text2">{{biddingEndsDisplay()}}</p>
             <p class="text1 text-white" v-if="biddingEndsDisplay">Bidding Ends</p>
             <p class="text2">{{biddingEndsDisplay()}}</p>
 
@@ -24,7 +27,7 @@
             <button @click.prevent="download()" class="button-secondary"><span>Download</span></button>
           </div>
           -->
-          <div class="mt-auto" v-if="asset.nftIndex">
+          <div class="mt-auto" v-if="asset.nftIndex >= 0">
             <button class="mb-3 button-primary"><router-link :to="'/asset-sale-data/' + assetHash">Sell Collectible</router-link></button>
           </div>
         </div>
@@ -44,13 +47,15 @@ export default {
   },
   data () {
     return {
-      assetHash: null
+      assetHash: null,
+      loading: true
     }
   },
   mounted () {
-    this.loading = false
     this.assetHash = this.$route.params.assetHash
-    this.$store.dispatch('searchStore/findAssetByHash', this.assetHash)
+    this.$store.dispatch('searchStore/findAssetByHash', this.assetHash).then(() => {
+      this.loading = false
+    })
   },
   methods: {
     projectName (projectId) {
@@ -63,7 +68,7 @@ export default {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
       let bd
       if (asset.tradeInfo && asset.tradeInfo.biddingEndTime) {
-        bd = moment(this.item.tradeInfo.biddingEndTime).format('LLLL')
+        bd = moment(asset.tradeInfo.biddingEndTime).format('LLLL')
       }
       return bd
     },

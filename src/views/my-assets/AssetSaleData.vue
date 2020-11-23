@@ -1,7 +1,7 @@
 <template>
 <div class="container-fluid bg-secondary" v-if="asset" style="padding: 150px 50px; height: 100vh;">
   <div class="text-right"><router-link class="p-3" :to="'/my-assets/' + assetHash" ><b-icon icon="x-circle" scale="1" variant="white"></b-icon></router-link></div>
-  <b-card-group deck>
+  <b-card-group deck v-if="!loading">
     <b-card :img-src="asset.assetUrl" img-alt="Card image" img-left class="p-5" style="max-height: 363px; width: 976px;">
       <b-card-text>
         <div class="row">
@@ -59,6 +59,7 @@ export default {
   },
   data () {
     return {
+      loading: true,
       assetHash: null,
       amountStx: null,
       saleType: 1,
@@ -68,9 +69,11 @@ export default {
     }
   },
   mounted () {
-    this.loading = false
     this.assetHash = this.$route.params.assetHash
-    this.$store.dispatch('searchStore/findAssetByHash', this.assetHash)
+    this.$store.dispatch('searchStore/findAssetByHash', this.assetHash).then((asset) => {
+      if (asset.tradeInfo) this.saleType = asset.tradeInfo.saleType
+      this.loading = false
+    })
   },
   methods: {
     submitSell () {
@@ -82,7 +85,7 @@ export default {
     },
     setTradeInfo (tradeInfo) {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      if (!asset.nftIndex || asset.projectId.indexOf('.') < 0) {
+      if (typeof asset.nftIndex === 'undefined' || asset.projectId.indexOf('.') < 0) {
         this.$notify({ type: 'error', title: 'Not Registered', text: 'This item isn\'t registered on-chain.' })
         return
       }
