@@ -25,8 +25,13 @@
       </div>
       <div class="mb-2 d-flex justify-content-between">
         <p class="text1">From <strong>{{projectName(asset.projectId)}}</strong></p>
-        <div v-if="isOwner">
+        <div v-if="isOwner()">
           <p class="text1"><router-link :to="'/my-assets/' + asset.assetHash">manage your asset</router-link></p>
+        </div>
+      </div>
+      <div class="mb-2 d-flex justify-content-between">
+        <div v-if="!isOwner()">
+          <div v-if="isBuyNow()"><b-button @click="buyNow()" variant="info">Buy Now</b-button></div>
         </div>
       </div>
     </div>
@@ -59,6 +64,29 @@ export default {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
       return asset.artist === profile.username
+    },
+    isBuyNow () {
+      const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
+      if (!asset.tradeInfo || !asset.tradeInfo.saleType === 1) return false
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      return profile.loggedIn && asset.tradeInfo.saleType === 1 && asset.tradeInfo.buyNowOrStartingPrice > 0
+    },
+    buyNow () {
+      const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      const purchaseInfo = {
+        buyer: profile.username,
+        asset: asset
+      }
+      this.$store.dispatch('stacksStore/buyNow').then((result) => {
+        this.result = result
+      })
+    },
+    isPlaceBid () {
+      const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
+      if (!asset.tradeInfo || !asset.tradeInfo.saleType === 2) return false
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      return profile.loggedIn && asset.tradeInfo.saleType === 2
     },
     saleType () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)

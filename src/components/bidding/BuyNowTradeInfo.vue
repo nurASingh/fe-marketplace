@@ -27,7 +27,10 @@ export default {
     return {
       tradeInfo: {
         saleType: 1,
-        buyNowOrStartingPrice: null
+        buyNowOrStartingPrice: 0,
+        incrementPrice: 0,
+        reservePrice: 0,
+        biddingEndTime: 0
       }
     }
   },

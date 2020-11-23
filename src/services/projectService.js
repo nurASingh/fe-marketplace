@@ -91,20 +91,20 @@ const projectService = {
       })
     })
   },
-  registerProject: function (project) {
-    return new Promise((resolve, reject) => {
-      axios.post(SEARCH_API_PATH + '/register', project).then((response) => {
-        resolve(response)
-      }).catch((error) => {
-        reject(error)
-      })
-    })
-  },
   saveProject: function (rootFile) {
     return new Promise((resolve, reject) => {
       rootFile.updated = moment({}).valueOf()
       userSession.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false }).then(() => {
         resolve(rootFile)
+      }).catch((error) => {
+        reject(error)
+      })
+    })
+  },
+  saveDomainIndex: function (domainIndex) {
+    return new Promise((resolve, reject) => {
+      axios.post(SEARCH_API_PATH + '/v1/domain/register', domainIndex).then((response) => {
+        resolve(response.data)
       }).catch((error) => {
         reject(error)
       })

@@ -49,9 +49,9 @@ export default {
       tradeInfo: {
         saleType: 2,
         incrementPrice: 1,
-        buyNowOrStartingPrice: null,
-        reservePrice: null,
-        biddingEndTime: null
+        buyNowOrStartingPrice: 0,
+        reservePrice: 0,
+        biddingEndTime: 0
       }
     }
   },

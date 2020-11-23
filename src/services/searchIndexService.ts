@@ -45,11 +45,9 @@ const searchIndexService = {
       }
       indexable.tradeInfo = {
         saleType: (indexable.tradeInfo) ? indexable.tradeInfo.saleType : 0,
-        amount: (indexable.tradeInfo) ? indexable.tradeInfo.amount : 0,
-        amountStx: (indexable.tradeInfo) ? indexable.tradeInfo.amountStx : 0,
-        saleCurrency: (indexable.tradeInfo) ? indexable.tradeInfo.fiatCurrency : 'EUR',
         buyNowOrStartingPrice: (indexable.tradeInfo) ? indexable.tradeInfo.buyNowOrStartingPrice : 0,
         reservePrice: (indexable.tradeInfo) ? indexable.tradeInfo.reservePrice : 0,
+        biddingEndTime: (indexable.tradeInfo) ? indexable.tradeInfo.biddingEndTime : 0,
         incrementPrice: (indexable.tradeInfo) ? indexable.tradeInfo.incrementPrice : 0
       }
       axios.post(SEARCH_API_PATH + '/addRecord', indexable).then((result) => {
@@ -165,7 +163,9 @@ const searchIndexService = {
   },
   findAssetByHash: function (assetHash: string) {
     return new Promise(function (resolve, reject) {
-      axios.get(SEARCH_API_PATH + '/v1/asset/' + assetHash).then((asset) => {
+      axios.get(SEARCH_API_PATH + '/v1/asset/' + assetHash).then((asset: any) => {
+        if (asset.nftIndex === 'null') asset.nftIndex = null
+        if (asset.tokenId === 'null') asset.tokenId = null
         resolve(asset)
       }).catch((error) => {
         reject(new Error('Unable index record: ' + error))

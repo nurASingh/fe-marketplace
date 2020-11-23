@@ -38,6 +38,9 @@ const utils = {
   fromHex: function (method, rawResponse) {
     const td = new TextDecoder('utf-8')
     const res = hexToCV(rawResponse)
+    if (rawResponse.startsWith('0x08')) {
+      throw new Error('Blockchain call returned not okay with error code: ' + res.value.value.toNumber())
+    }
     if (method === 'get-mint-price') {
       return res.value.value.toNumber()
     } else if (method === 'get-index') {
@@ -48,16 +51,24 @@ const utils = {
       return res.value.value.toNumber()
     } else if (method === 'get-app') {
       return {
-        owner: td.decode(res.value.data.owner.buffer),
+        // owner: td.decode(res.value.data.owner.buffer),
         contractId: td.decode(res.value.data['app-contract-id'].buffer),
         status: res.value.data.status.value.toNumber(),
         storageModel: res.value.data['storage-model'].value.toNumber()
       }
     } else if (method === 'get-token-info') {
       return {
-        owner: td.decode(res.value.data.owner.buffer),
+        // owner: td.decode(res.value.data.owner.buffer),
         assetHash: res.value.data['asset-hash'].buffer.toString('hex'),
         date: res.value.data.date.value.toNumber()
+      }
+    } else if (method === 'get-sale-data') {
+      return {
+        biddingEndTime: res.value.data['bidding-end-time'].value.toNumber(),
+        incrementPrice: res.value.data['increment-stx'].value.toNumber(),
+        reservePrice: res.value.data['reserve-stx'].value.toNumber(),
+        buyNowOrStartingPrice: res.value.data['amount-stx'].value.toNumber(),
+        saleType: res.value.data['sale-type'].value.toNumber()
       }
     } else if (method === 'get-base-token-uri') {
       return td.decode(res.buffer)

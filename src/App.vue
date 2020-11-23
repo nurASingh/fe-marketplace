@@ -54,6 +54,7 @@ export default {
     this.$store.dispatch('authStore/fetchMyAccount').then((profile) => {
       this.loaded = true
       this.$store.dispatch('stacksStore/fetchMacsWalletInfo')
+      this.$store.dispatch('applicationStore/lookupApplications')
       this.$store.dispatch('projectStore/fetchMyProjects', profile).catch((err) => {
         console.log(err)
       })

@@ -18,16 +18,16 @@
             </div>
           </div>
         </div>
-        <buy-now-trade-info :submitData="submitDataBuyNow" @setTradeInfo="setTradeInfo" class="row" v-if="saleType === 'buy-now'" />
-        <auction-trade-info :submitData="submitDataAuction" @setTradeInfo="setTradeInfo" class="row" v-else-if="saleType === 'auction'" />
-        <offer-trade-info :submitData="submitDataOffer" @setTradeInfo="setTradeInfo" class="row" v-else-if="saleType === 'offers'"/>
+        <buy-now-trade-info :submitData="submitDataBuyNow" @setTradeInfo="setTradeInfo" class="row" v-if="saleType === 1" />
+        <auction-trade-info :submitData="submitDataAuction" @setTradeInfo="setTradeInfo" class="row" v-else-if="saleType === 2" />
+        <offer-trade-info :submitData="submitDataOffer" @setTradeInfo="setTradeInfo" class="row" v-else-if="saleType === 3"/>
         <div class="row" style="position: absolute; bottom: 50px;">
           <div class="col-12">
             <p class="text1">Available for</p>
             <div class="mt-auto">
-              <b-button class="mb-2 mr-3" :variant="(saleType === 'buy-now') ? 'info' : 'light'" @click="saleType = 'buy-now'">Buy Now</b-button>
-              <b-button class="mb-2 mr-3" :variant="(saleType === 'auction') ? 'info' : 'light'" @click="saleType = 'auction'">Auction</b-button>
-              <b-button class="mb-2 mr-3" :variant="(saleType === 'offers') ? 'info' : 'light'" @click="saleType = 'offers'">Offers</b-button>
+              <b-button class="mb-2 mr-3" :variant="(saleType === 1) ? 'info' : 'light'" @click="saleType = 1">Buy Now</b-button>
+              <b-button class="mb-2 mr-3" :variant="(saleType === 2) ? 'info' : 'light'" @click="saleType = 2">Auction</b-button>
+              <b-button class="mb-2 mr-3" :variant="(saleType === 3) ? 'info' : 'light'" @click="saleType = 3">Offers</b-button>
             </div>
           </div>
         </div>
@@ -61,7 +61,7 @@ export default {
     return {
       assetHash: null,
       amountStx: null,
-      saleType: 'buy-now',
+      saleType: 1,
       submitDataBuyNow: 0,
       submitDataAuction: 0,
       submitDataOffer: 0
@@ -74,9 +74,9 @@ export default {
   },
   methods: {
     submitSell () {
-      if (this.saleType === 'buy-now') {
+      if (this.saleType === 1) {
         this.submitDataBuyNow++
-      } else if (this.saleType === 'auction') {
+      } else if (this.saleType === 2) {
         this.submitDataAuction++
       }
     },
@@ -87,19 +87,22 @@ export default {
         return
       }
       asset.tradeInfo = tradeInfo
+      this.$root.$emit('bv::show::modal', 'waiting-modal')
       this.$store.dispatch('stacksStore/setTradeInfo', asset).then((result) => {
         this.result = result
-        this.$bvModal.show('app-modal')
+        this.$root.$emit('bv::hide::modal', 'waiting-modal')
+        this.$store.commit('setModalMessage', 'That worked! Others are now able to buy this item.')
+        this.$root.$emit('bv::show::modal', 'success-modal')
       }).catch((error) => {
         this.result = error
-        this.$bvModal.show('app-modal')
+        this.$store.commit('setModalMessage', 'There was an error setting trade info.')
       })
     },
     isValid (warn) {
       let valid = false
-      if (this.saleType === 'buy-now' && this.amountStx > 0 && this.amountStx < 100) {
+      if (this.saleType === 1 && this.amountStx > 0 && this.amountStx < 100) {
         valid = true
-      } else if (this.saleType === 'auction') {
+      } else if (this.saleType === 2) {
         if (this.startingPrice && this.startingPrice > 0) {
           if (warn) {
             this.$notify({ type: 'error', title: 'Contract Error', text: 'The contract name must be present and at least 2 characters long.' })

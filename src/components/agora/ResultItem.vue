@@ -10,17 +10,17 @@
       <div class="homepage__items--description">
         <div class="d-flex justify-content-between">
           <div class="homepage__items--title">#{{result.nftIndex}} {{result.title}}</div>
-          <div class="homepage__items--amount" v-if="result.amountStx">Σ {{result.amountStx}}</div>
+          <div class="homepage__items--amount">Σ {{buyingPrice()}}</div>
         </div>
         <div class="d-flex justify-content-between">
           <div class="homepage__items--by">By <span class="homepage__items--artist">{{owner(result.artist)}}</span></div>
-          <div class="homepage__items--price" v-if="result.amountStx">£1.50</div>
+          <div class="homepage__items--price" v-if="result.buyNowOrStartingPrice">{{amountFiat}}</div>
         </div>
       </div>
     </div>
   </div>
 </router-link>
-{{created(result.created)}} / {{created(result.updated)}}
+<!-- {{created(result.created)}} / {{created(result.updated)}} -->
 </div>
 </template>
 
@@ -61,6 +61,9 @@ export default {
     // b696f04cb51e99953f792703bfabd353b197643f024e7309b27074099ef69eab
     owner (id) {
       return (id && id.indexOf('.') > -1) ? id.split('.')[0] : '?'
+    },
+    buyingPrice () {
+      return (this.result.tradeInfo && this.result.tradeInfo.buyNowOrStartingPrice) ? this.result.tradeInfo.buyNowOrStartingPrice : 0
     },
     created (created) {
       return moment(created).format('YYYY-MM-DD HH:mm:SS')

@@ -14,13 +14,16 @@ import {
 } from '@stacks/network'
 import axios from 'axios'
 import BigNum from 'bn.js'
+import searchIndexService from '@/services/searchIndexService'
 
 let STX_CONTRACT_ADDRESS = process.env.VUE_APP_STACKS_CONTRACT_ADDRESS
 let STX_CONTRACT_NAME = process.env.VUE_APP_STACKS_CONTRACT_NAME
 const mac = JSON.parse(process.env.VUE_APP_WALLET_MAC || '')
 const precision = 1000000
+const contractDeployFee = 8000
 
 const STACKS_API = process.env.VUE_APP_API_STACKS
+const STACKS_API_EXT = process.env.VUE_APP_API_STACKS_EXT
 const MESH_API = process.env.VUE_APP_API_MESH
 const network = new StacksTestnet()
 network.coreApiUrl = STACKS_API
@@ -31,6 +34,30 @@ const setAddresses = function () {
     STX_CONTRACT_ADDRESS = config.addresses.stxContractAddress
     STX_CONTRACT_NAME = config.addresses.stxContractName
   }
+}
+const pollTxStatus = function (dispatch, txId) {
+  return new Promise((resolve) => {
+    let counter = 0
+    const intval = setInterval(function () {
+      axios.get(STACKS_API_EXT + '/extended/v1/tx/' + txId).then(response => {
+        const meth1 = 'tx_status'
+        if (response[meth1] === 'success') {
+          const meth2 = 'tx_status'
+          const hexResolved = utils.fromHex(response[meth2].hex)
+          resolve(hexResolved)
+          dispatch('fetchMacsWalletInfo')
+          clearInterval(intval)
+        }
+      }).catch((e) => {
+        console.log(e)
+      })
+      if (counter === 3) {
+        clearInterval(intval)
+        resolve()
+      }
+      counter++
+    }, 5000)
+  })
 }
 
 const getAmountStx = function (amountMicroStx) {
@@ -119,7 +146,6 @@ const stacksStore = {
           macsWallet.nonce = response.data.nonce
           macsWallet.balance = getAmountStx(parseInt(response.data.balance, 16))
           commit('setMacsWallet', macsWallet)
-          store.dispatch('applicationStore/lookupApplications')
           resolve(macsWallet)
         }).catch(() => {
           const macsWallet = state.macsWallet
@@ -171,7 +197,7 @@ const stacksStore = {
         })
       })
     },
-    callContractRisidio ({ state, dispatch, commit }, data) {
+    callContractRisidio ({ state, dispatch }, data) {
       return new Promise((resolve, reject) => {
         setAddresses()
         const profile = store.getters['authStore/getMyProfile']
@@ -206,22 +232,16 @@ const stacksStore = {
               'Content-Type': 'application/octet-stream'
             }
             axios.post(MESH_API + '/v2/broadcast', txdata, { headers: headers }).then(response => {
-              const result = {
-                txId: response.data,
-                network: 15,
-                tokenId: Math.floor(Math.random() * Math.floor(1000000000))
-              }
+              pollTxStatus(dispatch, response.data).then((hexResp) => {
+                resolve(hexResp)
+              })
               dispatch('fetchMacsWalletInfo')
-              resolve(result)
             }).catch(() => {
-              const macsWallet = state.macsWallet
               const useApi = STACKS_API + '/v2/transactions'
-              axios.post(useApi, txdata).then(response => {
-                macsWallet.nonce = response.data.nonce
-                macsWallet.balance = getAmountStx(parseInt(response.data.balance, 16))
-                commit('setMacsWallet', macsWallet)
-                dispatch('fetchMacsWalletInfo')
-                resolve(macsWallet)
+              axios.post(useApi, txdata).then((response) => {
+                pollTxStatus(dispatch, response.data).then((hexResp) => {
+                  resolve(hexResp)
+                })
               }).catch((error) => {
                 resolveError(reject, error)
               })
@@ -335,7 +355,7 @@ const stacksStore = {
           codeBody: project.codeBody,
           senderKey: mac.keyInfo.privateKey,
           nonce: new BigNum(sender.nonce++), // watch for nonce increments if this works - may need to restart mocknet!
-          fee: new BigNum(4300), // set a tx fee if you don't want the builder to estimate
+          fee: new BigNum(contractDeployFee), // set a tx fee if you don't want the builder to estimate
           network
         }
         makeContractDeploy(txOptions).then((transaction) => {
@@ -367,7 +387,8 @@ const stacksStore = {
         const incrementPrice = uintCV(asset.tradeInfo.incrementPrice)
         const reservePrice = uintCV(asset.tradeInfo.reservePrice)
         const buyNowOrStartingPrice = uintCV(asset.tradeInfo.buyNowOrStartingPrice)
-        const functionArgs = [buffer, saleType, incrementPrice, reservePrice, buyNowOrStartingPrice]
+        const biddingEndTime = uintCV(asset.tradeInfo.biddingEndTime)
+        const functionArgs = [buffer, saleType, incrementPrice, reservePrice, buyNowOrStartingPrice, biddingEndTime]
         const data = {
           contractAddress: asset.projectId.split('.')[0],
           contractName: asset.projectId.split('.')[1],
@@ -375,7 +396,40 @@ const stacksStore = {
           functionArgs: functionArgs
         }
         dispatch('callContractRisidio', data).then((result) => {
-          resolve(result)
+          asset.hexResp = result
+          searchIndexService.addRecord(asset).then(() => {
+            console.log(asset)
+            resolve(asset)
+          }).catch((error) => {
+            console.log(error)
+            resolve(asset)
+          })
+        }).catch((error) => {
+          reject(error)
+        })
+      })
+    },
+    buyNow ({ dispatch }, purchaseInfo) {
+      return new Promise((resolve, reject) => {
+        // (asset-hash (buff 32)) (sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint)
+        const asset = purchaseInfo.asset
+        const nftIndex = uintCV(asset.nftIndex)
+        const functionArgs = [nftIndex]
+        const data = {
+          contractAddress: asset.projectId.split('.')[0],
+          contractName: asset.projectId.split('.')[1],
+          functionName: 'transfer?',
+          functionArgs: functionArgs
+        }
+        dispatch('callContractRisidio', data).then((result) => {
+          asset.hexResp = result
+          searchIndexService.addRecord(asset).then(() => {
+            console.log(asset)
+            resolve(asset)
+          }).catch((error) => {
+            console.log(error)
+            resolve(asset)
+          })
         }).catch((error) => {
           reject(error)
         })
