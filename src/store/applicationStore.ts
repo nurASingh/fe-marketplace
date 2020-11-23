@@ -195,7 +195,7 @@ const applicationStore = {
             clarityAsset.nftIndex = nftIndex
             appdata.application.numberCalls++
             commit('addClarityAssetToAppmap', { application: appdata.application, asset: clarityAsset })
-            dispatch('lookupTradeInfo', { application: appdata.application, nftIndex: nftIndex }).then((tradeInfo) => {
+            dispatch('lookupTradeInfo', { application: appdata.application, nftIndex: nftIndex }).then(() => {
               if (appdata.application.numberCalls >= appdata.application.mintCounter) {
                 searchIndexService.addRecords(appdata.application)
               }

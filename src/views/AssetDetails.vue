@@ -78,7 +78,7 @@ export default {
         buyer: profile.username,
         asset: asset
       }
-      this.$store.dispatch('stacksStore/buyNow').then((result) => {
+      this.$store.dispatch('stacksStore/buyNow', purchaseInfo).then((result) => {
         this.result = result
       })
     },
