@@ -7,6 +7,8 @@ import contentStore from './contentStore'
 import searchStore from './searchStore'
 import stacksStore from './stacksStore'
 import projectStore from './projectStore'
+import rates from 'risidio-rates'
+import axios from 'axios'
 
 Vue.use(Vuex)
 
@@ -63,9 +65,21 @@ export default new Vuex.Store({
         displayName: 'News and Media',
         name: 'news_media'
       }
-    ]
+    ],
+    xgeRates: null
   },
   getters: {
+    getExchangeRates: state => {
+      return state.xgeRates
+    },
+    getExchangeRate: state => amountStx => {
+      if (!state.xgeRates) {
+        return null
+      }
+      const rate = state.xgeRates.find(item => item.fiatCurrency === 'EUR')
+      const priceInEuro = (1 / rate.amountStx) * amountStx
+      return Math.round(priceInEuro * 100) / 100
+    },
     getEventCode: state => {
       return state.eventCode
     },
@@ -88,6 +102,9 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    setXgeRates (state, xgeRates) {
+      state.xgeRates = xgeRates
+    },
     setWinDims (state) {
       state.windims = {
         innerWidth: window.innerWidth, innerHeight: window.innerHeight
@@ -104,5 +121,17 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    fetchRates ({ commit }) {
+      return new Promise(() => {
+        rates.fetchSTXRates().then((rates) => {
+          commit('setXgeRates', rates)
+        })
+        setInterval(function () {
+          rates.fetchSTXRates().then((rates) => {
+            commit('setXgeRates', rates)
+          })
+        }, 3600000)
+      })
+    }
   }
 })

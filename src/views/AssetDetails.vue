@@ -18,20 +18,42 @@
         <p class="mb-2 text-11-500 text-info">{{username()}}</p>
       </div>
     </div>
+
     <div class="col-6">
-      <div class="mb-2 d-flex justify-content-between">
+      <div class="d-flex justify-content-between">
         <p class="text-40-300">{{asset.title}}</p>
-        <p class="text-11-500 bg-secondary text-white text-center pt-3" style="text-transform: capitalize; width: 100px; height: 42px;">{{saleType()}}</p>
+        <p class="text-11-500 bg-secondary text-white text-center pt-2 mt-3" style="text-transform: capitalize; width: 80px; height: 32px;">{{saleType()}}</p>
       </div>
-      <div class="mb-2 d-flex justify-content-between">
-        <p class="text1">From <strong>{{projectName(asset.projectId)}}</strong></p>
-        <div v-if="isOwner()">
-          <p class="text1"><router-link :to="'/my-assets/' + asset.assetHash">manage your asset</router-link></p>
+      <div class="mb-3 d-flex justify-content-start" style="margin-top: -25px;">
+        <p class="text1">By <span class="text2">{{projectName(asset.projectId)}}</span></p>
+      </div>
+      <div class="row" v-if="isOwner()">
+        <div class="col-12 d-flex justify-content-end">
+          <div>
+            <p class="text2"><router-link :to="'/my-assets/' + asset.assetHash">manage your asset</router-link></p>
+          </div>
         </div>
       </div>
-      <div class="mb-2 d-flex justify-content-between">
-        <div v-if="!isOwner()">
-          <div v-if="isBuyNow()"><b-button @click="buyNow()" variant="info">Buy Now</b-button></div>
+      <div class="row mt-5">
+        <div class="col-6">
+          <div class="bb d-flex justify-content-between">
+            <div>
+              <p class="mt-2">Price</p>
+            </div>
+            <div>
+              <span class="text-stx mr-3">STX</span><span class="text-price text-secondary">{{asset.tradeInfo.buyNowOrStartingPrice}}</span>
+            </div>
+          </div>
+          <div class="d-flex justify-content-end">
+            <div>
+              <p class="mt-2">&asymp; &euro; {{rate}}</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-6">
+          <div class="mb-2 flex-fill d-flex justify-content-center">
+            <div v-if="!isOwner() && isBuyNow()" class="flex-fill"><b-button @click="buyNow()" style="min-width: 100%;" variant="info">Buy Now</b-button></div>
+          </div>
         </div>
       </div>
     </div>
@@ -94,7 +116,7 @@ export default {
         if (asset.tradeInfo.saleType === 0) {
           return 'Pre Sale'
         } else if (asset.tradeInfo.saleType === 1) {
-          return 'Buy Now'
+          return 'On Sale'
         } else if (asset.tradeInfo.saleType === 2) {
           return 'On Auction'
         }
@@ -108,6 +130,11 @@ export default {
     }
   },
   computed: {
+    rate () {
+      const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
+      const rates = this.$store.getters[APP_CONSTANTS.KEY_EXCHANGE_RATE](asset.tradeInfo.buyNowOrStartingPrice)
+      return rates
+    },
     asset () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
       return asset
@@ -120,4 +147,16 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.text-price {
+  font-weight: 800;
+  font-size: 24px;
+}
+.text-stx {
+  font-weight: 300;
+  font-size: 20px;
+  color: #777777;
+}
+.bb {
+  border-bottom: 1pt solid #50B1B5;
+}
 </style>
