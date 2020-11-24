@@ -4,17 +4,17 @@
   <div id="result-item" class="mb-4">
     <img width="100%" :src="result.assetUrl"/>
     <!-- <div style="position: absolute; top: -20px; left: 15px; font-size: 2rem;"><b-badge variant="light">{{result.nftIndex}} <span class="sr-only">NFT</span></b-badge></div> -->
-    <div style="position: absolute; top: 0px; right: 15px;"><a href="#" :class="(amIOwner()) ? 'homepage__items--my-btn' : 'homepage__items--like-btn'"><b-icon icon="heart"></b-icon></a></div>
-    <!--<div class="homepage__items--description" v-if="dHover[index]" v-html="item.b1_text1[0].text"></div>-->
-    <div class="homepage__items--overlay" style="position: absolute; top: -20px; right: 0px; left: 0px;">
-      <div class="homepage__items--description">
+    <div><a href="#" :class="(amIOwner()) ? 'result__item--my-btn' : 'result__item--like-btn'"><b-icon icon="heart"></b-icon></a></div>
+    <!--<div class="result__item--description" v-if="dHover[index]" v-html="item.b1_text1[0].text"></div>-->
+    <div class="result__item--overlay">
+      <div class="result__item--description">
         <div class="d-flex justify-content-between">
           <div class="result__item--title">#{{result.nftIndex}} {{result.title}}</div>
           <div class="result__item--amount">Σ {{buyingPrice()}}</div>
         </div>
         <div class="d-flex justify-content-between">
-          <div class="homepage__items--by">By <span class="homepage__items--artist">{{owner(result.artist)}}</span></div>
-          <div class="homepage__items--price">{{saleType()}}</div>
+          <div class="result__item--by">By <span class="result__item--artist">{{owner(result.artist)}}</span></div>
+          <div class="result__item--price">{{saleType()}}</div>
         </div>
       </div>
     </div>
@@ -162,7 +162,7 @@ export default {
     border-radius: 50%;
     z-index: 3;
   }
-  & .homepage__items--my-btn {
+  & .result__item--my-btn {
     position: absolute;
     top: 0;
     right: 0;
