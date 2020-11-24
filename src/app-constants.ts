@@ -1,5 +1,6 @@
 export const APP_CONSTANTS = {
   KEY_MODAL_MESSAGE: 'getModalMessage',
+  KEY_EXCHANGE_RATE: 'getExchangeRate',
   KEY_CATEGORIES: 'getCategories',
   KEY_CONFIGURATION_LOGIN: 'getConfigurationLogin',
   KEY_CONFIGURATION: 'getConfiguration',
