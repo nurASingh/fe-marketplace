@@ -12,6 +12,7 @@
 </template>
 
 <script>
+import { APP_CONSTANTS } from '@/app-constants'
 
 export default {
   name: 'SellBuyNow',
@@ -34,12 +35,18 @@ export default {
       }
     }
   },
+  mounted () {
+    const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.$route.params.assetHash)
+    if (asset && asset.tradeInfo) this.tradeInfo = asset.tradeInfo
+    return asset
+  },
   methods: {
     submit: function () {
       if (!this.tradeInfo.buyNowOrStartingPrice || this.tradeInfo.buyNowOrStartingPrice <= 0) {
         this.$notify({ type: 'error', title: 'Price', text: 'Please enter the buy now price.' })
         return
       }
+      this.tradeInfo.saleType = 1
       this.$emit('setTradeInfo', this.tradeInfo)
     }
   },

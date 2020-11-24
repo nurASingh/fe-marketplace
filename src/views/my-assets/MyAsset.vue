@@ -1,10 +1,17 @@
 <template>
 <div class="container-fluid bg-secondary" v-if="asset" style="padding: 50px 50px; height: 100vh;">
-  <div class="text-right"><router-link class="p-3" to="/my-assets" ><b-icon icon="x-circle" scale="1" variant="white"></b-icon></router-link></div>
-  <div class="mx-auto" v-if="asset" style="">
+  <div class="mx-auto mt-5" v-if="asset" style="">
+    <div class="mb-4 row">
+      <div class="col-8 offset-2">
+        <div class="d-flex justify-content-between">
+          <span><router-link class="text-info text-11-700" to="/my-assets"><b-icon class="mr-2" icon="caret-left-fill"/>Back</router-link></span>
+          <!-- <div class="text-right"><router-link class="p-3" to="/my-assets" ><b-icon icon="x-circle" scale="1" variant="white"></b-icon></router-link></div> -->
+        </div>
+      </div>
+    </div>
     <div class="row">
-      <div class="col-6 text-right">
-        <div id="img1"><img :src="asset.assetUrl" class="img-responsive" width="80%"/></div>
+      <div class="col-4 offset-2 text-left">
+        <div id="img1"><img :src="asset.assetUrl" class="img-responsive" width="100%"/></div>
       </div>
       <div class="col-6">
         <div class="text-white d-flex flex-column align-items-start" :style="calcHeight">
@@ -15,6 +22,9 @@
             <p class="text2">{{projectName(asset.projectId)}}</p>
             <p class="text1 text-white">Created on</p>
             <p class="text2">{{created(asset.created)}}</p>
+            <p class="text1 text-white" v-if="asset.saleType === 1">Buy Now</p>
+            <p class="text1 text-white" v-if="asset.saleType === 2">On Auction</p>
+            <p class="text2">{{biddingEndsDisplay()}}</p>
             <p class="text1 text-white" v-if="biddingEndsDisplay">Bidding Ends</p>
             <p class="text2">{{biddingEndsDisplay()}}</p>
 
@@ -24,7 +34,7 @@
             <button @click.prevent="download()" class="button-secondary"><span>Download</span></button>
           </div>
           -->
-          <div class="mt-auto" v-if="asset.nftIndex">
+          <div class="mt-auto" v-if="asset.nftIndex >= 0">
             <button class="mb-3 button-primary"><router-link :to="'/asset-sale-data/' + assetHash">Sell Collectible</router-link></button>
           </div>
         </div>
@@ -44,13 +54,15 @@ export default {
   },
   data () {
     return {
-      assetHash: null
+      assetHash: null,
+      loading: true
     }
   },
   mounted () {
-    this.loading = false
     this.assetHash = this.$route.params.assetHash
-    this.$store.dispatch('searchStore/findAssetByHash', this.assetHash)
+    this.$store.dispatch('searchStore/findAssetByHash', this.assetHash).then(() => {
+      this.loading = false
+    })
   },
   methods: {
     projectName (projectId) {
@@ -63,7 +75,7 @@ export default {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
       let bd
       if (asset.tradeInfo && asset.tradeInfo.biddingEndTime) {
-        bd = moment(this.item.tradeInfo.biddingEndTime).format('LLLL')
+        bd = moment(asset.tradeInfo.biddingEndTime).format('LLLL')
       }
       return bd
     },

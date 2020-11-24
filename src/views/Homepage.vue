@@ -25,7 +25,6 @@
     </div>
     <div class="row mb-4">
       <div v-for="(item, index) in block1Items" :key="index" class="col-lg-3 col-md-4 col-6" >
-        <!--<div @mouseleave="hoverOut()" @mouseover="hoverIn(index)" class="mb-4">-->
           <div class="mb-4 homepage__items">
             <img width="100%" :src="item.b1_image1.url"/>
             <!--<div class="homepage__items--description" v-if="dHover[index]" v-html="item.b1_text1[0].text"></div>-->
@@ -205,27 +204,20 @@ export default {
   },
   mounted () {
     this.loading = false
+    this.$store.dispatch('searchStore/findBySearchTerm')
   },
   methods: {
-    hoverIn (index) {
-      this.dHover[index] = true
-      this.componentKey += 1
-    },
-    hoverOut () {
-      this.dHover = [false, false, false, false, false, false, false, false, false, false, false, false]
-      this.componentKey += 1
-    },
     isActive (category) {
       if (this.category === category) {
         return 'active'
       }
       return ''
-    },
-    explore () {
-      this.$router.push('/marketplace')
     }
   },
   computed: {
+    resultSet () {
+      return this.$store.getters[APP_CONSTANTS.KEY_SEARCH_RESULTS]
+    },
     bannerImage () {
       const content = this.$store.getters['contentStore/getHomepage']
       if (!content) {
@@ -265,10 +257,6 @@ export default {
         'background-size': 'cover',
         opacity: 1
       }
-    },
-    sectionDimensions () {
-      const height = this.$store.getters[APP_CONSTANTS.KEY_SECTION_HEIGHT]
-      return 'min-height: ' + height + 'px; width: auto;'
     },
     block2Items () {
       const content = this.$store.getters['contentStore/getHomepage']

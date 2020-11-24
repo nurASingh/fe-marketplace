@@ -38,8 +38,10 @@
         <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 2 })">On Auction</a></b-dropdown-item>
         <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 1 })">Buy Now</a></b-dropdown-item>
       </b-nav-item-dropdown>
+      <!--
       <b-nav-item><router-link class="text-white" to="/collections">Collections</router-link></b-nav-item>
       <b-nav-item><router-link class="text-white" to="/creators">Creators</router-link></b-nav-item>
+      -->
       <b-nav-item-dropdown caret class="dropdown-menu-wide navbar__applications-item">
         <!-- Using 'button-content' slot -->
         <template v-slot:button-content>
@@ -47,28 +49,15 @@
         </template>
         <div class="row">
           <div class="col-6">
-            <b-dropdown-item>Type of Collectibles</b-dropdown-item>
-            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'all' })">All</a></b-dropdown-item>
-            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'popular' })">Popular</a></b-dropdown-item>
-            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'recent' })">Recently Added</a></b-dropdown-item>
-            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 2 })">On Auction</a></b-dropdown-item>
-            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 1 })">Buy Now</a></b-dropdown-item>
-          </div>
-          <div class="col-6">
-            <b-dropdown-item>Type of Collectibles</b-dropdown-item>
-            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'all' })">All</a></b-dropdown-item>
-            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'popular' })">Popular</a></b-dropdown-item>
-            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'recent' })">Recently Added</a></b-dropdown-item>
-            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 2 })">On Auction</a></b-dropdown-item>
-            <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'sale-type', saleType: 1 })">Buy Now</a></b-dropdown-item>
+            <b-dropdown-item>Connected Applications</b-dropdown-item>
+            <project-list v-on="$listeners"/>
           </div>
         </div>
       </b-nav-item-dropdown>
-      <b-nav-item class="text-info"><router-link class="text-white" to="/community">Become a Contributer</router-link></b-nav-item>
+      <b-nav-item class="text-info"><router-link class="text-white" to="/admin-app">Become a Contributor</router-link></b-nav-item>
     </b-navbar-nav>
     <b-navbar-nav class="ml-xl-auto align-items-xl-center">
-      <b-nav-item><router-link class="text-white" to="/admin-app">How It Works</router-link></b-nav-item>
-      <b-nav-item><router-link class="text-white" to="/community">Help</router-link></b-nav-item>
+      <b-nav-item><router-link class="text-white" to="/community?how-it-works">How It Works</router-link></b-nav-item>
     </b-navbar-nav>
 
     <b-navbar-nav class="navbar__login d-flex">
@@ -87,11 +76,13 @@
 <script>
 import { APP_CONSTANTS } from '@/app-constants'
 import SideBar from './SideBar'
+import ProjectList from '@/components/agora/ProjectList'
 
 export default {
   name: 'MainNavbar',
   components: {
-    SideBar
+    SideBar,
+    ProjectList
   },
   data () {
     return {
@@ -127,6 +118,11 @@ export default {
     }
   },
   computed: {
+    projects () {
+      const appmap = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP]
+      if (appmap) return appmap.apps
+      return []
+    },
     content () {
       const content = this.$store.getters['contentStore/getHomepage']
       return content

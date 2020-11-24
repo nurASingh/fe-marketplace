@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@stacks/auth": "^1.0.0-beta.10",
-    "@stacks/connect": "^4.2.3",
+    "@stacks/connect": "^4.2.4",
     "@stacks/encryption": "^1.0.0-beta.10",
     "@stacks/network": "^1.0.0-beta.10",
     "@stacks/transactions": "^1.0.0-beta.10",

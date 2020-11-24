@@ -8,8 +8,18 @@
       <div><span>STX</span> <span class="text-info">{{ balance }}</span></div>
     </div>
     <div class="text-xlight ml-4 d-flex justify-content-between">
-      <span>Address</span>
+      <span @click.prevent="showInternalWallet = !showInternalWallet">Address</span>
       <span>{{ stxAddress }}</span>
+    </div>
+    <div v-if="showInternalWallet">
+      <div class="text-xlight mb-0 ml-4 d-flex justify-content-between">
+        <span>Macs Balance</span>
+        <div><span>STX</span> <span class="text-info">{{ balanceMac }}</span></div>
+      </div>
+      <div class="text-xlight ml-4 d-flex justify-content-between">
+        <span>Macs Address</span>
+        <span>{{ stxAddressMac }}</span>
+      </div>
     </div>
   </div>
   <div class="login-sidebar__item-group login-sidebar--border-bottom">
@@ -43,6 +53,7 @@ export default {
   },
   data () {
     return {
+      showInternalWallet: false
     }
   },
   methods: {
@@ -52,10 +63,21 @@ export default {
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
       return (profile && profile.wallet) ? profile.wallet.balance : 0
     },
+    balanceMac () {
+      const wallet = this.$store.getters[APP_CONSTANTS.KEY_MACS_WALLET]
+      return (wallet) ? wallet.balance : 0
+    },
     stxAddress () {
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
       if (profile.wallet && profile.wallet.keyInfo.address) {
         return profile.wallet.keyInfo.address.substring(0, 5) + '...' + profile.wallet.keyInfo.address.substring(profile.wallet.keyInfo.address.length - 5)
+      }
+      return 'n/a'
+    },
+    stxAddressMac () {
+      const wallet = this.$store.getters[APP_CONSTANTS.KEY_MACS_WALLET]
+      if (wallet && wallet.keyInfo.address) {
+        return wallet.keyInfo.address.substring(0, 5) + '...' + wallet.keyInfo.address.substring(wallet.keyInfo.address.length - 5)
       }
       return 'n/a'
     },
