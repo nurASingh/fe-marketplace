@@ -23,26 +23,9 @@
       <div :class="isActive('artists')"><a href="#" @click.prevent="category = 'artists'">Artists</a></div>
       <div :class="isActive('applications')"><a href="#" @click.prevent="category = 'applications'">Applications</a></div>
     </div>
-    <div class="row mb-4">
-      <div v-for="(item, index) in block1Items" :key="index" class="col-lg-3 col-md-4 col-6" >
-          <div class="mb-4 homepage__items">
-            <img width="100%" :src="item.b1_image1.url"/>
-            <!--<div class="homepage__items--description" v-if="dHover[index]" v-html="item.b1_text1[0].text"></div>-->
-            <div class="homepage__items--overlay">
-              <a href="#" class="homepage__items--like-btn"><b-icon icon="heart"></b-icon></a>
-              <div class="homepage__items--description">
-                <div class="d-flex justify-content-between">
-                  <div class="homepage__items--title">Block 1 Item 1</div>
-                  <div class="homepage__items--amount">Σ 0.5</div>
-                </div>
-                <div class="d-flex justify-content-between">
-                  <div class="homepage__items--by">By <span class="homepage__items--artist">Alice</span></div>
-                  <div class="homepage__items--price">£1.50</div>
-                </div>
-              </div>
-            </div>
-        </div>
-      </div>
+    <div class="homepage__items-section">
+      <result-grid :resultSet="resultSet" :gridClasses="gridClasses" v-if="resultSet && resultSet.length > 0"/>
+      <div v-else v-html="currentSearch">No results: {{currentSearch}}</div>
     </div>
   </div>
   <div class="d-flex justify-content-center homepage__categories--more-button">
@@ -188,10 +171,12 @@
 <script>
 import { APP_CONSTANTS } from '@/app-constants'
 import SearchBar from '@/components/agora/SearchBar'
+import ResultGrid from '@/components/agora/ResultGrid'
 
 export default {
   name: 'Homepage',
   components: {
+    ResultGrid,
     SearchBar
   },
   data () {
@@ -199,7 +184,7 @@ export default {
       query: null,
       componentKey: 0,
       category: 'discover',
-      dHover: [false, false, false, false, false, false, false, false, false, false, false, false]
+      gridClasses: ['col-md-3', 'col-sm-4', 'col-6']
     }
   },
   mounted () {

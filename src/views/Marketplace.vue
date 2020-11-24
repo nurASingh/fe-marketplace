@@ -7,7 +7,7 @@
     <div class="w-75 p-2">
       <marketplace-filter-bar v-on="$listeners"/>
       <div class="p-5">
-        <result-grid :resultSet="resultSet" v-if="resultSet && resultSet.length > 0"/>
+        <result-grid :resultSet="resultSet" :gridClasses="gridClasses" v-if="resultSet && resultSet.length > 0"/>
         <div v-else v-html="currentSearch">No results: {{currentSearch}}</div>
       </div>
     </div>
@@ -32,7 +32,8 @@ export default {
   data () {
     return {
       results: null,
-      query: null
+      query: null,
+      gridClasses: ['col-lg-3', 'col-md-4', 'col-sm-6', 'col-12']
     }
   },
   mounted () {

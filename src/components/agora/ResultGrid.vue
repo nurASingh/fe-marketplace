@@ -1,6 +1,6 @@
 <template>
 <div class="row mb-4">
-  <div v-for="(result, index) in resultSet" :key="index" class="col-md-3 col-sm-4 col-xs-6" >
+  <div v-for="(result, index) in resultSet" :key="index" v-bind:class="gridClasses">
     <result-item :result="result" />
   </div>
 </div>
@@ -15,7 +15,7 @@ export default {
   components: {
     ResultItem
   },
-  props: ['resultSet'],
+  props: ['resultSet', 'gridClasses'],
   data () {
     return {
     }
