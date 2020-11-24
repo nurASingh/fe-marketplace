@@ -6,7 +6,7 @@
           <div v-if="!uploadable" class="text-info pt-5 create-container text-center">
             <div>
               <div style="font-size: 32px;">+</div>
-              <media-files-upload style="font-size: 16px; cursor: pointer;" class="" @lookupEvent="$emit('lookup-event')" :readonly="false" :contentModel="contentModel1" popoverId="'popover-target-1'" :parentalError="parentalError" :showFiles="true" :mediaFiles="mediaFiles1" :limit="1" :sizeLimit="2000000" :mediaTypes="'plain'" @updateMedia="setByEventLogo1($event)"/>
+              <media-files-upload style="font-size: 1.6rem; cursor: pointer;" class="" @lookupEvent="$emit('lookup-event')" :readonly="false" :contentModel="contentModel1" popoverId="'popover-target-1'" :parentalError="parentalError" :showFiles="true" :mediaFiles="mediaFiles1" :limit="1" :sizeLimit="2000000" :mediaTypes="'plain'" @updateMedia="setByEventLogo1($event)"/>
             </div>
           </div>
           <div v-if="uploadable">

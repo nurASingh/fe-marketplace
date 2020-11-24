@@ -124,7 +124,7 @@ export default {
     height: 47px;
   }
   & .input-group input {
-    font-size: 14px;
+    font-size: 1.4rem;
     font-weight: 500;
     color: #000;
     height: 26px;
@@ -141,7 +141,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 12px;
+    font-size: 1.2rem;
     font-weight: 600;
     color: #000;
     text-transform: none;
@@ -155,7 +155,7 @@ export default {
     box-shadow: none;
   }
   & .main-search .btn.dropdown-toggle::after {
-    font-size: 16px;
+    font-size: 1.6rem;
   }
 
   /* MAIN SEARCH BAR -- LOOP ICON */

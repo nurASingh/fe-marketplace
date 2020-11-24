@@ -113,27 +113,27 @@ export default {
   }
 
   & .homepage__items--title {
-    font-size: 14px;
+    font-size: 1.4rem;
     font-weight: 400;
   }
 
   & .homepage__items--amount {
-    font-size: 12px;
+    font-size: 1.2rem;
     font-weight: 600;
   }
 
   & .homepage__items--by {
-    font-size: 10px;
+    font-size: 1rem;
     font-weight: 300;
   }
 
   & .homepage__items--artist {
-    font-size: 10px;
+    font-size: 1rem;
     font-weight: 700;
   }
 
   & .homepage__items--price {
-    font-size: 9px;
+    font-size: 0.9rem;
     font-weight: 400;
   }
 
@@ -142,7 +142,7 @@ export default {
     top: 0;
     right: 0;
     color: #FFFFFF;
-    font-size: 13px;
+    font-size: 1.3rem;
     background-color: #50B1B5;
     padding: 10px 13px;
     border-radius: 50%;

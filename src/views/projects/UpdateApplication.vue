@@ -50,7 +50,7 @@
                   ></b-input>
               </div>
               <div class="mb-2" v-if="valid">
-                <b-button variant="info" class="mt-3 mr-3 btn-lg" style="text-transform: capitalize; font-size: 14px;" @click.prevent="saveApplication()">Save Application</b-button>
+                <b-button variant="info" class="mt-3 mr-3 btn-lg" style="text-transform: capitalize; font-size: 1.4rem;" @click.prevent="saveApplication()">Save Application</b-button>
                 <!-- <b-button variant="danger" class="mt-3 btn-lg" style="text-transform: capitalize; font-size: 14px;" to="/admin-app">Back</b-button> -->
               </div>
             </b-form>

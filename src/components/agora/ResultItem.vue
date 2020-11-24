@@ -1,20 +1,20 @@
 <template>
 <div>
 <router-link :to="assetUrl">
-  <div id="result-item" class="mb-4 ">
+  <div id="result-item" class="mb-4">
     <img width="100%" :src="result.assetUrl"/>
     <!-- <div style="position: absolute; top: -20px; left: 15px; font-size: 2rem;"><b-badge variant="light">{{result.nftIndex}} <span class="sr-only">NFT</span></b-badge></div> -->
-    <div style="position: absolute; top: 0px; right: 15px;"><a href="#" class="homepage__items--like-btn"><b-icon icon="heart"></b-icon></a></div>
-    <!--<div class="homepage__items--description" v-if="dHover[index]" v-html="item.b1_text1[0].text"></div>-->
-    <div class="homepage__items--overlay" style="position: absolute; top: -20px; right: 0px; left: 0px;">
-      <div class="homepage__items--description">
+    <div><a href="#" class="result__item--like-btn"><b-icon icon="heart"></b-icon></a></div>
+    <!--<div class="result__item--description" v-if="dHover[index]" v-html="item.b1_text1[0].text"></div>-->
+    <div class="result__item--overlay">
+      <div class="result__item--description">
         <div class="d-flex justify-content-between">
-          <div class="homepage__items--title">#{{result.nftIndex}} {{result.title}}</div>
-          <div class="homepage__items--amount">Σ {{buyingPrice()}}</div>
+          <div class="result__item--title">#{{result.nftIndex}} {{result.title}}</div>
+          <div class="result__item--amount">Σ {{buyingPrice()}}</div>
         </div>
         <div class="d-flex justify-content-between">
-          <div class="homepage__items--by">By <span class="homepage__items--artist">{{owner(result.artist)}}</span></div>
-          <div class="homepage__items--price" v-if="result.buyNowOrStartingPrice">{{amountFiat}}</div>
+          <div class="result__item--by">By <span class="result__item--artist">{{owner(result.artist)}}</span></div>
+          <div class="result__item--price" v-if="result.buyNowOrStartingPrice">{{amountFiat}}</div>
         </div>
       </div>
     </div>
@@ -82,13 +82,13 @@ export default {
 </script>
 <style lang="scss" scoped>
 #result-item {
-  /* ITEMS STYLE */
-  & .homepage__items {
-    position: relative;
-    width: 100%;
-  }
+  position: relative;
+}
 
-  & .homepage__items--overlay {
+#result-item {
+  /* ITEMS STYLE */
+
+  & .result__item--overlay {
     display: flex;
     align-items: flex-end;
     position: absolute;
@@ -98,7 +98,7 @@ export default {
     cursor: pointer;
   }
 
-  & .homepage__items--description {
+  & .result__item--description {
     width: 100%;
     padding: 11px 18px;
     color: #fff;
@@ -108,41 +108,41 @@ export default {
     transition: opacity ease 0.3s;
   }
 
-  & .homepage__items--overlay:hover .homepage__items--description {
+  & .result__item--overlay:hover .result__item--description {
     opacity: 0.95;
   }
 
-  & .homepage__items--title {
-    font-size: 14px;
+  & .result__item--title {
+    font-size: 1.4rem;
     font-weight: 400;
   }
 
-  & .homepage__items--amount {
-    font-size: 12px;
+  & .result__item--amount {
+    font-size: 1.2rem;
     font-weight: 600;
   }
 
-  & .homepage__items--by {
-    font-size: 10px;
+  & .result__item--by {
+    font-size: 1rem;
     font-weight: 300;
   }
 
-  & .homepage__items--artist {
-    font-size: 10px;
+  & .result__item--artist {
+    font-size: 1rem;
     font-weight: 700;
   }
 
-  & .homepage__items--price {
-    font-size: 9px;
+  & .result__item--price {
+    font-size: 0.9rem;
     font-weight: 400;
   }
 
-  & .homepage__items--like-btn {
+  & .result__item--like-btn {
     position: absolute;
     top: 0;
     right: 0;
     color: #FFFFFF;
-    font-size: 13px;
+    font-size: 1.3rem;
     background-color: #50B1B5;
     padding: 10px 13px;
     border-radius: 50%;

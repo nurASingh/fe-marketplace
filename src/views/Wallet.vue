@@ -119,20 +119,20 @@ export default {
 .wallet-text1 {
   font-weight: 500;
   font-style: italic;
-  font-size: 11px;
+  font-size: 1.1rem;
   color: #707070;
   text-transform: capitalize;
   margin-top: 5px;
 }
 .wallet-text2 {
   font-weight: 300;
-  font-size: 20px;
+  font-size: 2rem;
   color: #777777;
   text-transform: uppercase;
 }
 .wallet-text2 a {
   font-weight: 700;
-  font-size: 20px;
+  font-size: 2rem;
   color: #777777;
   text-transform: uppercase;
 }

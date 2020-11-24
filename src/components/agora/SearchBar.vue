@@ -81,7 +81,7 @@ export default {
     box-shadow: 0px 3px 6px #00000029;
   }
   & .input-group input {
-    font-size: 11px;
+    font-size: 1.1rem;
     font-weight: 300;
     color: #000;
     height: 26px;
@@ -100,7 +100,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 12px;
+    font-size: 1.2rem;
     font-weight: 600;
     color: #000;
     text-transform: none;
@@ -114,7 +114,7 @@ export default {
     box-shadow: none;
   }
   & .main-search .btn.dropdown-toggle::after {
-    font-size: 16px;
+    font-size: 1.6rem;
   }
 
   /* MAIN SEARCH BAR -- DROPDOWN MENU */
@@ -157,7 +157,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    font-size: 12px;
+    font-size: 1.2rem;
     font-weight: 600;
     color: #000;
     text-transform: none;
@@ -171,7 +171,7 @@ export default {
     box-shadow: none;
   }
   & .main-search .btn.dropdown-toggle::after {
-    font-size: 16px;
+    font-size: 1.6rem;
   }
 
   /* MAIN SEARCH BAR -- DROPDOWN MENU */

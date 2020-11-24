@@ -92,7 +92,7 @@ export default {
 }
 .contract-id {
   font-weight: 500;
-  font-size: 10px;
+  font-size: 1rem;
   letter-spacing: 0px;
   color: #5154A1;
 }

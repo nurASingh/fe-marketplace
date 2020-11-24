@@ -19,7 +19,7 @@
         parameters and click deploy and we'll do the heavy lifting!
       </p>
       <div class="mb-5">
-        <b-button to="/connect-app" variant="info" class="mt-3 mr-3 btn-lg" style="text-transform: capitalize; font-size: 14px;">Continue</b-button>
+        <b-button to="/connect-app" variant="info" class="mt-3 mr-3 btn-lg" style="text-transform: capitalize; font-size: 1.4rem;">Continue</b-button>
       </div>
     </div>
   </div>

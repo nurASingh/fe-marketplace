@@ -152,7 +152,7 @@ footer .navbar-brand {
 
 .footer__pitch {
   margin: 30px 0;
-  font-size: 12px;
+  font-size: 1.2rem;
 }
 
 /* FOOTER CONTENT COLUMN */
@@ -165,7 +165,7 @@ footer .navbar-brand {
 }
 
 .footer__column-content {
-  font-size: 12px;
+  font-size: 1.2rem;
 }
 
 .footer__column-content div:first-child {
@@ -186,7 +186,7 @@ footer .navbar-brand {
 }
 
 .footer__bottom-row {
-  font-size: 12px;
+  font-size: 1.2rem;
   font-weight: 300;
 }
 
@@ -243,7 +243,7 @@ footer .navbar-brand {
 
 @media only screen and (max-width: 359px) {
   .footer__column-content {
-    font-size: 9px;
+    font-size: 0.9rem;
   }
 }
 </style>

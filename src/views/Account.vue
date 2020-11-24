@@ -120,7 +120,7 @@ export default {
   background: #fff;
   border-top-left-radius: 20px;
   border-bottom-left-radius: 20px;
-  font-size: 12px;
+  font-size: 1.2rem;
   border: 1px solid #E3E3E3;
   padding: 6px;
   padding-left: 20px;
@@ -129,7 +129,7 @@ export default {
   text-align: left;
   font-weight: 500;
   font-style: italic;
-  font-size: 11px;
+  font-size: 1.1rem;
   letter-spacing: 0px;
   color: #707070;
   text-transform: capitalize;
@@ -139,7 +139,7 @@ export default {
   background: #fff;
   border-top-right-radius: 20px;
   border-bottom-right-radius: 20px;
-  font-size: 12px;
+  font-size: 1.2rem;
   border: 1px solid #E3E3E3;
   padding: 6px;
   padding-left: 20px;
@@ -148,7 +148,7 @@ export default {
   text-align: left;
   font-weight: 500;
   font-style: italic;
-  font-size: 11px;
+  font-size: 1.1rem;
   letter-spacing: 0px;
   color: #707070;
   text-transform: capitalize;

@@ -215,7 +215,7 @@ nav a {
   color: #000;
 }
 nav ul {
-  font-size: 12px;
+  font-size: 1.2rem;
 }
 #nav-collapse ul.navbar-nav:first-child {
   font-weight: 600;
@@ -248,7 +248,7 @@ nav .nav-link {
 nav .login-button {
   width: 97px;
   margin-left: 40px;
-  font-size: 12px;
+  font-size: 1.2rem;
 }
 
 nav .navbar__default-account-icon {
@@ -303,7 +303,7 @@ nav .navbar-toggler {
   /* MOBILE NAVBAR LOGIN */
   nav .login-button {
     margin-left: 0px;
-    font-size: 14px;
+    font-size: 1.4rem;
   }
   nav .navbar-collapse .navbar__login {
     margin: auto 0 0;
@@ -367,7 +367,7 @@ nav .navbar-toggler {
 
   #nav-collapse .navbar-nav .nav-item {
     margin: 0 0 20px;
-    font-size: 14px;
+    font-size: 1.4rem;
   }
 
   #nav-collapse .navbar-nav:first-child .nav-item:last-child {
@@ -381,7 +381,7 @@ nav .navbar-toggler {
     & .navbar-nav .dropdown-menu {
       padding: 0;
       margin: 0;
-      font-size: 14px;
+      font-size: 1.4rem;
       background: transparent;
       border: none;
       border-radius: 0;

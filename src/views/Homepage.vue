@@ -375,7 +375,7 @@ export default {
     margin: 42px 0;
   }
   & .homepage__categories a {
-    font-size: 12px;
+    font-size: 1.2rem;
     font-weight: 700;
     color: #000;
   }
@@ -431,28 +431,28 @@ export default {
   }
 
   & .homepage__items--title {
-    font-size: 14px;
+    font-size: 1.4rem;
     font-weight: 400;
   }
 
   & .homepage__items--amount {
-    font-size: 12px;
+    font-size: 1.2rem;
     font-weight: 600;
     align-self: center;
   }
 
   & .homepage__items--by {
-    font-size: 10px;
+    font-size: 1rem;
     font-weight: 300;
   }
 
   & .homepage__items--artist {
-    font-size: 10px;
+    font-size: 1rem;
     font-weight: 700;
   }
 
   & .homepage__items--price {
-    font-size: 9px;
+    font-size: 0.9rem;
     font-weight: 400;
   }
 
@@ -461,7 +461,7 @@ export default {
     top: 0;
     right: 0;
     color: #FFFFFF;
-    font-size: 13px;
+    font-size: 1.3rem;
     background-color: #50B1B5;
     padding: 10px 13px;
     border-radius: 50%;
@@ -474,7 +474,7 @@ export default {
 
   & .homepage__applications--view-all {
     align-self: center;
-    font-size: 11px;
+    font-size: 1.1rem;
     font-weight: 700;
   }
 
@@ -484,19 +484,19 @@ export default {
   }
 
   & .homepage__applications--item div.text-center div {
-    font-size: 13px;
+    font-size: 1.3rem;
     font-weight: 500;
     margin: 20px 0 8px;
   }
 
   & .homepage__applications--item p {
-    font-size: 10px;
+    font-size: 1rem;
     font-weight: 300;
     text-align: center;
   }
 
     & .homepage__applications--item p span {
-    font-size: 10px;
+    font-size: 1rem;
     font-weight: 700;
   }
 
@@ -507,7 +507,7 @@ export default {
 
   & .homepage__collections--view-all {
     align-self: center;
-    font-size: 11px;
+    font-size: 1.1rem;
     font-weight: 700;
   }
 
@@ -545,7 +545,7 @@ export default {
     margin: 0 10px 12px;
   }
   & .homepage__categories-sn--text {
-    font-size: 16px;
+    font-size: 1.6rem;
     color: #fff;
     margin-top: 20px;
   }
@@ -596,7 +596,7 @@ export default {
     padding-bottom: 120px;
   }
   & .homepage__blog-section p {
-    font-size: 17px;
+    font-size: 1.7rem;
     font-weight: 500;
   }
 
@@ -608,7 +608,7 @@ export default {
 
   /* CATEGORIES SECTION */
   & .homepage__categories a {
-    font-size: 10px;
+    font-size: 1rem;
     margin: 0 10px;
   }
 
@@ -646,7 +646,7 @@ export default {
 /* CATEGORIES SECTION */
 @media only screen and (max-width: 359px) {
   #homepage .homepage__categories a {
-    font-size: 10px;
+    font-size: 1rem;
     margin: 0 7px;
   }
 }

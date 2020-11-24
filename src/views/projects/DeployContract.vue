@@ -7,7 +7,7 @@
       <div class="row">
         <div class="col-12">
           <p class="text-40-300">Upload Contract</p>
-          <p style="font-size: 10px;">Contract id: {{projectId}} <router-link class="mr-3" :to="'/connect-app/' + projectId"><b-icon icon="pencil"/></router-link></p>
+          <p style="font-size: 1rem;">Contract id: {{projectId}} <router-link class="mr-3" :to="'/connect-app/' + projectId"><b-icon icon="pencil"/></router-link></p>
             <deploy-contract-from-file :project="project" @deployed="deployed"/>
         </div>
       </div>

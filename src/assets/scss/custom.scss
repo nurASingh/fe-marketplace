@@ -130,8 +130,13 @@ $font-dir: "/fonts/";
   font-weight: 100;
   font-display: swap;
 }
-
+html {
+  /* 1rem = 10px */
+  font-size: 62.5%;
+}
 body {
+  /* default font-size set back to 16px */
+  font-size: 1.6rem;
   margin: 0;
   font-family: 'Montserrat', Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -145,31 +150,31 @@ h1, h2, h3, h4, h5, h6 {
   font-family: 'Montserrat', Arial, Helvetica, sans-serif;
 }
 h1 {
-  font-size: 40px;
+  font-size: 4rem;
   font-weight: 200;
   letter-spacing: 0px;
   text-transform: capitalize;
 }
 h2 {
-  font-size: 17px;
+  font-size: 1.7rem;
   font-weight: 400;
   letter-spacing: 0px;
   text-transform: capitalize;
   white-space: normal;
 }
 h3 {
-  font-size: 16px;
+  font-size: 1.6rem;
   font-weight: 500;
   letter-spacing: 0px;
 }
 h4 {
-  font-size: 15px;
+  font-size: 1.5rem;
   font-weight: 700;
   letter-spacing: 0px;
 }
 p {
   text-align: left;
-  font-size: 12px;
+  font-size: 1.2rem;
   font-weight: 300;
   letter-spacing: 0px;
 }
@@ -202,7 +207,7 @@ p {
   box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.161);
   border-radius: 17px;
   padding: 20px;
-  font-size: 12px;
+  font-size: 1.2rem;
   margin-top: 16px;
 }
 .dropdown .dropdown-menu {
@@ -238,7 +243,7 @@ p {
 }
 .quote {
   text-align: center;
-  font-size: 36px;
+  font-size: 3.6rem;
   font-weight: 200;
   letter-spacing: 0px;
   color: #FFFFFF;
@@ -246,19 +251,19 @@ p {
   opacity: 1;
 }
 .text-font1 {
-  font-size: 12px;
+  font-size: 1.2rem;
   font-weight: 700;
   text-align: left;
 }
 .text-font2 {
-  font-size: 12px;
+  font-size: 1.2rem;
   font-weight: 700;
 }
 .text-black {
   color: #000000;
 }
 .text-large {
-  font-size: 14px;
+  font-size: 1.4rem;
 }
 .bg-lighter {
   background-color: #F5F5F5;
@@ -275,7 +280,7 @@ button:focus {
 .button-primary {
   width: 177px;
   height: 43px;
-  font-size: 11px;
+  font-size: 1.1rem;
   font-weight: 700;
   text-transform: capitalize;
   border-radius: 22px;
@@ -287,7 +292,7 @@ button:focus {
 .button-secondary {
   width: 177px;
   height: 43px;
-  font-size: 11px;
+  font-size: 1.1rem;
   font-weight: 700;
   text-transform: capitalize;
   border-radius: 22px;
@@ -307,7 +312,7 @@ a:focus {
 }
 .nav-text > a {
   text-align: left;
-  font-size: 12px;
+  font-size: 1.2rem;
   font-weight: 500;
   letter-spacing: 0px;
   color: #FFFFFF;
@@ -322,7 +327,7 @@ a:focus {
   height: 62px;
 }
 .more-text {
-  font-size: 11px;
+  font-size: 1.1rem;
   font-weight: 700;
   color: $info;
 }
@@ -330,7 +335,7 @@ a:focus {
   border-radius: 22px;
   text-align: center;
   font-weight: 700;
-  font-size: 11px;
+  font-size: 1.1rem;
   letter-spacing: 0px;
   color: #FFFFFF;
   text-transform: capitalize;
@@ -352,7 +357,7 @@ a:focus {
 .blurb {
   width: 450px;
   text-align: center;
-  font-size: 12px;
+  font-size: 1.2rem;
   font-weight: 300;
   letter-spacing: 0px;
   color: #FFFFFF;
@@ -383,32 +388,32 @@ a:focus {
 // FOOTER ON MOBILE
 @media only screen and (max-width: 515px) {
   .footerContent h2 {
-    font-size: 13px !important;
+    font-size: 1.3rem !important;
   }
   .footerContent p {
-    font-size: 8px !important;
+    font-size: 0.8rem !important;
   }
 }
 
 @media only screen and (max-width: 320px) {
   .footerContent h2 {
-    font-size: 12px !important;
+    font-size: 1.2rem !important;
   }
   .footerContent p {
-    font-size: 7px !important;
+    font-size: 0.7rem !important;
   }
 }
 
 // MOBILE TEXT
 @media only screen and (max-width: 426px) {
   h1 {
-    font-size: 22px;
+    font-size: 2.2rem;
   }
   h2 {
-    font-size: 17px;
+    font-size: 1.7rem;
   }
   h3 {
-    font-size: 14px;
+    font-size: 1.4rem;
   }
 }
 
@@ -431,7 +436,7 @@ a:focus {
 }
 .wallet-use {
   text-decoration: underline;
-  font-size: 12px;
+  font-size: 1.2rem;
   font-weight: 600;
 }
 .modal-content {
@@ -443,14 +448,14 @@ a:focus {
   padding: 10px;
   margin: 0 5px 5px;
  
-  font-size: 12px;
+  font-size: 1.2rem;
  
   color: #ffffff;
   background: #44A4FC;
   border-left: 5px solid #187FE7;
 
   .notification-title {
-    font-size: 16px;
+    font-size: 1.6rem;
     font-weight: 700
   }
  
@@ -477,67 +482,67 @@ a:focus {
 }
 .text1 {
   font-weight: 300;
-  font-size: 11px;
+  font-size: 1.1rem;
   color: #707070;
 }
 .text-11-500 {
   font-weight: 500;
-  font-size: 11px;
+  font-size: 1.1rem;
   color: #707070;
 }
 .text-11-700 {
   font-weight: 700;
-  font-size: 11px;
+  font-size: 1.1rem;
   color: #707070;
 }
 .text-13-300 {
   font-weight: 300;
-  font-size: 13px;
+  font-size: 1.3rem;
   color: #707070;
 }
 .text2 {
   font-weight: 500;
-  font-size: 12px;
+  font-size: 1.2rem;
   color: #000000;
 }
 .text-12-700 {
   font-weight: 700;
-  font-size: 12px;
+  font-size: 1.2rem;
   color: #000000;
 }
 .text-40-300 {
   font-weight: 300;
-  font-size: 40px;
+  font-size: 4rem;
   color: #000000;
   margin-bottom: 20px;
   text-transform: capitalize;
 }
 .text-17-500 {
   font-weight: 500;
-  font-size: 17px;
+  font-size: 1.7rem;
   color: #000000;
 }
 .text-30-500 {
   font-weight: 500;
-  font-size: 30px;
+  font-size: 3rem;
   color: #000000;
   text-transform: capitalize;
 }
 .text3 {
   font-weight: 600;
-  font-size: 14px;
+  font-size: 1.4rem;
   color: #000000;
 }
 .text-center-300 {
   text-align: center;
   font-weight: 300;
-  font-size: 13px;
+  font-size: 1.3rem;
   color: #000000;
 }
 
 .text-xlight {
   font-weight: 300;
-  font-size: 10px;
+  font-size: 1rem;
   color: #525252;
 }
 
@@ -563,6 +568,6 @@ a:focus {
   border-radius: 20px;
 }
 .footer-text {
-  font-size: 16px;
+  font-size: 1.6rem;
   font-weight: 500;
 }

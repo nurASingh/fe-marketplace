@@ -119,10 +119,10 @@ export default {
 <style lang="scss" scoped>
 .text1 {
   font-weight: 300;
-  font-size: 12px;
+  font-size: 1.2rem;
 }
 .text2 {
   font-weight: 500;
-  font-size: 14px;
+  font-size: 1.4rem;
 }
 </style>
