@@ -46,6 +46,7 @@ export default {
         this.$notify({ type: 'error', title: 'Price', text: 'Please enter the buy now price.' })
         return
       }
+      this.tradeInfo.saleType = 1
       this.$emit('setTradeInfo', this.tradeInfo)
     }
   },

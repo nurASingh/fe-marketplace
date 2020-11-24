@@ -35,6 +35,11 @@
           </div>
           <div class="col-md-6 col-xs-6">
             <div class="mb-4 text2">
+              <div class="">Platform Address</div>
+              <div class="text2"><a class="text-info" href="#" @click.prevent="usePlatformAddress()">macs</a></div>
+              <b-input v-model="params.platformAddress"></b-input>
+            </div>
+            <div class="mb-4 text2">
               <div class="">Mint Price (micro stacks)</div>
               <b-input v-model="params.mintPrice"></b-input>
             </div>
@@ -78,6 +83,8 @@ import SideMenu from '@/components/admin/SideMenu'
 import TitleBar from '@/components/admin/TitleBar'
 import utils from '@/services/utils'
 
+const PLATFORM_ADDRESS = JSON.parse(process.env.VUE_APP_WALLET_MAC || '').keyInfo.address
+
 export default {
   name: 'CustomiseContract',
   components: {
@@ -98,8 +105,9 @@ export default {
       deployedProject: null,
       result: null,
       params: {
-        tokenName: 'loopbomb',
-        tokenSymbol: 'LOOP',
+        platformAddress: PLATFORM_ADDRESS,
+        tokenName: 'token-name',
+        tokenSymbol: 'token-symbol',
         mintPrice: '100000',
         token: 'token_name',
         contractName: null,
@@ -109,8 +117,8 @@ export default {
       // contractSourceDisplay: null,
       contractSource: `
 ;; Interface definitions
-(impl-trait 'ST1ESYCGJB5Z5NBHS39XPC70PGC14WAQK5XXNQYDW.nft-interface.transferable-nft-trait)
-(impl-trait 'ST1ESYCGJB5Z5NBHS39XPC70PGC14WAQK5XXNQYDW.nft-interface.tradable-nft-trait)
+(impl-trait 'params.platformAddress.nft-interface.transferable-nft-trait)
+(impl-trait 'params.platformAddress.nft-interface.tradable-nft-trait)
 
 ;; data structures
 (define-non-fungible-token my-nft uint)
@@ -345,6 +353,10 @@ export default {
     useProject: function () {
       this.params.tokenName = this.project.projectId.split('.')[1]
     },
+    usePlatformAddress: function () {
+      const mac = this.$store.getters[APP_CONSTANTS.KEY_MACS_WALLET]
+      this.params.platformAddress = (mac && mac.keyInfo && mac.keyInfo.address) ? mac.keyInfo.address : ''
+    },
     useMyAddress: function () {
       this.params.contractOwner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
     },
@@ -395,6 +407,7 @@ export default {
       source = source.replaceAll('params.token-name', this.params.tokenName)
       source = source.replaceAll('params.token-symbol', this.params.tokenSymbol)
       source = source.replaceAll('params.mintPrice', this.params.mintPrice)
+      source = source.replaceAll('params.platformAddress', this.params.platformAddress)
       source = source.replaceAll('params.callBack', utils.stringToHex(this.params.callBack))
       projectPlus.codeBody = source
       this.$store.commit('setModalMessage', 'Processing request..')
@@ -420,11 +433,13 @@ export default {
       let rep1 = '<span class="text-danger bg-white">' + this.params.contractOwner + '</span>'
       let contractSourceDisplay = this.contractSource.replaceAll('params.contractOwner', rep1)
       rep1 = '<span class="text-danger bg-white">' + this.params.tokenName + '</span>'
-      contractSourceDisplay = contractSourceDisplay.replaceAll('params.token-name', rep1)
+      contractSourceDisplay = contractSourceDisplay.replaceAll('params.tokenName', rep1)
       rep1 = '<span class="text-danger bg-white">' + this.params.tokenSymbol + '</span>'
-      contractSourceDisplay = contractSourceDisplay.replaceAll('params.token-symbol', rep1)
+      contractSourceDisplay = contractSourceDisplay.replaceAll('params.tokenSymbol', rep1)
       rep1 = '<span class="text-danger bg-white">' + this.params.mintPrice + '</span>'
       contractSourceDisplay = contractSourceDisplay.replaceAll('params.mintPrice', rep1)
+      rep1 = '<span class="text-danger bg-white">' + this.params.platformAddress + '</span>'
+      contractSourceDisplay = contractSourceDisplay.replaceAll('params.platformAddress', rep1)
       rep1 = '<span class="text-danger bg-white">' + utils.stringToHex(this.params.callBack) + '</span>'
       contractSourceDisplay = contractSourceDisplay.replaceAll('params.callBack', rep1)
       return contractSourceDisplay

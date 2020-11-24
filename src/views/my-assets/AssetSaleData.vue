@@ -1,6 +1,13 @@
 <template>
 <div class="container-fluid bg-secondary" v-if="asset" style="padding: 150px 50px; height: 100vh;">
-  <div class="text-right"><router-link class="p-3" :to="'/my-assets/' + assetHash" ><b-icon icon="x-circle" scale="1" variant="white"></b-icon></router-link></div>
+  <div class="mb-4 row">
+    <div class="ml-4 col-8">
+      <div class="d-flex justify-content-between">
+        <span><router-link class="text-info text-11-700" to="/my-assets"><b-icon class="mr-2" icon="caret-left-fill"/>Back</router-link></span>
+        <!-- <div class="text-right"><router-link class="p-3" to="/my-assets" ><b-icon icon="x-circle" scale="1" variant="white"></b-icon></router-link></div> -->
+      </div>
+    </div>
+  </div>
   <b-card-group deck v-if="!loading">
     <b-card :img-src="asset.assetUrl" img-alt="Card image" img-left class="p-5" style="max-height: 363px; width: 976px;">
       <b-card-text>
@@ -71,7 +78,7 @@ export default {
   mounted () {
     this.assetHash = this.$route.params.assetHash
     this.$store.dispatch('searchStore/findAssetByHash', this.assetHash).then((asset) => {
-      if (asset.tradeInfo) this.saleType = asset.tradeInfo.saleType
+      if (asset.tradeInfo && asset.tradeInfo.saleType > 0) this.saleType = asset.tradeInfo.saleType
       this.loading = false
     })
   },
