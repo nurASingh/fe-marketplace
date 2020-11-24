@@ -159,4 +159,4 @@ export default {
 .bb {
   border-bottom: 1pt solid #50B1B5;
 }
-</style>
+ </style>
