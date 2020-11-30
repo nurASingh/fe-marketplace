@@ -120,11 +120,19 @@ export default {
 (impl-trait 'params.platformAddress.nft-interface.transferable-nft-trait)
 (impl-trait 'params.platformAddress.nft-interface.tradable-nft-trait)
 
-;; data structures
+;; Non Fungible Token, modeled after ERC-721 via transferable-nft-trait
+;; Note this is a basic implementation - no support yet for setting approvals for assets
+;; NFT are identified by nft-index (uint) which is tied via a reverse lookup to a real world
+;; asset hash - SHA 256 32 byte value. The Asset Hash is used to tie arbitrary real world
+;; data to the NFT
 (define-non-fungible-token my-nft uint)
+
+;; data structures
 (define-map my-nft-data ((nft-index uint)) ((asset-hash (buff 32)) (date uint)))
 (define-map sale-data ((nft-index uint)) ((sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint) (bidding-end-time uint)))
 (define-map my-nft-lookup ((asset-hash (buff 32))) ((nft-index uint)))
+(define-map transfer-map ((nft-index uint)) ((transfer-count uint)))
+(define-map transfer-history-map ((nft-index uint) (transfer-count uint)) ((from principal) (to principal) (sale-type uint) (when uint) (amount uint)))
 
 ;; variables
 (define-data-var administrator principal 'params.contractOwner)
@@ -141,6 +149,9 @@ export default {
 (define-constant not-found (err u11))
 (define-constant amount-not-set (err u12))
 (define-constant seller-not-found (err u13))
+(define-constant asset-not-registered (err u14))
+(define-constant transfer-error (err u15))
+(define-constant not-approved-to-sell (err u16))
 
 (define-constant same-spender-err (err u1))
 (define-constant failed-to-mint-err (err u5))
@@ -196,18 +207,9 @@ export default {
     )
 )
 
-;; (define-public (set-sale-data1 (asset-hash (buff 32)) (sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint) (bidding-end-time uint))
-;;     (match (map-get? my-nft-lookup ((asset-hash asset-hash)))
-;;         myIndex
-;;         (if
-;;             (try! (is-nft-owner (get nft-index myIndex)))
-;;             (ok (map-insert sale-data {nft-index: (get nft-index myIndex)} ((sale-type sale-type) (increment-stx increment-stx) (reserve-stx reserve-stx) (amount-stx amount-stx) (bidding-end-time bidding-end-time))))
-;;             not-allowed
-;;         )
-;;         not-found
-;;     )
-;; )
-
+;; set-sale-data updates the sale type and purchase info for a given NFT. Only the owner can call this method
+;; and doing so make the asset transferable by the recipient - on condition of meeting the conditions of sale
+;; This is equivalent to the setApprovalForAll method in ERC 721 contracts.
 (define-public (set-sale-data (asset-hash (buff 32)) (sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint) (bidding-end-time uint))
     (let
         (
@@ -215,7 +217,7 @@ export default {
         )
         (if
             (is-ok (is-nft-owner myIndex))
-            (if (map-insert sale-data {nft-index: myIndex} ((sale-type sale-type) (increment-stx increment-stx) (reserve-stx reserve-stx) (amount-stx amount-stx) (bidding-end-time bidding-end-time)))
+            (if (map-set sale-data {nft-index: myIndex} ((sale-type sale-type) (increment-stx increment-stx) (reserve-stx reserve-stx) (amount-stx amount-stx) (bidding-end-time bidding-end-time)))
                 (ok myIndex) not-allowed
             )
             not-allowed
@@ -229,30 +231,40 @@ export default {
 ;; contract miner-address remainder to the seller address. Reset the
 ;; map data in sale-data and my-nft data to indicate not for sale and BNS
 ;; name of new owner.
-;; Errors
-;;   - amount-not-set (u4) if the nft has no price set in sale data
-;;   - same-spender-err (u5) if seller tries to buy their own asset
-;;   - seller-not-found (u5) if the NFT has no owner
 (define-public (transfer-from (seller principal) (buyer principal) (nft-index uint))
     (let
         (
+            (saleType (get sale-type (map-get? sale-data {nft-index: nft-index})))
             (amount (get amount-stx (map-get? sale-data {nft-index: nft-index})))
             (seller1 (nft-get-owner? my-nft nft-index))
             (ahash (get asset-hash (map-get? my-nft-data {nft-index: nft-index})))
         )
-        (asserts! (is-some amount) amount-not-set)
-        (asserts! (is-eq seller1 (some tx-sender)) same-spender-err)
+        (asserts! (is-some ahash) asset-not-registered)
+        (asserts! (is-eq (unwrap! saleType seller-not-found) u1) not-approved-to-sell)
+        (asserts! (> (unwrap! amount amount-not-set) u0) amount-not-set)
+        (asserts! (is-eq buyer tx-sender) same-spender-err)
         (asserts! (not (is-eq (unwrap! seller1 seller-not-found) seller)) seller-not-found)
+        (let ((count (inc-transfer-count nft-index)))
+            (add-transfer nft-index (- count u1) seller buyer (unwrap! saleType seller-not-found) u0 (unwrap! amount amount-not-set))
+        )
         (map-set my-nft-data { nft-index: nft-index } { asset-hash: (unwrap! ahash not-found), date: block-height })
         (map-set sale-data { nft-index: nft-index } { amount-stx: u0, bidding-end-time: u0, increment-stx: u0, reserve-stx: u0, sale-type: u0 })
         (stx-transfer? (/ (* (unwrap! amount amount-not-set) (var-get platform-fee)) u100) tx-sender (as-contract tx-sender))
         (stx-transfer? (/ (* (unwrap! amount amount-not-set) (- u100 (var-get platform-fee))) u100) tx-sender (unwrap! seller1 seller-not-found))
         (if
             (is-ok (nft-transfer? my-nft nft-index (unwrap! seller1 seller-not-found) tx-sender))
-            (ok u0) (err u1)
+            (ok u0) transfer-error
         )
     )
 )
+
+(define-private (add-transfer (nft-index uint) (transfer-count uint) (from principal) (to principal) (sale-type uint) (when uint) (amount uint))
+  (if (is-eq to tx-sender)
+    (ok (map-insert transfer-history-map {nft-index: nft-index, transfer-count: transfer-count} ((from from) (to to) (sale-type sale-type) (when when) (amount amount))))
+    not-allowed
+  )
+)
+
 
 ;; Transfers tokens to a specified principal.
 (define-public (transfer (seller principal) (nft-index uint))
@@ -307,6 +319,15 @@ export default {
     )
 )
 
+(define-read-only (get-transfer-count (nft-index uint))
+    (let
+        (
+            (count (default-to u0 (get transfer-count (map-get? transfer-map (tuple (nft-index nft-index))))))
+        )
+        (ok count)
+    )
+)
+
 (define-read-only (get-token-name)
     (ok token-name)
 )
@@ -321,6 +342,17 @@ export default {
     (if (is-eq (some tx-sender) (nft-get-owner? my-nft nft-index))
         (ok true)
         not-allowed
+    )
+)
+(define-private (inc-transfer-count (nft-index uint))
+    (let
+        (
+            (count (default-to u0 (get transfer-count (map-get? transfer-map (tuple (nft-index nft-index))))))
+        )
+        (begin
+            (map-insert transfer-map { nft-index: nft-index } { transfer-count: count})
+            (+ count u1)
+        )
     )
 )
 `
@@ -338,7 +370,7 @@ export default {
   },
   mounted () {
     this.projectId = this.$route.params.projectId
-    this.$store.dispatch('stacksStore/fetchMacsWalletInfo')
+    this.$store.dispatch('stacksStore/fetchMacSkyWalletInfo')
     this.$store.dispatch('applicationStore/lookupApplications')
     this.$store.dispatch('projectStore/findProjectByProjectId', this.projectId).then((project) => {
       if (!project) {
@@ -373,6 +405,14 @@ export default {
       }
       if (!this.params.callBack || !this.params.callBack.startsWith('https://')) {
         this.$notify({ type: 'error', title: 'Project Details', text: 'Please enter a secure (https) callback url for your tokens - we append the asset hash to retrieve meta data.' })
+        result = false
+      }
+      if (!this.params.tokenName || this.params.tokenName.startsWith('token-')) {
+        this.$notify({ type: 'error', title: 'Token Name', text: 'Please enter a descriptive name.' })
+        result = false
+      }
+      if (!this.params.tokenSymbol || this.params.tokenSymbol.startsWith('token-')) {
+        this.$notify({ type: 'error', title: 'Token Symbol', text: 'Please enter a symbol for your token - convention is 3 or 4 luppercase letters or digits.' })
         result = false
       }
       let tokenUrl

@@ -9,11 +9,14 @@
       nav-class="font-weight-bold text-uppercase text-info"
       nav-wrapper-class="font-weight-bold text-uppercase bg-info text-info"
       active-nav-item-class="font-weight-bold text-uppercase text-info"
-      active-tab-class="text-info"
+      active-tab-class=""
       content-class="mt-3 px-3 pt-5"
       >
       <b-tab title="App Registry" active>
         <app-registry/>
+      </b-tab>
+      <b-tab title="Diagnostics">
+        <clarity-assets />
       </b-tab>
       <b-tab title="API Settings">
         <api-settings/>
@@ -37,6 +40,7 @@ import AppRegistry from '@/components/admin/system/AppRegistry'
 import ApiSettings from '@/components/admin/system/ApiSettings'
 import SearchSettings from '@/components/admin/system/SearchSettings'
 import IndexSettings from '@/components/admin/system/IndexSettings'
+import ClarityAssets from '@/components/admin/system/ClarityAssets'
 
 export default {
   name: 'SystemSettings',
@@ -46,6 +50,7 @@ export default {
     AppRegistry,
     SearchSettings,
     IndexSettings,
+    ClarityAssets,
     ApiSettings
   },
   data () {

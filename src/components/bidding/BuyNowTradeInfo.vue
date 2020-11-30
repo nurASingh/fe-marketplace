@@ -47,6 +47,9 @@ export default {
         return
       }
       this.tradeInfo.saleType = 1
+      this.tradeInfo.incrementPrice = 0
+      this.tradeInfo.reservePrice = 0
+      this.tradeInfo.biddingEndTime = 0
       this.$emit('setTradeInfo', this.tradeInfo)
     }
   },

@@ -27,8 +27,7 @@
                       Application is registered with the marketplace (#{{appmapProject.appCounter}})
                     </div>
                     <div class="mt-4 mb-2 text1" v-else>
-                      <b-button @click.prevent="connectApp('risidio')" variant="info">Connect App to Marketplace</b-button>
-                      <!-- <a href="#" class="" @click.prevent="connectApp('stacks')">stacks</a> -->
+                      <b-button @click.prevent="connectApp()" variant="info">Connect App to Marketplace</b-button>
                     </div>
                     <div v-if="showContractData">
                       <pre class="source-code">{{project.codeBody}}</pre>
@@ -98,7 +97,7 @@ export default {
   },
   mounted () {
     this.projectId = this.$route.params.projectId
-    this.$store.dispatch('stacksStore/fetchMacsWalletInfo')
+    this.$store.dispatch('stacksStore/fetchMacSkyWalletInfo')
     this.$store.dispatch('applicationStore/lookupApplications')
     /**
     this.$store.dispatch('projectStore/findProjectByProjectId', this.projectId).then((project) => {
@@ -114,7 +113,7 @@ export default {
         this.$router.push('/my-apps')
       })
     },
-    connectApp: function (provider) {
+    connectApp: function () {
       const appmapContractId = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_CONTRACT_ID]
       const owner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].username
       const functionArgs = [bufferCV(Buffer.from(owner)), bufferCV(Buffer.from(this.projectId)), intCV(0)]
@@ -125,43 +124,31 @@ export default {
         functionArgs: functionArgs,
         eventCode: 'connect-application'
       }
-      data.provider = provider
       this.connectApplication(data) // $emit('updateEventCode', data)
     },
     connectApplication (data) {
-      /**
-      const bufArr = []
-      for (let i = 0; i < data.functionArgs.length; i++) {
-        const element = data.functionArgs[i]
-        if (element.startsWith('0x')) {
-          bufArr.push(intCV(element))
-        } else {
-          bufArr.push(bufferCV(Buffer.from(element)))
-        }
-      }
-      data.functionArgs = bufArr
-      **/
-      const method = (data.provider === 'risidio') ? 'stacksStore/callContractRisidio' : 'stacksStore/callContractBlockstack'
+      const walletMode = this.$store.getters[APP_CONSTANTS.KEY_WALLET_MODE]
+      const method = (walletMode === 'risidio') ? 'stacksStore/callContractRisidio' : 'stacksStore/callContractBlockstack'
       this.$root.$emit('bv::show::modal', 'waiting-modal')
       this.$store.dispatch(method, data).then((result) => {
         this.result = result
         this.$root.$emit('bv::hide::modal', 'waiting-modal')
         this.$root.$emit('bv::show::modal', 'success-modal')
         this.$store.commit('setModalMessage', 'Application is now connected to the Stacks blockchain.')
-      }).catch((error) => {
-        this.result = error
-        this.$store.commit('setModalMessage', 'Error occurred processing transaction.')
+      }).catch(() => {
+        data.action = 'inc-nonce'
+        this.$store.commit('setModalMessage', 'Incrementing nonce and trying again.')
+        this.$store.dispatch(method, data).then((result) => {
+          this.result = result
+          this.$root.$emit('bv::hide::modal', 'waiting-modal')
+          this.$root.$emit('bv::show::modal', 'success-modal')
+          this.$store.commit('setModalMessage', 'Application is now connected to the Stacks blockchain.')
+        }).catch((error) => {
+          this.result = error
+          this.$store.commit('setModalMessage', 'Error occurred processing transaction.')
+        })
       })
     },
-    /**
-    connectApplication (data) {
-      this.$store.dispatch('stacksStore/callContractRisidio', data).then((result) => {
-        console.log(result)
-      }).catch((result) => {
-        console.log(result)
-      })
-    },
-    **/
     openContractUrl () {
       if (this.projectId) {
         return STACKS_API + '/v2/contracts/source/' + this.projectId.split('.')[0] + '/' + this.projectId.split('.')[1] + '?proof=0'

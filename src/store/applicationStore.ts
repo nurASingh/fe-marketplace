@@ -21,6 +21,35 @@ const applicationStore = {
     getAppmapTxId: (state: any) => {
       return state.appmap.txId
     },
+    getClarityAsset: (state: any) => (assetHash: string) => {
+      state.appmap.apps.forEach(function (application) {
+        if (application.clarityAssets) {
+          const index = application.clarityAssets.findIndex((o) => o.assethash === assetHash)
+          if (index > -1) {
+            return application.clarityAssets[index]
+          }
+        }
+      })
+      return null
+    },
+    getClarityAssets: (state: any) => (appCounter: string) => {
+      const index = state.appmap.apps.findIndex((o) => o.appCounter === appCounter)
+      if (index > -1) {
+        return state.appmap.apps[index].clarityAssets
+      }
+      return null
+    },
+    getAppmapTradeInfo: (state: any) => (data: any) => {
+      const index = state.appmap.apps.findIndex((o) => o.appCounter === data.appCounter)
+      if (index > -1) {
+        const assets = state.appmap.apps[index].clarityAssets
+        const index1 = assets.findIndex((o) => o.assetHash === data.assetHash)
+        if (index1 > -1) {
+          return assets[index1].tradeInfo
+        }
+      }
+      return null
+    },
     getAppmap: state => {
       return state.appmap
     },
@@ -32,6 +61,12 @@ const applicationStore = {
     },
     getAppmapProject: (state: any) => projectId => {
       const index = state.appmap.apps.findIndex((o) => o.contractId === projectId)
+      if (index > -1) {
+        return state.appmap.apps[index]
+      }
+    },
+    getApplication: (state: any) => appCounter => {
+      const index = state.appmap.apps.findIndex((o) => o.appCounter === appCounter)
       if (index > -1) {
         return state.appmap.apps[index]
       }
@@ -65,6 +100,12 @@ const applicationStore = {
     setAppmap (state, appmap) {
       state.appmap = appmap
     },
+    addBaseTokenUriToAppmap (state, data) {
+      const index = state.appmap.apps.findIndex((o) => o.appCounter === data.application.appCounter)
+      if (index > -1) {
+        state.appmap.apps[index].baseTokenUri = data.baseTokenUri
+      }
+    },
     addAppToAppmap (state, application) {
       const index = state.appmap.apps.findIndex((o) => o.appCounter === application.appCounter)
       if (index < 0) {
@@ -73,13 +114,14 @@ const applicationStore = {
         state.appmap.apps.splice(index, 1, application)
       }
     },
-    addTradeInfoToAppmap (state, data) {
-      const index1 = state.appmap.apps.findIndex((o) => o.appCounter === data.application.appCounter)
+    addTradeInfoToAppmap ({ state, commit }, data) {
+      const index1 = state.appmap.apps.findIndex((o) => o.contractId === data.application.contractId)
       if (index1 > -1) {
         const application = state.appmap.apps[index1]
         const index = application.clarityAssets.findIndex((o) => o.nftIndex === data.nftIndex)
         if (index > -1) {
           application.clarityAssets[index].tradeInfo = data.tradeInfo
+          commit('addAppToAppmap', application)
         }
       }
     },
@@ -89,9 +131,9 @@ const applicationStore = {
         const application = state.appmap.apps[index1]
         const index = application.clarityAssets.findIndex((o) => o.assetHash === data.asset.assetHash)
         if (index < 0) {
-          application.clarityAssets.splice(0, 0, data.asset)
+          state.appmap.apps[index1].clarityAssets.splice(0, 0, data.asset)
         } else {
-          application.clarityAssets.splice(index, 1, data.asset)
+          state.appmap.apps[index1].clarityAssets.splice(index, 1, data.asset)
         }
       }
     }
@@ -147,19 +189,17 @@ const applicationStore = {
         })
       })
     },
-    lookupMintCounter ({ commit }: any, application: any) {
+    lookupMintCounter ({ dispatch, commit }: any, application: any) {
       return new Promise((resolve, reject) => {
         store.dispatch('stacksStore/callContractReadOnly', { contractId: application.contractId, functionName: 'get-mint-counter' }).then((mintCounter) => {
           application.mintCounter = mintCounter
           application.clarityAssets = []
           commit('addAppToAppmap', application)
           resolve(application)
-          /**
           application.clarityAssets = []
           for (let i = 0; i < application.mintCounter; i++) {
             dispatch('lookupMintedAssets', { application: application, index: i })
           }
-          **/
         }).catch((e) => {
           reject(e)
         })
@@ -195,7 +235,10 @@ const applicationStore = {
             clarityAsset.nftIndex = nftIndex
             appdata.application.numberCalls++
             commit('addClarityAssetToAppmap', { application: appdata.application, asset: clarityAsset })
-            dispatch('lookupTradeInfo', { application: appdata.application, nftIndex: nftIndex }).then(() => {
+            dispatch('lookupTradeInfo', { application: appdata.application, nftIndex: nftIndex }).then((tradeInfo) => {
+              clarityAsset.tradeInfo = tradeInfo
+              commit('addClarityAssetToAppmap', { application: appdata.application, asset: clarityAsset })
+              resolve(clarityAsset)
               if (appdata.application.numberCalls >= appdata.application.mintCounter) {
                 searchIndexService.addRecords(appdata.application)
               }
@@ -212,16 +255,18 @@ const applicationStore = {
         })
       })
     },
-    lookupTradeInfo: function ({ commit }: any, data: any) {
+    lookupTradeInfo: function ({ state, commit }: any, data: any) {
       return new Promise((resolve, reject) => {
         const functionArgs = [`0x${serializeCV(uintCV(data.nftIndex)).toString('hex')}`]
+        console.log(state.appCounter)
         const config = {
           contractId: data.application.contractId,
           functionName: 'get-sale-data',
           functionArgs: functionArgs
         }
         store.dispatch('stacksStore/callContractReadOnly', config).then((tradeInfo) => {
-          commit('addTradeInfoToAppmap', { nftIndex: data.nftIndex, application: data.application, tradeInfo: tradeInfo })
+          data.tradeInfo = tradeInfo
+          commit('addTradeInfoToAppmap', data)
           resolve(tradeInfo)
         }).catch((error) => {
           console.log(error)
@@ -237,8 +282,7 @@ const applicationStore = {
           functionArgs: []
         }
         store.dispatch('stacksStore/callContractReadOnly', config).then((baseTokenUri) => {
-          application.baseTokenUri = baseTokenUri
-          commit('addAppToAppmap', application)
+          commit('addBaseTokenUriToAppmap', { application: application, baseTokenUri: baseTokenUri })
           resolve(application)
         }).catch((e) => {
           reject(e)

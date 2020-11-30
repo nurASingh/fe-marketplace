@@ -5,7 +5,7 @@
       <div>
         <a href="#" @click.prevent="showDomainForm = !showDomainForm">New Domain</a>
       </div>
-      <div>
+      <div v-if="showClear">
         Clear:
         <a class="mx-2" href="#" @click.prevent="clearAssets">assets</a>
         <a class="mx-2" href="#" @click.prevent="clearUsers">users</a>
@@ -16,7 +16,6 @@
         Index:
         <a class="mx-2" href="#" @click.prevent="indexUsers(users)">all me</a>
         <a class="mx-2" href="#" @click.prevent="indexUsers(usersMin)">radicle_art</a>
-        <a class="mx-2" href="#" @click.prevent="indexMintedAssets()">Match NFT Index to Asset Hash</a>
       </div>
     </div>
   </div>
@@ -50,6 +49,7 @@ export default {
   },
   data () {
     return {
+      showClear: false,
       projectOption: 0,
       showDomainForm: false,
       searchResults: null,
@@ -70,18 +70,6 @@ export default {
         return ['owner', 'updated', 'title', 'assetUrl', 'projectId']
       }
     },
-    /**
-    sortBy () {
-      if (!this.searchResults) return
-      if (this.searchType === 'users') {
-        return 'name'
-      } else if (this.searchType === 'projects') {
-        return 'updated'
-      } else {
-        return 'updated'
-      }
-    },
-    **/
     values () {
       if (!this.searchResults) return
       let mapped = []
@@ -145,11 +133,6 @@ export default {
     },
     indexUsers (users) {
       this.$store.dispatch('searchStore/indexUsers', users).then((result) => {
-        this.result = result
-      })
-    },
-    indexMintedAssets () {
-      this.$store.dispatch('applicationStore/indexMintedAssets').then((result) => {
         this.result = result
       })
     },

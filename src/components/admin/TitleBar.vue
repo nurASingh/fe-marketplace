@@ -24,7 +24,7 @@ export default {
 </script>
 <style lang="scss">
 .account-menu {
-  padding: 10px 13px;
+  padding: 5px 0 0 10px;
   background: #5154A1;
   cursor: pointer;
   color: #fff;
@@ -32,6 +32,7 @@ export default {
   font-size: 1.2rem;
   width: 46px;
   height: 46px;
+  font-size: 2.6rem;
 }
 
 </style>

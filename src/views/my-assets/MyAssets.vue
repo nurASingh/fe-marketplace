@@ -4,7 +4,7 @@
   <div class="col-9 pt-5 admin-app">
     <title-bar title="My Collectibles" class="container" v-on="$listeners"/>
     <div class="container" @click="$emit('toggle-off-navbar')">
-      <result-grid :resultSet="resultSet"/>
+      <result-grid :resultSet="resultSet" :gridClasses="gridClasses"/>
     </div>
   </div>
 </div>
@@ -25,7 +25,8 @@ export default {
   },
   data () {
     return {
-      results: null
+      results: null,
+      gridClasses: ['col-lg-3', 'col-md-4', 'col-sm-6', 'col-12']
     }
   },
   mounted () {

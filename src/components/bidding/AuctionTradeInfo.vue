@@ -1,5 +1,5 @@
 <template>
-<div class="row">
+<div class="row mt-5">
   <div class="col-6 mb-5">
     <div role="group">
       <label for="input-live"><span class="text2">Starting Price</span></label>
@@ -11,12 +11,12 @@
   <div class="col-6 mb-5">
     <div role="group">
       <label for="input-live"><span class="text2">Reserve Price</span></label>
-      <b-input-group>
+      <b-input-group class="mb-3">
         <b-form-input v-model="tradeInfo.reservePrice" class="input" placeholder="STX"></b-form-input>
       </b-input-group>
 
       <label for="input-live"><span class="text2">Increment</span></label>
-      <b-input-group>
+      <b-input-group class="mb-3">
         <b-form-input v-model="tradeInfo.incrementPrice" class="input" placeholder="STX"></b-form-input>
       </b-input-group>
 
@@ -24,7 +24,7 @@
       <datetime type="datetime" input-id="biddingEndTime" v-model="tradeInfo.biddingEndTime">
         <input id="biddingEndTime">
       </datetime>
-      {{getLongTime()}}
+      <!-- {{getLongTime()}} -->
     </div>
   </div>
 </div>
@@ -34,6 +34,7 @@
 import moment from 'moment'
 import { Datetime } from 'vue-datetime'
 import { APP_CONSTANTS } from '@/app-constants'
+import utils from '@/services/utils'
 
 export default {
   name: 'SellAuction',
@@ -77,11 +78,9 @@ export default {
       if (!this.tradeInfo.incrementPrice || this.tradeInfo.incrementPrice < 0) {
         this.$notify({ type: 'error', title: 'Increment', text: 'Please enter the increment for bidding.' })
         return
-      } else if (!this.tradeInfo.buyNowOrStartingPrice || this.tradeInfo.buyNowOrStartingPrice < 0) {
+      }
+      if (!this.tradeInfo.buyNowOrStartingPrice || this.tradeInfo.buyNowOrStartingPrice < 0) {
         this.$notify({ type: 'error', title: 'Starting Price', text: 'Please enter the starting price for bidding.' })
-        return
-      } else if (!this.tradeInfo.reservePrice || this.tradeInfo.reservePrice < 0) {
-        this.$notify({ type: 'error', title: 'Reserve Price', text: 'Please enter the reserve.' })
         return
       }
       if (!this.tradeInfo.reservePrice || this.tradeInfo.reservePrice < 0) {
@@ -89,11 +88,16 @@ export default {
         return
       }
       this.tradeInfo.saleType = 2
-      this.tradeInfo.biddingEndTime = moment(this.tradeInfo.biddingEndTime).valueOf()
       // const tradeInfo = this.tradeInfo
       // tradeInfo.biddingEndTime = moment(this.tradeInfo.biddingEndTime).valueOf()
-      this.$emit('setTradeInfo', this.tradeInfo)
-      this.tradeInfo.biddingEndTime = String(moment(this.tradeInfo.biddingEndTime).format())
+      const chainTradeInfo = {
+        saleType: this.tradeInfo.saleType,
+        incrementPrice: this.tradeInfo.incrementPrice,
+        buyNowOrStartingPrice: this.tradeInfo.buyNowOrStartingPrice,
+        reservePrice: this.tradeInfo.reservePrice,
+        biddingEndTime: moment(this.tradeInfo.biddingEndTime).valueOf()
+      }
+      this.$emit('setTradeInfo', chainTradeInfo)
     },
     checkEndTime () {
       const now = moment({}).valueOf()

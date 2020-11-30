@@ -2,12 +2,14 @@
 <div>
   <h2>API Settings</h2>
   <div class="row border-bottom pb-4 mb-5">
-    <div class="col-2">STACKS_API</div>
-    <div class="col-4">{{stacksApi}}</div>
-    <div class="col-2">SEARCH_API</div>
-    <div class="col-4">{{searchApi}}</div>
-    <div class="col-2">mac</div>
-    <div class="col-4">{{mac}}</div>
+    <div class="col-3">STACKS_API</div>
+    <div class="col-8">{{stacksApi}}</div>
+    <div class="col-3">SEARCH_API</div>
+    <div class="col-8">{{searchApi}}</div>
+    <div class="col-3">mac</div>
+    <div class="col-8">{{mac.keyInfo.address}}</div>
+    <div class="col-3">Rates</div>
+    <div class="col-8"><a href="#" @click.prevent="fetchRates">fetch rates</a></div>
   </div>
 </div>
 </template>
@@ -29,6 +31,9 @@ export default {
     }
   },
   methods: {
+    fetchRates: function () {
+      this.$store.dispatch('fetchRatesFromBinance')
+    }
   },
   computed: {
   }

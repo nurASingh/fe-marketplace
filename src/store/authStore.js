@@ -1,7 +1,8 @@
 /* eslint-disable */
-import { showConnect, authenticate } from '@stacks/connect';
-// import { Person, UserSession } from '@stacks/auth';
-import { Person, UserSession } from 'blockstack';
+import { UserSession, AppConfig } from '@stacks/auth'
+import { showConnect, authenticate } from '@stacks/connect'
+import utils from '@/services/utils'
+// import { Person, UserSession } from 'blockstack';
 import store from '@/store'
 import {
   getAddressFromPrivateKey,
@@ -13,24 +14,12 @@ const MESH_API = process.env.VUE_APP_API_MESH
 const STACKS_API = process.env.VUE_APP_API_STACKS
 
 const BLOCKSTACK_LOGIN = Number(process.env.VUE_APP_BLOCKSTACK_LOGIN)
-const userSession = new UserSession()
+const appConfig = new AppConfig()
+const userSession = new UserSession({ appConfig })
 const origin = window.location.origin
 const getStacksAccount = function (appPrivateKey) {
   const privateKey = createStacksPrivateKey(appPrivateKey)
   return getAddressFromPrivateKey(privateKey.data.toString('hex'))
-}
-const precision = 1000000
-const getAmountStx = function (amountMicroStx) {
-  try {
-    if (typeof amountMicroStx === 'string') {
-      amountMicroStx = Number(amountMicroStx)
-    }
-    if (amountMicroStx === 0) return 0
-    amountMicroStx = amountMicroStx / precision
-    return Math.round(amountMicroStx * precision) / precision
-  } catch {
-    return 0
-  }
 }
 const authFinished = function(o) {
   store.commit('authStore/setAuthResponse', o)
@@ -42,7 +31,7 @@ const authOptions = {
   manifestPath: '/manifest.json',
   finished: authFinished,
   appDetails: {
-    name: 'Risidio Meshnet',
+    name: 'Risidio Auctions',
     icon: origin + '/img/logo/risidio_black.svg'
   }
 }
@@ -54,7 +43,7 @@ const fetchUserWallet = function (profile) {
       postData: null
     }
     axios.post(MESH_API + '/v2/accounts', data).then(response => {
-      const balance = getAmountStx(parseInt(response.data.balance, 16))
+      const balance = utils.fromOnChainAmount(response.data.balance)
       const wallet = {
         keyInfo: {
           address: profile.stxAddress
@@ -67,7 +56,7 @@ const fetchUserWallet = function (profile) {
     }).catch((error) => {
       const useApi = STACKS_API + '/v2/accounts/' + profile.stxAddress
       axios.get(useApi).then(response => {
-        const balance = getAmountStx(parseInt(response.data.balance, 16))
+        const balance = utils.fromOnChainAmount(response.data.balance)
         const wallet = {
           keyInfo: {
             address: profile.stxAddress
@@ -91,8 +80,7 @@ const getProfile = function () {
     const account = userSession.loadUserData()
     if (account) {
       let uname = account.username
-      const person = new Person(account.profile)
-      let name = person.name()
+      let name = account.profile.name
       if (uname) {
         if (!name) {
           const indexOfDot = uname.indexOf('.')
@@ -114,13 +102,13 @@ const getProfile = function () {
         uname.indexOf('head') > -1 ||
         uname.indexOf('testuser0934583') > -1 ||
         uname.indexOf('feek') > -1
-      const avatarUrl = person.avatarUrl()
+      const avatarUrl = account.profile.avatarUrl
       // let privateKey = account.appPrivateKey + '01'
       // privateKey = hexStringToECPair(privateKey).toWIF()
       // const authResponseToken = account.authResponseToken
       // var decodedToken = decodeToken(authResponseToken)
       // const publicKey = getAddressFromPrivateKey(id.privateKey.data.toString('hex'))
-    const stxAppAddress = getStacksAccount(account.appPrivateKey)
+      const stxAppAddress = getStacksAccount(account.appPrivateKey)
       const loggedIn = true
       myProfile = {
         loggedIn: loggedIn,
@@ -130,7 +118,7 @@ const getProfile = function () {
         showAdmin: showAdmin,
         superAdmin: uname === 'radicle_art.id.blockstack',
         name: name,
-        description: person.description(),
+        description: account.profile.description,
         avatarUrl: avatarUrl,
         username: uname,
         hubUrl: account.hubUrl,

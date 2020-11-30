@@ -9,7 +9,7 @@
     <router-view @updateEventCode="updateEventCode" @toggle-on-navbar="toggleOnNavbar" @set-filter="setFilter" @toggle-off-navbar="toggleOffNavbar" style="min-height: 100vh;"/>
     <router-view @set-filter="setFilter" name="footer" :class="(adminPage) ? 'app-footer' : ''"/>
     <notifications :duration="10000" classes="r-notifs" position="bottom right" width="30%"/>
-    <waiting-modal />
+    <waiting-modal/>
     <success-modal />
   </div>
 </template>
@@ -53,8 +53,8 @@ export default {
     this.$store.dispatch('applicationStore/lookupApplications')
     this.$store.dispatch('authStore/fetchMyAccount').then((profile) => {
       this.loaded = true
-      this.$store.dispatch('fetchRates')
-      this.$store.dispatch('stacksStore/fetchMacsWalletInfo')
+      this.$store.dispatch('fetchRatesFromDb')
+      this.$store.dispatch('stacksStore/fetchMacSkyWalletInfo')
       this.$store.dispatch('applicationStore/lookupApplications')
       this.$store.dispatch('projectStore/fetchMyProjects', profile).catch((err) => {
         console.log(err)

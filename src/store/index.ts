@@ -8,7 +8,7 @@ import searchStore from './searchStore'
 import stacksStore from './stacksStore'
 import projectStore from './projectStore'
 import rates from 'risidio-rates'
-import axios from 'axios'
+import searchIndexService from '@/services/searchIndexService'
 
 Vue.use(Vuex)
 
@@ -80,6 +80,20 @@ export default new Vuex.Store({
       const priceInEuro = (1 / rate.amountStx) * amountStx
       return Math.round(priceInEuro * 100) / 100
     },
+    getExchangeRateFormatted: state => amountStx => {
+      if (!state.xgeRates) {
+        return null
+      }
+      const rate = state.xgeRates.find(item => item.fiatCurrency === 'EUR')
+      const priceInEuro = (1 / rate.amountStx) * amountStx
+      return rate.symbol + ' ' + (Math.round(priceInEuro * 100) / 100)
+    },
+    getStxAmountFormatted: () => amountStx => {
+      if (!amountStx) {
+        return 0
+      }
+      return (Math.round(amountStx * 10000) / 10000)
+    },
     getEventCode: state => {
       return state.eventCode
     },
@@ -102,8 +116,8 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    setXgeRates (state, xgeRates) {
-      state.xgeRates = xgeRates
+    setXgeRates (state, rates) {
+      state.xgeRates = rates.ratesModel
     },
     setWinDims (state) {
       state.windims = {
@@ -121,16 +135,24 @@ export default new Vuex.Store({
     }
   },
   actions: {
-    fetchRates ({ commit }) {
+    fetchRatesFromBinance ({ commit }) {
       return new Promise(() => {
         rates.fetchSTXRates().then((rates) => {
+          commit('setXgeRates', rates)
+          searchIndexService.addExchangeRates({ ratesModel: rates })
+        })
+      })
+    },
+    fetchRatesFromDb ({ commit }) {
+      return new Promise(() => {
+        searchIndexService.getExchangeRates().then((rates) => {
           commit('setXgeRates', rates)
         })
         setInterval(function () {
           rates.fetchSTXRates().then((rates) => {
             commit('setXgeRates', rates)
           })
-        }, 3600000)
+        }, 600000) // fetch from db every 10 minutes
       })
     }
   }

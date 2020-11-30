@@ -36,6 +36,26 @@ const searchIndexService = {
     })
   },
 
+  addExchangeRates: function (rates: any) {
+    return new Promise(function (resolve, reject) {
+      axios.post(SEARCH_API_PATH + '/v1/rates/', rates).then((result) => {
+        resolve(result.data)
+      }).catch((error) => {
+        reject(new Error('Unable index record: ' + error))
+      })
+    })
+  },
+
+  getExchangeRates: function () {
+    return new Promise(function (resolve, reject) {
+      axios.get(SEARCH_API_PATH + '/v1/rates/').then((result) => {
+        resolve(result.data)
+      }).catch((error) => {
+        reject(new Error('Unable index record: ' + error))
+      })
+    })
+  },
+
   addRecord: function (indexable: any) {
     return new Promise(function (resolve, reject) {
       if (!indexable.domain) indexable.domain = location.hostname
