@@ -107,6 +107,31 @@ const utils = {
         assetHash: res.value.data['asset-hash'].buffer.toString('hex'),
         date: res.value.data.date.value.toNumber()
       }
+    } else if (method === 'get-token-info-full') {
+      const clarityAsset = {}
+      if (res.value.data.owner) {
+        clarityAsset.owner = res.value.data.owner.value.address.hash160
+      }
+      if (res.value.data['sale-data']) {
+        const saleData = res.value.data['sale-data']
+        if (saleData.value) {
+          const tradeInfo = {}
+          tradeInfo.biddingEndTime = saleData.value.data['bidding-end-time'].value.toNumber()
+          tradeInfo.incrementPrice = this.fromMicroAmount(saleData.value.data['increment-stx'].value.toNumber())
+          tradeInfo.reservePrice = this.fromMicroAmount(saleData.value.data['reserve-stx'].value.toNumber())
+          tradeInfo.buyNowOrStartingPrice = this.fromMicroAmount(saleData.value.data['amount-stx'].value.toNumber())
+          tradeInfo.saleType = saleData.value.data['sale-type'].value.toNumber()
+          clarityAsset.tradeInfo = tradeInfo
+        }
+      }
+      if (res.value.data['token-info']) {
+        clarityAsset.assetHash = res.value.data['token-info'].value.data['asset-hash'].buffer.toString('hex')
+        clarityAsset.date = res.value.data['token-info'].value.data.date.value.toNumber()
+      }
+      if (res.value.data['transfer-count']) {
+        clarityAsset.transferCount = res.value.data['transfer-count'].value.toNumber()
+      }
+      return clarityAsset
     } else if (method === 'get-sale-data') {
       return {
         biddingEndTime: res.value.data['bidding-end-time'].value.toNumber(),

@@ -114,14 +114,15 @@ const applicationStore = {
         state.appmap.apps.splice(index, 1, application)
       }
     },
-    addTradeInfoToAppmap ({ state, commit }, data) {
+    addTradeInfoToAppmap (state, data) {
       const index1 = state.appmap.apps.findIndex((o) => o.contractId === data.application.contractId)
       if (index1 > -1) {
         const application = state.appmap.apps[index1]
-        const index = application.clarityAssets.findIndex((o) => o.nftIndex === data.nftIndex)
-        if (index > -1) {
-          application.clarityAssets[index].tradeInfo = data.tradeInfo
-          commit('addAppToAppmap', application)
+        if (application && application.clarityAssets) {
+          const index = application.clarityAssets.findIndex((o) => o.nftIndex === data.nftIndex)
+          if (index > -1) {
+            application.clarityAssets[index].tradeInfo = data.tradeInfo
+          }
         }
       }
     },
@@ -221,7 +222,7 @@ const applicationStore = {
         const functionArgs = [`0x${serializeCV(uintCV(appdata.index)).toString('hex')}`]
         const config = {
           contractId: appdata.application.contractId,
-          functionName: 'get-token-info',
+          functionName: 'get-token-info-full',
           functionArgs: functionArgs
         }
         store.dispatch('stacksStore/callContractReadOnly', config).then((clarityAsset) => {
@@ -258,7 +259,6 @@ const applicationStore = {
     lookupTradeInfo: function ({ state, commit }: any, data: any) {
       return new Promise((resolve, reject) => {
         const functionArgs = [`0x${serializeCV(uintCV(data.nftIndex)).toString('hex')}`]
-        console.log(state.appCounter)
         const config = {
           contractId: data.application.contractId,
           functionName: 'get-sale-data',
@@ -269,7 +269,6 @@ const applicationStore = {
           commit('addTradeInfoToAppmap', data)
           resolve(tradeInfo)
         }).catch((error) => {
-          console.log(error)
           reject(error)
         })
       })

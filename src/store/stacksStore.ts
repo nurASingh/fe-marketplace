@@ -25,6 +25,7 @@ const contractDeployFee = 10000
 
 const STACKS_API = process.env.VUE_APP_API_STACKS
 const STACKS_API_EXT = process.env.VUE_APP_API_STACKS_EXT
+const STACKS_POLLING = process.env.VUE_APP_API_POLLING
 const MESH_API = process.env.VUE_APP_API_MESH
 // const network = new StacksTestnet()
 // network.coreApiUrl = STACKS_API
@@ -42,6 +43,7 @@ const setAddresses = function () {
 const pollTxStatus = function (dispatch, txId) {
   return new Promise((resolve) => {
     let counter = 0
+    if (!STACKS_POLLING) return
     const intval = setInterval(function () {
       axios.get(STACKS_API_EXT + '/extended/v1/tx/' + txId).then(response => {
         const meth1 = 'tx_status'
@@ -242,9 +244,10 @@ const stacksStore = {
         if (!data.senderKey) {
           data.senderKey = profile.senderKey
         }
-        let nonce = new BigNum(state.macsWallet.nonce)
+        const wallet = (data.wallet) ? data.wallet : state.macsWallet
+        let nonce = new BigNum(wallet.nonce)
         if (data && data.action === 'inc-nonce') {
-          nonce = new BigNum(state.macsWallet.nonce + 1)
+          nonce = new BigNum(wallet.nonce + 1)
         }
         const network = new StacksTestnet()
         const txOptions = {
@@ -253,7 +256,7 @@ const stacksStore = {
           functionName: data.functionName,
           functionArgs: (data.functionArgs) ? data.functionArgs : [],
           fee: new BigNum(1800),
-          senderKey: state.macsWallet.keyInfo.privateKey,
+          senderKey: wallet.keyInfo.privateKey,
           nonce: new BigNum(nonce),
           network
         }
@@ -462,7 +465,8 @@ const stacksStore = {
           contractAddress: asset.projectId.split('.')[0],
           contractName: asset.projectId.split('.')[1],
           functionName: 'transfer',
-          functionArgs: functionArgs
+          functionArgs: functionArgs,
+          wallet: (state.provider === 'risidio' && purchaseInfo.useWallet && purchaseInfo.useWallet === 'sky') ? state.skysWallet : state.macsWallet
         }
         const methos = (state.provider === 'risidio') ? 'callContractRisidio' : 'callContractBlockstack'
         dispatch(methos, data).then((result) => {

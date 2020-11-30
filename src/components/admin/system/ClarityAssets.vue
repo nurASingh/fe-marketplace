@@ -7,15 +7,15 @@
       <a href="#" @click="appCounter = null">close</a>
     </div>
     <div :key="componentKey" v-if="clarityAssets">
-        <div class="d-flex justify-content-between py-4 border-bottom">
-          <div><a href="#" @click.prevent="showTradeInfo = !showTradeInfo">stacks</a></div>
-          <div><a href="#" @click.prevent="showTradeInfoGaia = !showTradeInfoGaia">gaia</a></div>
-          <div><a href="#" @click.prevent="showTradeInfoSearch = !showTradeInfoSearch">lucene</a></div>
-        </div>
+      <div class="d-flex justify-content-between py-4 border-bottom">
+        <div><a href="#" @click.prevent="showTradeInfo = !showTradeInfo">stacks</a></div>
+        <div><a href="#" @click.prevent="showTradeInfoGaia = !showTradeInfoGaia">gaia</a></div>
+        <div><a href="#" @click.prevent="showTradeInfoSearch = !showTradeInfoSearch">lucene</a></div>
+      </div>
       <div v-for="(asset, idx1) in clarityAssets" :key="idx1">
         <div><a href="#" @click.prevent="lookupTradeInfo(asset.nftIndex)">Asset {{asset.nftIndex}}:</a> {{asset.assetHash}}</div>
-        <trade-info-lucene :assetHash="asset.assetHash" v-if="asset.tradeInfo && showTradeInfoSearch"/>
-        <trade-info :tradeInfo="asset.tradeInfo" v-if="asset.tradeInfo && showTradeInfo"/>
+        <trade-info-lucene :assetHash="asset.assetHash"/>
+        <trade-info :tradeInfo="asset.tradeInfo" v-if="asset.tradeInfo"/>
       </div>
     </div>
   </div>

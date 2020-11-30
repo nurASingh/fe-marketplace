@@ -49,7 +49,7 @@ export default {
   },
   data () {
     return {
-      showClear: false,
+      showClear: true,
       projectOption: 0,
       showDomainForm: false,
       searchResults: null,

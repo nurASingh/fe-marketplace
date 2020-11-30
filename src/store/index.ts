@@ -117,7 +117,7 @@ export default new Vuex.Store({
   },
   mutations: {
     setXgeRates (state, rates) {
-      state.xgeRates = rates.ratesModel
+      state.xgeRates = rates
     },
     setWinDims (state) {
       state.windims = {
@@ -145,14 +145,14 @@ export default new Vuex.Store({
     },
     fetchRatesFromDb ({ commit }) {
       return new Promise(() => {
-        searchIndexService.getExchangeRates().then((rates) => {
-          commit('setXgeRates', rates)
+        searchIndexService.getExchangeRates().then((rates: any) => {
+          commit('setXgeRates', rates.ratesModel)
         })
         setInterval(function () {
           rates.fetchSTXRates().then((rates) => {
             commit('setXgeRates', rates)
           })
-        }, 600000) // fetch from db every 10 minutes
+        }, 60000) // fetch from db every 10 minutes
       })
     }
   }

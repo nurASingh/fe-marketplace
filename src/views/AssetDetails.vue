@@ -51,9 +51,13 @@
             </div>
           </div>
         </div>
-        <div class="col-6">
+        <div class="col-6" v-if="!isOwner() && isBuyNow()">
           <div class="mb-2 d-flex justify-content-center">
-            <div v-if="!isOwner() && isBuyNow()" class="flex-fill"><b-button @click="buyNow()" style="min-width: 100%; min-height: 30px;" variant="info">Buy Now</b-button></div>
+            <div class="flex-fill"><b-button @click="buyNow('mac')" style="min-width: 100%; min-height: 30px;" variant="info">Buy Now</b-button></div>
+          </div>
+        </div>
+        <div class="col-6" v-if="isOwner()">
+          <div class="mb-2 d-flex justify-content-center">
             <div v-if="isOwner()" class="flex-fill"><b-button :href="'/my-assets/' + asset.assetHash" style="min-width: 100%; min-height: 30px;" variant="info">manage your asset</b-button></div>
           </div>
         </div>

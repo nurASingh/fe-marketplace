@@ -258,14 +258,6 @@ export default {
     )
 )
 
-(define-private (add-transfer (nft-index uint) (transfer-count uint) (from principal) (to principal) (sale-type uint) (when uint) (amount uint))
-  (if (is-eq to tx-sender)
-    (ok (map-insert transfer-history-map {nft-index: nft-index, transfer-count: transfer-count} ((from from) (to to) (sale-type sale-type) (when when) (amount amount))))
-    not-allowed
-  )
-)
-
-
 ;; Transfers tokens to a specified principal.
 (define-public (transfer (seller principal) (nft-index uint))
     (if (is-ok (transfer-from seller tx-sender nft-index))
@@ -301,6 +293,18 @@ export default {
 
 (define-read-only (get-token-info (nft-index uint))
     (map-get? my-nft-data ((nft-index nft-index)))
+)
+
+(define-read-only (get-token-info-full (nft-index uint))
+    (let
+        (
+            (the-token-info (map-get? my-nft-data ((nft-index nft-index))))
+            (the-sale-data (map-get? sale-data ((nft-index nft-index))))
+            (the-owner (nft-get-owner? my-nft nft-index))
+            (the-tx-count (default-to u0 (get transfer-count (map-get? transfer-map (tuple (nft-index nft-index))))))
+        )
+        (ok (tuple (token-info the-token-info) (sale-data the-sale-data) (owner the-owner) (transfer-count the-tx-count)))
+    )
 )
 
 (define-read-only (get-index (asset-hash (buff 32)))
@@ -354,6 +358,13 @@ export default {
             (+ count u1)
         )
     )
+)
+
+(define-private (add-transfer (nft-index uint) (transfer-count uint) (from principal) (to principal) (sale-type uint) (when uint) (amount uint))
+  (if (is-eq to tx-sender)
+    (ok (map-insert transfer-history-map {nft-index: nft-index, transfer-count: transfer-count} ((from from) (to to) (sale-type sale-type) (when when) (amount amount))))
+    not-allowed
+  )
 )
 `
     }

@@ -27,6 +27,18 @@
             </div>
           </div>
         </div>
+      </div>
+      <div class="row mt-5" v-if="walletMode === 'risidio'">
+        <div class="col-12">
+          <div class="text1 text-white">
+            <b-form-checkbox @change="changeWalletMode()" name="check-button" switch>
+              <span v-if="useWallet === 'mac'">Wallet 1 ({{stxAddressMac}})</span>
+              <span v-else>Wallet 2 ({{stxAddressSky}})</span>
+            </b-form-checkbox>
+          </div>
+        </div>
+      </div>
+      <div class="row mt-5 mx-5">
         <div class="mt-5 col-12">
           <div class="mb-2 flex-fill d-flex justify-content-center">
             <b-button @click="buyNow()" style="min-width: 50%; min-height: 50px;" variant="info">Confirm Buy Now</b-button>
@@ -60,7 +72,8 @@ export default {
   data () {
     return {
       loading: true,
-      clarityAsset: null
+      clarityAsset: null,
+      useWallet: 'mac'
     }
   },
   mounted () {
@@ -77,6 +90,13 @@ export default {
     })
   },
   methods: {
+    changeWalletMode () {
+      if (this.useWallet === 'mac') {
+        this.useWallet = 'sky'
+      } else {
+        this.useWallet = 'mac'
+      }
+    },
     buyingPrice () {
       return this.$store.getters[APP_CONSTANTS.KEY_STX_AMOUNT](this.clarityAsset.tradeInfo.buyNowOrStartingPrice)
     },
@@ -86,10 +106,34 @@ export default {
       return asset.owner === profile.username
     },
     buyNow () {
-      this.$emit('confirm-buy-now')
+      this.$emit('confirm-buy-now', { useWallet: this.useWallet })
     }
   },
   computed: {
+    walletMode () {
+      const walletMode = this.$store.getters[APP_CONSTANTS.KEY_WALLET_MODE]
+      return walletMode
+    },
+    stxAddressMac () {
+      const wallet = this.$store.getters[APP_CONSTANTS.KEY_MACS_WALLET]
+      if (wallet.keyInfo) {
+        return wallet.keyInfo.address
+      }
+      if (wallet && wallet.keyInfo.address) {
+        return wallet.keyInfo.address.substring(0, 5) + '...' + wallet.keyInfo.address.substring(wallet.keyInfo.address.length - 5)
+      }
+      return 'n/a'
+    },
+    stxAddressSky () {
+      const wallet = this.$store.getters[APP_CONSTANTS.KEY_SKYS_WALLET]
+      if (wallet.keyInfo) {
+        return wallet.keyInfo.address
+      }
+      if (wallet && wallet.keyInfo.address) {
+        return wallet.keyInfo.address.substring(0, 5) + '...' + wallet.keyInfo.address.substring(wallet.keyInfo.address.length - 5)
+      }
+      return 'n/a'
+    },
     profile () {
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
       return profile
