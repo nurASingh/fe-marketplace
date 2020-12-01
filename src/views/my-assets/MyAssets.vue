@@ -2,7 +2,7 @@
 <div class="row">
   <side-menu class="col-3 mr-0 pr-0 pt-5"/>
   <div class="col-9 pt-5 admin-app">
-    <title-bar title="My Collectibles" class="container" v-on="$listeners"/>
+    <title-bar :title="pageTitle" class="container" v-on="$listeners"/>
     <div class="container" @click="$emit('toggle-off-navbar')">
       <result-grid :resultSet="resultSet" :gridClasses="gridClasses"/>
     </div>
@@ -26,12 +26,16 @@ export default {
   data () {
     return {
       results: null,
+      pageTitle: 'My Collectibles',
       gridClasses: ['col-lg-3', 'col-md-4', 'col-sm-6', 'col-12']
     }
   },
   mounted () {
     this.loading = false
     this.findAssets()
+    if (this.$route.name === 'favourites') {
+      this.pageTitle = 'Favourites'
+    }
   },
   methods: {
     findAssets () {
@@ -64,6 +68,9 @@ export default {
   },
   computed: {
     resultSet () {
+      if (this.$route.name === 'favourites') {
+        return this.$store.getters[APP_CONSTANTS.KEY_FAVOURITES]
+      }
       return this.$store.getters[APP_CONSTANTS.KEY_SEARCH_RESULTS]
     }
   }

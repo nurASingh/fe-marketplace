@@ -21,7 +21,7 @@ let STX_CONTRACT_ADDRESS = process.env.VUE_APP_STACKS_CONTRACT_ADDRESS
 let STX_CONTRACT_NAME = process.env.VUE_APP_STACKS_CONTRACT_NAME
 const mac = JSON.parse(process.env.VUE_APP_WALLET_MAC || '')
 const sky = JSON.parse(process.env.VUE_APP_WALLET_SKY || '')
-const contractDeployFee = 10000
+const contractDeployFee = 12000
 
 const STACKS_API = process.env.VUE_APP_API_STACKS
 const STACKS_API_EXT = process.env.VUE_APP_API_STACKS_EXT
@@ -79,6 +79,13 @@ const handleSetTradeInfo = function (asset, result, resolve) {
 }
 const handleBuyNow = function (asset, result, resolve, purchaseInfo) {
   asset.owner = purchaseInfo.buyer
+  if (asset.tradeInfo) {
+    asset.tradeInfo.saleType = 0
+    asset.tradeInfo.buyNowOrStartingPrice = 0
+    asset.tradeInfo.incrementPrice = 0
+    asset.tradeInfo.reservePrice = 0
+    asset.tradeInfo.biddingEndTime = 0
+  }
   asset.hexResp = (result && result.data) ? result.data : ''
   searchIndexService.addRecord(asset).then(() => {
     console.log(asset)

@@ -25,6 +25,8 @@ export const APP_CONSTANTS = {
   KEY_MY_PROJECT: 'projectStore/getProject',
   KEY_MY_PROJECTS: 'projectStore/getProjects',
   KEY_CONTRACT: 'projectStore/getContract',
+  KEY_FAVOURITES: 'projectStore/getFavourites',
+
   KEY_PROFILE: 'authStore/getMyProfile',
   KEY_EVENT_CODE: 'getEventCode',
   SET_EVENT_CODE: 'setEventCode',

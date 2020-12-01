@@ -37,19 +37,13 @@ export default {
   },
   watch: {
     '$route' () {
-      this.adminPage = this.$route.name.indexOf('-app') > -1 ||
-        this.$route.name === 'account' ||
-        this.$route.name === 'wallet' ||
-        this.$route.name === 'my-assets'
+      this.adminPage = this.isHeaderLess()
       if (this.adminPage) this.showNavbar = false
     }
   },
   mounted () {
     this.adminPage = this.$route.name.indexOf('-app') > -1
-    this.adminPage = this.$route.name.indexOf('-app') > -1 ||
-      this.$route.name === 'account' ||
-      this.$route.name === 'wallet' ||
-      this.$route.name === 'my-assets'
+    this.adminPage = this.isHeaderLess()
     this.$store.dispatch('applicationStore/lookupApplications')
     this.$store.dispatch('authStore/fetchMyAccount').then((profile) => {
       this.loaded = true
@@ -95,6 +89,13 @@ export default {
     },
     toggleOnNavbar () {
       this.showNavbar = true
+    },
+    isHeaderLess () {
+      return this.$route.name.indexOf('-app') > -1 ||
+      this.$route.name === 'account' ||
+      this.$route.name === 'wallet' ||
+      this.$route.name === 'my-assets' ||
+      this.$route.name === 'favourites'
     },
     toggleOffNavbar () {
       this.showNavbar = false

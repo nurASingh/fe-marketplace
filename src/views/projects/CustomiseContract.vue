@@ -300,7 +300,7 @@ export default {
         (
             (the-token-info (map-get? my-nft-data ((nft-index nft-index))))
             (the-sale-data (map-get? sale-data ((nft-index nft-index))))
-            (the-owner (nft-get-owner? my-nft nft-index))
+            (the-owner (unwrap-panic (nft-get-owner? my-nft nft-index)))
             (the-tx-count (default-to u0 (get transfer-count (map-get? transfer-map (tuple (nft-index nft-index))))))
         )
         (ok (tuple (token-info the-token-info) (sale-data the-sale-data) (owner the-owner) (transfer-count the-tx-count)))

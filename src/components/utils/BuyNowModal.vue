@@ -7,7 +7,10 @@
             Transfering: {{asset.title}}
           </div>
           <div class="mt-3 text-11-500 text-left text-white">
-            From: {{asset.owner}} to {{profile.username}}
+            From: {{asset.owner}} [{{clarityAsset.owner}}]
+          </div>
+          <div class="mt-3 text-11-500 text-left text-white">
+            To {{profile.username}}
           </div>
         </div>
       </div>
@@ -98,7 +101,10 @@ export default {
       }
     },
     buyingPrice () {
-      return this.$store.getters[APP_CONSTANTS.KEY_STX_AMOUNT](this.clarityAsset.tradeInfo.buyNowOrStartingPrice)
+      if (this.clarityAsset.tradeInfo) {
+        return this.$store.getters[APP_CONSTANTS.KEY_STX_AMOUNT](this.clarityAsset.tradeInfo.buyNowOrStartingPrice)
+      }
+      return 0
     },
     isOwner () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
@@ -139,8 +145,10 @@ export default {
       return profile
     },
     rate () {
-      const rate = this.$store.getters[APP_CONSTANTS.KEY_EXCHANGE_RATE](this.clarityAsset.tradeInfo.buyNowOrStartingPrice)
-      return rate
+      if (this.clarityAsset.tradeInfo) {
+        return this.$store.getters[APP_CONSTANTS.KEY_EXCHANGE_RATE](this.clarityAsset.tradeInfo.buyNowOrStartingPrice)
+      }
+      return 0
     },
     asset () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)

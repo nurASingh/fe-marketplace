@@ -1,6 +1,6 @@
 import projectService from '@/services/projectService.js'
 import store from '.'
-import { uintCV, intCV, bufferCV, serializeCV } from '@stacks/transactions'
+import { uintCV, intCV, serializeCV } from '@stacks/transactions'
 import searchIndexService from '@/services/searchIndexService'
 
 const KEY_GAIA_PROJECT = 'getGaiaProject'
@@ -196,6 +196,7 @@ const applicationStore = {
           application.mintCounter = mintCounter
           application.clarityAssets = []
           commit('addAppToAppmap', application)
+          application.numberCalls = 0
           resolve(application)
           application.clarityAssets = []
           for (let i = 0; i < application.mintCounter; i++) {
@@ -217,7 +218,7 @@ const applicationStore = {
         resolve('Indexing underway - please don\'t refresh or close this tab..')
       })
     },
-    lookupMintedAssets: function ({ dispatch, commit }: any, appdata: any) {
+    lookupMintedAssets: function ({ state, commit }: any, appdata: any) {
       return new Promise(function (resolve, reject) {
         const functionArgs = [`0x${serializeCV(uintCV(appdata.index)).toString('hex')}`]
         const config = {
@@ -226,37 +227,45 @@ const applicationStore = {
           functionArgs: functionArgs
         }
         store.dispatch('stacksStore/callContractReadOnly', config).then((clarityAsset) => {
-          const buffer = `0x${serializeCV(bufferCV(Buffer.from(clarityAsset.assetHash, 'hex'))).toString('hex')}` // Buffer.from(hash.toString(CryptoJS.enc.Hex), 'hex')
-          const myConfig = {
-            contractId: appdata.application.contractId,
-            functionName: 'get-index',
-            functionArgs: [buffer]
+          // const buffer = `0x${serializeCV(bufferCV(Buffer.from(clarityAsset.assetHash, 'hex'))).toString('hex')}` // Buffer.from(hash.toString(CryptoJS.enc.Hex), 'hex')
+          // const myConfig = {
+          //  contractId: appdata.application.contractId,
+          //  functionName: 'get-index',
+          //  functionArgs: [buffer]
+          // }
+          // store.dispatch('stacksStore/callContractReadOnly', myConfig).then((nftIndex) => {
+          clarityAsset.nftIndex = appdata.index
+          appdata.application.numberCalls++
+          commit('addClarityAssetToAppmap', { application: appdata.application, asset: clarityAsset })
+          if (appdata.application.mintCounter && appdata.application.numberCalls >= appdata.application.mintCounter) {
+            searchIndexService.addRecords(appdata.application)
+            resolve(state.appmap.apps[appdata.application.appCounter])
+          } else if (!appdata.application.mintCounter) {
+            resolve(clarityAsset)
           }
-          store.dispatch('stacksStore/callContractReadOnly', myConfig).then((nftIndex) => {
-            clarityAsset.nftIndex = nftIndex
-            appdata.application.numberCalls++
+          /**
+          dispatch('lookupTradeInfo', { application: appdata.application, nftIndex: nftIndex }).then((tradeInfo) => {
+            clarityAsset.tradeInfo = tradeInfo
             commit('addClarityAssetToAppmap', { application: appdata.application, asset: clarityAsset })
-            dispatch('lookupTradeInfo', { application: appdata.application, nftIndex: nftIndex }).then((tradeInfo) => {
-              clarityAsset.tradeInfo = tradeInfo
-              commit('addClarityAssetToAppmap', { application: appdata.application, asset: clarityAsset })
-              resolve(clarityAsset)
-              if (appdata.application.numberCalls >= appdata.application.mintCounter) {
-                searchIndexService.addRecords(appdata.application)
-              }
-            }).catch(() => {
-              if (appdata.application.numberCalls >= appdata.application.mintCounter) {
-                searchIndexService.addRecords(appdata.application)
-              }
-            })
-          }).catch((e) => {
-            reject(e)
+            resolve(clarityAsset)
+            if (appdata.application.numberCalls >= appdata.application.mintCounter) {
+              searchIndexService.addRecords(appdata.application)
+            }
+          }).catch(() => {
+            if (appdata.application.numberCalls >= appdata.application.mintCounter) {
+              searchIndexService.addRecords(appdata.application)
+            }
           })
+          **/
+          // }).catch((e) => {
+          //  reject(e)
+          // })
         }).catch((e) => {
           reject(e)
         })
       })
     },
-    lookupTradeInfo: function ({ state, commit }: any, data: any) {
+    lookupTradeInfo: function ({ commit }: any, data: any) {
       return new Promise((resolve, reject) => {
         const functionArgs = [`0x${serializeCV(uintCV(data.nftIndex)).toString('hex')}`]
         const config = {

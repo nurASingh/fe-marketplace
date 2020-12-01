@@ -110,7 +110,7 @@ const utils = {
     } else if (method === 'get-token-info-full') {
       const clarityAsset = {}
       if (res.value.data.owner) {
-        clarityAsset.owner = res.value.data.owner.value.address.hash160
+        clarityAsset.owner = res.value.data.owner.address.hash160
       }
       if (res.value.data['sale-data']) {
         const saleData = res.value.data['sale-data']

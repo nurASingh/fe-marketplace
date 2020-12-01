@@ -15,6 +15,7 @@ const getNewRootFile = function () {
   const newRootFile = {
     created: now,
     profile: {},
+    favourites: [],
     projects: []
   }
   return newRootFile
