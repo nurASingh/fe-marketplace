@@ -1,14 +1,14 @@
 {
-  "name": "Marketplace",
+  "name": "Risidio Auctions",
   "short_name": "Marketplace",
   "description": "Marketplace - P2P commerce for the decentralised web 3.0.",
   "start_url": "/",
   "icons": [{
-    "src": "/img/logo/risidio_black.svg",
+    "src": "/img/logo/Risidio_logo_256x256.png",
     "sizes": "256x256",
     "type": "image/png"
   }, {
-    "src": "/img/logo/risidio_black.svg",
+    "src": "/img/logo/Risidio_logo_512x512.png",
     "sizes": "512x512",
     "type": "image/png"
   }],

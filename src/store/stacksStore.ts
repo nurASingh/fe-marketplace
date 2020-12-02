@@ -6,29 +6,33 @@ import {
   broadcastTransaction,
   makeContractDeploy,
   callReadOnlyFunction,
-  uintCV, bufferCV
+  uintCV, bufferCV,
+  standardPrincipalCV
 } from '@stacks/transactions'
-import { openContractCall } from '@stacks/connect'
+import { openContractCall, FinishedTxData } from '@stacks/connect'
 import {
   StacksTestnet
 } from '@stacks/network'
 import axios from 'axios'
 import BigNum from 'bn.js'
 import searchIndexService from '@/services/searchIndexService'
-import moment from 'moment'
 
 let STX_CONTRACT_ADDRESS = process.env.VUE_APP_STACKS_CONTRACT_ADDRESS
 let STX_CONTRACT_NAME = process.env.VUE_APP_STACKS_CONTRACT_NAME
 const mac = JSON.parse(process.env.VUE_APP_WALLET_MAC || '')
-const precision = 1000000
-const contractDeployFee = 8000
+const sky = JSON.parse(process.env.VUE_APP_WALLET_SKY || '')
+const contractDeployFee = 12000
 
 const STACKS_API = process.env.VUE_APP_API_STACKS
 const STACKS_API_EXT = process.env.VUE_APP_API_STACKS_EXT
+const STACKS_POLLING = process.env.VUE_APP_API_POLLING
 const MESH_API = process.env.VUE_APP_API_MESH
-const network = new StacksTestnet()
-network.coreApiUrl = STACKS_API
-
+// const network = new StacksTestnet()
+// network.coreApiUrl = STACKS_API
+let provider = 'connect'
+if (MESH_API.indexOf('local') > -1) {
+  provider = 'risidio'
+}
 const setAddresses = function () {
   const config = store.getters[APP_CONSTANTS.KEY_CONFIGURATION]
   if (config && config.addresses) {
@@ -39,6 +43,7 @@ const setAddresses = function () {
 const pollTxStatus = function (dispatch, txId) {
   return new Promise((resolve) => {
     let counter = 0
+    if (!STACKS_POLLING) return
     const intval = setInterval(function () {
       axios.get(STACKS_API_EXT + '/extended/v1/tx/' + txId).then(response => {
         const meth1 = 'tx_status'
@@ -51,7 +56,7 @@ const pollTxStatus = function (dispatch, txId) {
       }).catch((e) => {
         console.log(e)
       })
-      if (counter === 3) {
+      if (counter === 30) {
         clearInterval(intval)
         resolve()
       }
@@ -59,22 +64,41 @@ const pollTxStatus = function (dispatch, txId) {
     }, 5000)
   })
 }
-
-const getAmountStx = function (amountMicroStx) {
-  try {
-    if (typeof amountMicroStx === 'string') {
-      amountMicroStx = Number(amountMicroStx)
-    }
-    if (amountMicroStx === 0) return 0
-    amountMicroStx = amountMicroStx / precision
-    return Math.round(amountMicroStx * precision) / precision
-  } catch {
-    return 0
-  }
+const handleSetTradeInfo = function (asset, result, resolve) {
+  asset.hexResp = (result && result.data) ? result.data : ''
+  // if (asset.tradeInfo.biddingEndTime && typeof asset.tradeInfo.biddingEndTime === 'string' && asset.tradeInfo.biddingEndTime.indexOf('-') > -1) {
+  //  asset.tradeInfo.biddingEndTime = moment(asset.tradeInfo.biddingEndTime).valueOf()
+  // }
+  searchIndexService.addTradeInfo(asset).then(() => {
+    console.log(asset)
+    resolve(asset)
+  }).catch((error) => {
+    console.log(error)
+    resolve(asset)
+  })
 }
+const handleBuyNow = function (asset, result, resolve, purchaseInfo) {
+  asset.owner = purchaseInfo.buyer
+  if (asset.tradeInfo) {
+    asset.tradeInfo.saleType = 0
+    asset.tradeInfo.buyNowOrStartingPrice = 0
+    asset.tradeInfo.incrementPrice = 0
+    asset.tradeInfo.reservePrice = 0
+    asset.tradeInfo.biddingEndTime = 0
+  }
+  asset.hexResp = (result && result.data) ? result.data : ''
+  searchIndexService.addRecord(asset).then(() => {
+    console.log(asset)
+    resolve(asset)
+  }).catch((error) => {
+    console.log(error)
+    resolve(asset)
+  })
+}
+
 const postDeploy = function (resolve, dispatch, projectId, contractId, txId) {
   store.dispatch('projectStore/updateProject', { projectId: projectId, contractId: contractId, txId: txId }).then((project) => {
-    dispatch('fetchMacsWalletInfo')
+    dispatch('fetchMacSkyWalletInfo')
     resolve(project)
   })
 }
@@ -113,48 +137,75 @@ const resolveError = function (reject, error) {
 const stacksStore = {
   namespaced: true,
   state: {
-    provider: 'risidio',
+    provider: provider,
     result: null,
     contracts: [],
-    appName: 'Risidio Mesh',
+    appName: 'Risidio Auctions',
     appLogo: '/img/Group 15980.svg',
-    macsWallet: mac
+    macsWallet: mac,
+    skysWallet: sky
   },
   getters: {
+    getWalletMode: state => {
+      return state.provider
+    },
     getMacsWallet: state => {
       return state.macsWallet
+    },
+    getSkysWallet: state => {
+      return state.skysWallet
     }
   },
   mutations: {
-    setMacsWallet (state, newMac) {
-      state.macsWallet = newMac
+    setMacsWallet (state, wallet) {
+      if (wallet.label === 'mac') {
+        state.macsWallet = wallet
+      } else if (wallet.label === 'sky') {
+        state.skysWallet = wallet
+      }
     },
     setResult (state, result) {
       state.result = result
+    },
+    toggleWalletMode (state) {
+      if (state.provider === 'risidio') {
+        state.provider = 'connect'
+      } else {
+        state.provider = 'risidio'
+      }
     }
   },
   actions: {
-    fetchMacsWalletInfo ({ state, commit }) {
+    fetchMacSkyWalletInfo ({ dispatch, state }) {
+      return new Promise((resolve) => {
+        dispatch('fetchWalletInternal', state.macsWallet).then((wallet) => {
+          resolve(wallet)
+          dispatch('fetchWalletInternal', state.skysWallet).then((wallet) => {
+            resolve(wallet)
+          })
+        })
+      })
+    },
+    fetchWalletInternal ({ state, commit }, wallet) {
       return new Promise((resolve, reject) => {
-        const macsWallet = state.macsWallet
         const data = {
-          path: '/v2/accounts/' + macsWallet.keyInfo.address,
+          path: '/v2/accounts/' + wallet.keyInfo.address,
           httpMethod: 'get',
           postData: null
         }
         axios.post(MESH_API + '/v2/accounts', data).then(response => {
-          macsWallet.nonce = response.data.nonce
-          macsWallet.balance = getAmountStx(parseInt(response.data.balance, 16))
-          commit('setMacsWallet', macsWallet)
-          resolve(macsWallet)
+          wallet.nonce = response.data.nonce
+          wallet.balance = utils.fromOnChainAmount(response.data.balance)
+          commit('setMacsWallet', wallet)
+          resolve(wallet)
         }).catch(() => {
-          const macsWallet = state.macsWallet
-          const useApi = STACKS_API + '/v2/accounts/' + macsWallet.keyInfo.address
+          const wallet = state.wallet
+          const useApi = STACKS_API + '/v2/accounts/' + wallet.keyInfo.address
           axios.get(useApi).then(response => {
-            macsWallet.nonce = response.data.nonce
-            macsWallet.balance = getAmountStx(parseInt(response.data.balance, 16))
-            commit('setMacsWallet', macsWallet)
-            resolve(macsWallet)
+            wallet.nonce = response.data.nonce
+            wallet.balance = utils.fromOnChainAmount(response.data.balance)
+            commit('setMacsWallet', wallet)
+            resolve(wallet)
           }).catch((error) => {
             resolveError(reject, error)
           })
@@ -167,27 +218,23 @@ const stacksStore = {
       return new Promise((resolve, reject) => {
         const contractAddress = (data.contractAddress) ? data.contractAddress : STX_CONTRACT_ADDRESS
         const contractName = (data.contractName) ? data.contractName : STX_CONTRACT_NAME
-        const nonce = new BigNum(state.macsWallet.nonce)
-        network.coreApiUrl = STACKS_API
+        // const nonce = new BigNum(state.macsWallet.nonce)
+        // network.coreApiUrl = STACKS_API
         const txoptions: any = {
           contractAddress: contractAddress,
           contractName: contractName,
           functionName: data.functionName,
           functionArgs: (data.functionArgs) ? data.functionArgs : [],
-          fee: new BigNum(1800),
-          senderKey: state.macsWallet.keyInfo.privateKey,
-          nonce: new BigNum(nonce),
-          validateWithAbi: false,
-          network: network,
+          // network: network,
           appDetails: {
             name: state.appName,
             icon: state.appLogo
           },
-          finished: response => {
+          finished: (response: FinishedTxData) => {
             const result = {
-              txId: response.data,
-              network: 15,
-              tokenId: Math.floor(Math.random() * Math.floor(1000000000))
+              txId: response.txId,
+              txRaw: response.txRaw,
+              network: 15
             }
             resolve(result)
           }
@@ -204,23 +251,25 @@ const stacksStore = {
         if (!data.senderKey) {
           data.senderKey = profile.senderKey
         }
-        let nonce = new BigNum(state.macsWallet.nonce)
+        const wallet = (data.wallet) ? data.wallet : state.macsWallet
+        let nonce = new BigNum(wallet.nonce)
         if (data && data.action === 'inc-nonce') {
-          nonce = new BigNum(state.macsWallet.nonce + 1)
+          nonce = new BigNum(wallet.nonce + 1)
         }
+        const network = new StacksTestnet()
         const txOptions = {
           contractAddress: (data.contractAddress) ? data.contractAddress : STX_CONTRACT_ADDRESS,
           contractName: (data.contractName) ? data.contractName : STX_CONTRACT_NAME,
           functionName: data.functionName,
           functionArgs: (data.functionArgs) ? data.functionArgs : [],
           fee: new BigNum(1800),
-          senderKey: state.macsWallet.keyInfo.privateKey,
+          senderKey: wallet.keyInfo.privateKey,
           nonce: new BigNum(nonce),
-          validateWithAbi: false,
           network
         }
         makeContractCall(txOptions).then((transaction) => {
           if (state.provider !== 'risidio') {
+            const network = new StacksTestnet()
             broadcastTransaction(transaction, network).then((result) => {
               resolve(result)
             }).catch((error) => {
@@ -232,19 +281,19 @@ const stacksStore = {
               'Content-Type': 'application/octet-stream'
             }
             axios.post(MESH_API + '/v2/broadcast', txdata, { headers: headers }).then(response => {
-              pollTxStatus(dispatch, response.data).then(() => {
-                // what to do when tx confirms? resolve(hexResp)
+              pollTxStatus(dispatch, response.data).then((txResponse) => {
+                console.log(txResponse)
               })
-              dispatch('fetchMacsWalletInfo')
-              resolve(response.data)
+              resolve(response)
+              dispatch('fetchMacSkyWalletInfo')
             }).catch(() => {
               const useApi = STACKS_API + '/v2/transactions'
               axios.post(useApi, txdata).then((response) => {
-                pollTxStatus(dispatch, response.data).then(() => {
-                  // what to do when tx confirms? resolve(hexResp)
+                pollTxStatus(dispatch, response.data).then((txResponse) => {
+                  console.log(txResponse)
                 })
-                dispatch('fetchMacsWalletInfo')
-                resolve(response.data)
+                resolve(response)
+                dispatch('fetchMacSkyWalletInfo')
               }).catch((error) => {
                 resolveError(reject, error)
               })
@@ -299,12 +348,12 @@ const stacksStore = {
           'Content-Type': 'application/json'
         }
         axios.post(MESH_API + '/v2/accounts', txoptions).then(response => {
-          dispatch('fetchMacsWalletInfo')
+          dispatch('fetchMacSkyWalletInfo')
           data.result = utils.fromHex(data.functionName, response.data.result)
           resolve(data.result)
         }).catch((error) => {
           axios.post(STACKS_API + path, txoptions.postData, { headers: headers }).then(response => {
-            dispatch('fetchMacsWalletInfo')
+            dispatch('fetchMacSkyWalletInfo')
             data.result = utils.fromHex(data.functionName, response.data.result)
             resolve(data.result)
           }).catch(() => {
@@ -353,6 +402,7 @@ const stacksStore = {
         const sender = state.macsWallet
         const contractName = project.projectId.split('.')[1]
         const contractId = mac.keyInfo.address + '.' + contractName
+        const network = new StacksTestnet()
         const txOptions = {
           contractName: contractName,
           codeBody: project.codeBody,
@@ -382,62 +432,59 @@ const stacksStore = {
         })
       })
     },
-    setTradeInfo ({ dispatch }, asset) {
+    setTradeInfo ({ state, dispatch }, asset) {
       return new Promise((resolve, reject) => {
         // (asset-hash (buff 32)) (sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint)
         const buffer = bufferCV(Buffer.from(asset.assetHash, 'hex')) // Buffer.from(hash.toString(CryptoJS.enc.Hex), 'hex')
         const saleType = uintCV(asset.tradeInfo.saleType)
-        const incrementPrice = uintCV(asset.tradeInfo.incrementPrice)
-        const reservePrice = uintCV(asset.tradeInfo.reservePrice)
-        const buyNowOrStartingPrice = uintCV(asset.tradeInfo.buyNowOrStartingPrice)
+        const incrementPrice = uintCV(utils.toOnChainAmount(asset.tradeInfo.incrementPrice))
+        const reservePrice = uintCV(utils.toOnChainAmount(asset.tradeInfo.reservePrice))
+        const buyNowOrStartingPrice = uintCV(utils.toOnChainAmount(asset.tradeInfo.buyNowOrStartingPrice))
         const biddingEndTime = uintCV(asset.tradeInfo.biddingEndTime)
         const functionArgs = [buffer, saleType, incrementPrice, reservePrice, buyNowOrStartingPrice, biddingEndTime]
-        const data = {
+        const data: any = {
           contractAddress: asset.projectId.split('.')[0],
           contractName: asset.projectId.split('.')[1],
           functionName: 'set-sale-data',
           functionArgs: functionArgs
         }
-        dispatch('callContractRisidio', data).then((result) => {
-          asset.hexResp = result
-          if (asset.tradeInfo.biddingEndTime && asset.tradeInfo.biddingEndTime.indexOf('-') > -1) {
-            asset.tradeInfo.biddingEndTime = moment(asset.tradeInfo.biddingEndTime).valueOf()
-          }
-          searchIndexService.addTradeInfo(asset).then(() => {
-            console.log(asset)
-            resolve(asset)
+        const methos = (state.provider === 'risidio') ? 'callContractRisidio' : 'callContractBlockstack'
+        dispatch(methos, data).then((result) => {
+          handleSetTradeInfo(asset, result, resolve)
+        }).catch(() => {
+          data.action = 'inc-nonce'
+          dispatch(methos, data).then((result) => {
+            handleSetTradeInfo(asset, result, resolve)
           }).catch((error) => {
-            console.log(error)
-            resolve(asset)
+            reject(error)
           })
-        }).catch((error) => {
-          reject(error)
         })
       })
     },
-    buyNow ({ dispatch }, purchaseInfo) {
+    buyNow ({ state, dispatch }, purchaseInfo) {
       return new Promise((resolve, reject) => {
         // (asset-hash (buff 32)) (sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint)
         const asset = purchaseInfo.asset
         const nftIndex = uintCV(asset.nftIndex)
-        const functionArgs = [nftIndex]
-        const data = {
+        const spCV = standardPrincipalCV(mac.keyInfo.address)
+        const functionArgs = [spCV, nftIndex]
+        const data: any = {
           contractAddress: asset.projectId.split('.')[0],
           contractName: asset.projectId.split('.')[1],
-          functionName: 'transfer?',
-          functionArgs: functionArgs
+          functionName: 'transfer',
+          functionArgs: functionArgs,
+          wallet: (state.provider === 'risidio' && purchaseInfo.useWallet && purchaseInfo.useWallet === 'sky') ? state.skysWallet : state.macsWallet
         }
-        dispatch('callContractRisidio', data).then((result) => {
-          asset.hexResp = result
-          searchIndexService.addRecord(asset).then(() => {
-            console.log(asset)
-            resolve(asset)
+        const methos = (state.provider === 'risidio') ? 'callContractRisidio' : 'callContractBlockstack'
+        dispatch(methos, data).then((result) => {
+          handleBuyNow(asset, result, resolve, purchaseInfo)
+        }).catch(() => {
+          data.action = 'inc-nonce'
+          dispatch(methos, data).then((result) => {
+            handleBuyNow(asset, result, resolve, purchaseInfo)
           }).catch((error) => {
-            console.log(error)
-            resolve(asset)
+            reject(error)
           })
-        }).catch((error) => {
-          reject(error)
         })
       })
     }

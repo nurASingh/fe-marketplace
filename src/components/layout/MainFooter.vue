@@ -4,8 +4,9 @@
     <div class="container">
       <div class="row m-0 d-flex">
         <div class="col-lg-5 col-12 d-flex flex-column justify-content-center align-items-lg-start align-items-center">
-            <router-link to="/" class="navbar-brand text-white"><img :src="logo" alt="risidio-logo" class="footer-logo"/></router-link>
-            <p class="footer__pitch">(Elevator Pitch here) The new digital marketplace for crypto collectibles assets. Buy, sell, etch… Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.</p>
+          <router-link to="/" class="navbar-brand text-white"><img :src="logo" alt="risidio-logo" class="footer-logo"/></router-link>
+          <p class="footer__pitch">Risidio Auctions is a marketplace for digital assets registered via the Bitcoin blockchain using Clarity Contracts and the Stacks 2.0 network. We are looking for partners and clients to help get the platform to the next level and make it a production ready viable alternative to similar projects like Open Sea on Ethereum.</p>
+          <wallet-toggle />
         </div>
         <div class="col-lg-7 col-12 d-flex columns3-content__container">
             <div class="footer__column-content ml-lg-auto">
@@ -64,30 +65,16 @@
         </div>
       </div>
     </div>
-    <!-- MOBILE DESIGN
-    <div class="row flex-flow-column justify-content-center text-center m-0 d-sm-none mobile-footer">
-      <div class="col-12">
-        <router-link to="/" class="navbar-brand text-white" style="margin: 60px 0 40px 0; height: auto;"><img :src="logo" alt="risidio-logo" class="footer-logo"/></router-link>
-      </div>
-      <div class="col-12 mobile-footer--contact" v-html="getContent('contact')"></div>
-      <div class="col-12 social-icons">
-        <span style="font-size: 15px;">
-          <a href="https://discord.gg/qvuxB9P"><i class="fab fa-discord"></i></a>
-          <a href="https://twitter.com/Risidio1"><i class="fab fa-twitter"></i></a>
-          <a href="https://www.instagram.com/risidio_official/"><i class="fab fa-instagram"></i></a>
-        </span>
-      </div>
-    </div>
-    <div class="row text-center d-sm-none mobile-footer--copyright">
-      <div class="col-12">
-        &copy; &nbsp; {{ year }} Risidio Ltd. All right reserved.
-      </div>
-    </div>!-->
   </footer>
 </div>
 </template>
 <script>
+import WalletToggle from '@/components/layout/WalletToggle'
+
 export default {
+  components: {
+    WalletToggle
+  },
   props: {
     backgroundColor: String,
     type: String

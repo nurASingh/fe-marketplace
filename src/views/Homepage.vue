@@ -25,7 +25,7 @@
     </div>
     <div class="homepage__items-section">
       <result-grid :resultSet="resultSet" :gridClasses="gridClasses" v-if="resultSet && resultSet.length > 0"/>
-      <div v-else v-html="currentSearch">No results: {{currentSearch}}</div>
+      <div v-else>No results</div>
     </div>
   </div>
   <div class="d-flex justify-content-center homepage__categories--more-button">

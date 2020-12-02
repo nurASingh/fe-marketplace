@@ -54,16 +54,17 @@
           </div>
         </div>
       </b-nav-item-dropdown>
-      <b-nav-item class="text-info"><router-link class="text-white" to="/admin-app">Become a Contributor</router-link></b-nav-item>
+      <b-nav-item><router-link class="text-white" to="/admin-app">Become a Contributor</router-link></b-nav-item>
     </b-navbar-nav>
     <b-navbar-nav class="ml-xl-auto align-items-xl-center">
+      <wallet-toggle />
       <b-nav-item><router-link class="text-white" to="/community?how-it-works">How It Works</router-link></b-nav-item>
     </b-navbar-nav>
 
     <b-navbar-nav class="navbar__login d-flex">
       <b-nav-item class="navbar__login--loogedin" v-if="loggedIn">
-        <div v-if="avatar" v-b-toggle.login-sidebar class="navbar__account d-flex align-items-center"><span v-html="avatar"></span><span class="text-info navbar__account--text">Account</span></div>
-        <div v-else v-b-toggle.login-sidebar class="navbar__account d-flex align-items-center"><span><b-icon icon="person-fill" class="navbar__default-account-icon"/></span><span class="text-info navbar__account--text">Account</span></div>
+        <div v-if="avatar" v-b-toggle.login-sidebar class="navbar__account d-flex align-items-center"><span v-html="avatar"></span><span class="text-white navbar__account--text">Account</span></div>
+        <div v-else v-b-toggle.login-sidebar class="navbar__account d-flex align-items-center"><span><b-icon icon="person-fill" class="navbar__default-account-icon"/></span><span class="text-white navbar__account--text">Account</span></div>
         <side-bar />
       </b-nav-item>
       <b-nav-item @click.prevent="startLogin()" href="#" v-else><button class="login-button button-secondary">Login</button></b-nav-item>
@@ -77,12 +78,14 @@
 import { APP_CONSTANTS } from '@/app-constants'
 import SideBar from './SideBar'
 import ProjectList from '@/components/agora/ProjectList'
+import WalletToggle from '@/components/layout/WalletToggle'
 
 export default {
   name: 'MainNavbar',
   components: {
     SideBar,
-    ProjectList
+    ProjectList,
+    WalletToggle
   },
   data () {
     return {
@@ -226,7 +229,6 @@ nav ul {
   padding: 0;
 }
 #nav-collapse ul:first-child li.text-info a {
-  color: #50B1B5 !important;
   font-weight: 700;
 }
 .navbar__account--text {
@@ -251,7 +253,6 @@ nav .navbar__default-account-icon {
   width: 30px;
   height: 30px;
   border-radius: 50%;
-  color: #50B1B5;
 }
 
 nav .navbar__account {

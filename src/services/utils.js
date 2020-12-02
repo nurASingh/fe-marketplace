@@ -3,7 +3,52 @@ import {
   hexToCV
 } from '@stacks/transactions'
 
+const precision = 1000000
+
 const utils = {
+  copyAddress: function (document, flasher, target) {
+    const tempInput = document.createElement('input')
+    tempInput.style = 'position: absolute; left: -1000px; top: -1000px'
+    tempInput.value = target
+    document.body.appendChild(tempInput)
+    tempInput.select()
+    document.execCommand('copy')
+    document.body.removeChild(tempInput)
+    flasher.classList.add('flasher')
+    setTimeout(function () {
+      flasher.classList.remove('flasher')
+    }, 1000)
+  },
+  fromMicroAmount: function (amountMicroStx) {
+    try {
+      if (amountMicroStx === 0) return 0
+      const val = Math.round(amountMicroStx) / (precision)
+      return val
+    } catch {
+      return 0
+    }
+  },
+  fromOnChainAmount: function (amountMicroStx) {
+    try {
+      amountMicroStx = parseInt(amountMicroStx, 16)
+      if (typeof amountMicroStx === 'string') {
+        amountMicroStx = Number(amountMicroStx)
+      }
+      if (amountMicroStx === 0) return 0
+      amountMicroStx = amountMicroStx / precision
+      return Math.round(amountMicroStx * precision) / precision
+    } catch {
+      return 0
+    }
+  },
+  toOnChainAmount: function (amount) {
+    try {
+      amount = amount * precision
+      return Math.round(amount * precision) / precision
+    } catch {
+      return 0
+    }
+  },
   fetchBase64FromImageUrl: function (url, document) {
     return new Promise((resolve) => {
       const img = new Image()
@@ -62,12 +107,37 @@ const utils = {
         assetHash: res.value.data['asset-hash'].buffer.toString('hex'),
         date: res.value.data.date.value.toNumber()
       }
+    } else if (method === 'get-token-info-full') {
+      const clarityAsset = {}
+      if (res.value.data.owner) {
+        clarityAsset.owner = res.value.data.owner.address.hash160
+      }
+      if (res.value.data['sale-data']) {
+        const saleData = res.value.data['sale-data']
+        if (saleData.value) {
+          const tradeInfo = {}
+          tradeInfo.biddingEndTime = saleData.value.data['bidding-end-time'].value.toNumber()
+          tradeInfo.incrementPrice = this.fromMicroAmount(saleData.value.data['increment-stx'].value.toNumber())
+          tradeInfo.reservePrice = this.fromMicroAmount(saleData.value.data['reserve-stx'].value.toNumber())
+          tradeInfo.buyNowOrStartingPrice = this.fromMicroAmount(saleData.value.data['amount-stx'].value.toNumber())
+          tradeInfo.saleType = saleData.value.data['sale-type'].value.toNumber()
+          clarityAsset.tradeInfo = tradeInfo
+        }
+      }
+      if (res.value.data['token-info']) {
+        clarityAsset.assetHash = res.value.data['token-info'].value.data['asset-hash'].buffer.toString('hex')
+        clarityAsset.date = res.value.data['token-info'].value.data.date.value.toNumber()
+      }
+      if (res.value.data['transfer-count']) {
+        clarityAsset.transferCount = res.value.data['transfer-count'].value.toNumber()
+      }
+      return clarityAsset
     } else if (method === 'get-sale-data') {
       return {
         biddingEndTime: res.value.data['bidding-end-time'].value.toNumber(),
-        incrementPrice: res.value.data['increment-stx'].value.toNumber(),
-        reservePrice: res.value.data['reserve-stx'].value.toNumber(),
-        buyNowOrStartingPrice: res.value.data['amount-stx'].value.toNumber(),
+        incrementPrice: this.fromMicroAmount(res.value.data['increment-stx'].value.toNumber()),
+        reservePrice: this.fromMicroAmount(res.value.data['reserve-stx'].value.toNumber()),
+        buyNowOrStartingPrice: this.fromMicroAmount(res.value.data['amount-stx'].value.toNumber()),
         saleType: res.value.data['sale-type'].value.toNumber()
       }
     } else if (method === 'get-base-token-uri') {

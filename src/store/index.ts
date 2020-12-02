@@ -7,6 +7,8 @@ import contentStore from './contentStore'
 import searchStore from './searchStore'
 import stacksStore from './stacksStore'
 import projectStore from './projectStore'
+import rates from 'risidio-rates'
+import searchIndexService from '@/services/searchIndexService'
 
 Vue.use(Vuex)
 
@@ -63,9 +65,35 @@ export default new Vuex.Store({
         displayName: 'News and Media',
         name: 'news_media'
       }
-    ]
+    ],
+    xgeRates: null
   },
   getters: {
+    getExchangeRates: state => {
+      return state.xgeRates
+    },
+    getExchangeRate: state => amountStx => {
+      if (!state.xgeRates) {
+        return null
+      }
+      const rate = state.xgeRates.find(item => item.fiatCurrency === 'EUR')
+      const priceInEuro = (1 / rate.amountStx) * amountStx
+      return Math.round(priceInEuro * 100) / 100
+    },
+    getExchangeRateFormatted: state => amountStx => {
+      if (!state.xgeRates) {
+        return null
+      }
+      const rate = state.xgeRates.find(item => item.fiatCurrency === 'EUR')
+      const priceInEuro = (1 / rate.amountStx) * amountStx
+      return rate.symbol + ' ' + (Math.round(priceInEuro * 100) / 100)
+    },
+    getStxAmountFormatted: () => amountStx => {
+      if (!amountStx) {
+        return 0
+      }
+      return (Math.round(amountStx * 10000) / 10000)
+    },
     getEventCode: state => {
       return state.eventCode
     },
@@ -88,6 +116,9 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    setXgeRates (state, rates) {
+      state.xgeRates = rates
+    },
     setWinDims (state) {
       state.windims = {
         innerWidth: window.innerWidth, innerHeight: window.innerHeight
@@ -104,5 +135,25 @@ export default new Vuex.Store({
     }
   },
   actions: {
+    fetchRatesFromBinance ({ commit }) {
+      return new Promise(() => {
+        rates.fetchSTXRates().then((rates) => {
+          commit('setXgeRates', rates)
+          searchIndexService.addExchangeRates({ ratesModel: rates })
+        })
+      })
+    },
+    fetchRatesFromDb ({ commit }) {
+      return new Promise(() => {
+        searchIndexService.getExchangeRates().then((rates: any) => {
+          commit('setXgeRates', rates.ratesModel)
+        })
+        setInterval(function () {
+          rates.fetchSTXRates().then((rates) => {
+            commit('setXgeRates', rates)
+          })
+        }, 60000) // fetch from db every 10 minutes
+      })
+    }
   }
 })

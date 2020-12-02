@@ -8,10 +8,13 @@
       <div><span>STX</span> <span class="text-info">{{ balance }}</span></div>
     </div>
     <div class="text-xlight ml-4 d-flex justify-content-between">
-      <span @click.prevent="showInternalWallet = !showInternalWallet">Address</span>
-      <span>{{ stxAddress }}</span>
+      <span ref="lndQrcode" style="white-space: nowrap;">Address </span>
+      <span>{{ stxAddress }} <a href="#" @click.prevent="copyAddress" class=""><b-icon icon="files"></b-icon></a></span>
     </div>
-    <div v-if="showInternalWallet">
+    <div class="text-xlight ml-4 d-flex justify-content-between">
+      <span class="text-capitalize">Using {{walletMode}} Wallet</span>
+    </div>
+    <div v-if="walletMode === 'risidio'">
       <div class="text-xlight mb-0 ml-4 d-flex justify-content-between">
         <span>Macs Balance</span>
         <div><span>STX</span> <span class="text-info">{{ balanceMac }}</span></div>
@@ -20,12 +23,20 @@
         <span>Macs Address</span>
         <span>{{ stxAddressMac }}</span>
       </div>
+      <div class="text-xlight mb-0 ml-4 d-flex justify-content-between">
+        <span>Skys Balance</span>
+        <div><span>STX</span> <span class="text-info">{{ balanceSky }}</span></div>
+      </div>
+      <div class="text-xlight ml-4 d-flex justify-content-between">
+        <span>Skys Address</span>
+        <span>{{ stxAddressSky }}</span>
+      </div>
     </div>
   </div>
   <div class="login-sidebar__item-group login-sidebar--border-bottom">
-    <div class="text2"><router-link to="#"><b-icon class="mr-2" icon="heart" /> Favourites</router-link></div>
     <div class="text2"><router-link to="/my-assets"><b-icon class="mr-2" icon="collection" /> My Collectibles</router-link></div>
-    <div class="text2"><router-link to="#"><b-icon class="mr-2" icon="gift" /> My Offers</router-link></div>
+    <div class="text2"><router-link to="/favourites"><b-icon class="mr-2" icon="heart" /> Favourites</router-link></div>
+    <!-- <div class="text2"><router-link to="#"><b-icon class="mr-2" icon="gift" /> My Offers</router-link></div> -->
   </div>
   <div class="login-sidebar__item-group login-sidebar--border-bottom">
     <div class="text2 mb-2">
@@ -46,25 +57,40 @@
 
 <script>
 import { APP_CONSTANTS } from '@/app-constants'
+import utils from '@/services/utils'
 
 export default {
   name: 'AccountLinks',
   components: {
   },
+  watch: {
+  },
   data () {
     return {
-      showInternalWallet: false
     }
   },
   methods: {
+    copyAddress () {
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      utils.copyAddress(document, this.$refs.lndQrcode, profile.wallet.keyInfo.address)
+      this.$notify({ type: 'info', title: 'Copied', text: 'STX Address to clipboard.' })
+    }
   },
   computed: {
+    walletMode () {
+      const walletMode = this.$store.getters[APP_CONSTANTS.KEY_WALLET_MODE]
+      return walletMode
+    },
     balance () {
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
       return (profile && profile.wallet) ? profile.wallet.balance : 0
     },
     balanceMac () {
       const wallet = this.$store.getters[APP_CONSTANTS.KEY_MACS_WALLET]
+      return (wallet) ? wallet.balance : 0
+    },
+    balanceSky () {
+      const wallet = this.$store.getters[APP_CONSTANTS.KEY_SKYS_WALLET]
       return (wallet) ? wallet.balance : 0
     },
     stxAddress () {
@@ -76,6 +102,13 @@ export default {
     },
     stxAddressMac () {
       const wallet = this.$store.getters[APP_CONSTANTS.KEY_MACS_WALLET]
+      if (wallet && wallet.keyInfo.address) {
+        return wallet.keyInfo.address.substring(0, 5) + '...' + wallet.keyInfo.address.substring(wallet.keyInfo.address.length - 5)
+      }
+      return 'n/a'
+    },
+    stxAddressSky () {
+      const wallet = this.$store.getters[APP_CONSTANTS.KEY_SKYS_WALLET]
       if (wallet && wallet.keyInfo.address) {
         return wallet.keyInfo.address.substring(0, 5) + '...' + wallet.keyInfo.address.substring(wallet.keyInfo.address.length - 5)
       }

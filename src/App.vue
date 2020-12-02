@@ -9,7 +9,7 @@
     <router-view @updateEventCode="updateEventCode" @toggle-on-navbar="toggleOnNavbar" @set-filter="setFilter" @toggle-off-navbar="toggleOffNavbar" style="min-height: 100vh;"/>
     <router-view @set-filter="setFilter" name="footer" :class="(adminPage) ? 'app-footer' : ''"/>
     <notifications :duration="10000" classes="r-notifs" position="bottom right" width="30%"/>
-    <waiting-modal />
+    <waiting-modal/>
     <success-modal />
   </div>
 </template>
@@ -37,23 +37,18 @@ export default {
   },
   watch: {
     '$route' () {
-      this.adminPage = this.$route.name.indexOf('-app') > -1 ||
-        this.$route.name === 'account' ||
-        this.$route.name === 'wallet' ||
-        this.$route.name === 'my-assets'
+      this.adminPage = this.isHeaderLess()
       if (this.adminPage) this.showNavbar = false
     }
   },
   mounted () {
     this.adminPage = this.$route.name.indexOf('-app') > -1
-    this.adminPage = this.$route.name.indexOf('-app') > -1 ||
-      this.$route.name === 'account' ||
-      this.$route.name === 'wallet' ||
-      this.$route.name === 'my-assets'
+    this.adminPage = this.isHeaderLess()
     this.$store.dispatch('applicationStore/lookupApplications')
     this.$store.dispatch('authStore/fetchMyAccount').then((profile) => {
       this.loaded = true
-      this.$store.dispatch('stacksStore/fetchMacsWalletInfo')
+      this.$store.dispatch('fetchRatesFromDb')
+      this.$store.dispatch('stacksStore/fetchMacSkyWalletInfo')
       this.$store.dispatch('applicationStore/lookupApplications')
       this.$store.dispatch('projectStore/fetchMyProjects', profile).catch((err) => {
         console.log(err)
@@ -94,6 +89,13 @@ export default {
     },
     toggleOnNavbar () {
       this.showNavbar = true
+    },
+    isHeaderLess () {
+      return this.$route.name.indexOf('-app') > -1 ||
+      this.$route.name === 'account' ||
+      this.$route.name === 'wallet' ||
+      this.$route.name === 'my-assets' ||
+      this.$route.name === 'favourites'
     },
     toggleOffNavbar () {
       this.showNavbar = false

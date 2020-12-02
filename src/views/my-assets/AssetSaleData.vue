@@ -97,6 +97,7 @@ export default {
         return
       }
       asset.tradeInfo = tradeInfo
+      this.$store.commit('setModalMessage', 'Calling wallet to sign and send... transactions can take a few minutes to confirm!')
       this.$root.$emit('bv::show::modal', 'waiting-modal')
       this.$store.dispatch('stacksStore/setTradeInfo', asset).then((result) => {
         this.result = result

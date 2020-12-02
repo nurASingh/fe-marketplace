@@ -16,6 +16,12 @@ const projectStore = {
       }
       return []
     },
+    getFavourites: (state: any) => {
+      if (state.rootFile) {
+        return (state.rootFile && state.rootFile.favourites) ? state.rootFile.favourites : []
+      }
+      return []
+    },
     getProject: (state: any) => projectId => {
       if (state.rootFile) {
         const index = state.rootFile.projects.findIndex((o) => o.projectId === projectId)
@@ -48,6 +54,36 @@ const projectStore = {
     }
   },
   actions: {
+    toggleFavourite ({ state, commit }: any, favourite: any) {
+      return new Promise((resolve, reject) => {
+        const profile = store.getters[APP_CONSTANTS.KEY_PROFILE]
+        projectService.fetchMyProjects(profile).then((rootFile: any) => {
+          if (!rootFile.favourites) rootFile.favourites = []
+          const index = rootFile.favourites.findIndex((o) => o.assetHash === favourite.assetHash)
+          if (index < 0) {
+            rootFile.favourites.splice(0, 0, favourite)
+          } else {
+            rootFile.favourites.splice(index, 1)
+          }
+          projectService.saveProject(rootFile).then((rootFile: any) => {
+            commit('rootFile', rootFile)
+            resolve(index)
+          })
+        }).catch((err) => {
+          reject(err)
+        })
+      })
+    },
+    fetchFavourites ({ state, commit }: any, favourite: any) {
+      return new Promise((resolve, reject) => {
+        const profile = store.getters[APP_CONSTANTS.KEY_PROFILE]
+        projectService.fetchMyProjects(profile).then((rootFile: any) => {
+          resolve(rootFile.favourites)
+        }).catch((err) => {
+          reject(err)
+        })
+      })
+    },
     fetchMyProjects ({ dispatch, state, commit }: any, forced: boolean) {
       return new Promise((resolve, reject) => {
         if (state.rootFile && !forced) {

@@ -21,8 +21,8 @@
             <div class="wallet-text1">
               <a href="#">Address</a>
             </div>
-            <div class="">
-              <a class="text2" href="#">{{stxAddress()}}</a>
+            <div class="" ref="lndQrcode">
+              <a @click="copyAddress" class="text2" href="#">{{stxAddress()}}</a>
             </div>
           </div>
           <div class="mt-5">
@@ -31,7 +31,7 @@
         </div>
         <div class="col-md-3">
           <div class="pt-2">
-            <b-button variant="info" class="">Get Credit</b-button>
+            <b-button variant="info" class="" @click="copyAddress" ><a class="text-white" href="https://www.blockstack.org/testnet/faucet" target="_blank">Get Credit</a></b-button>
           </div>
         </div>
       </div>
@@ -44,6 +44,7 @@
 import SideMenu from '@/components/admin/SideMenu'
 import TitleBar from '@/components/admin/TitleBar'
 import { APP_CONSTANTS } from '@/app-constants'
+import utils from '@/services/utils'
 
 export default {
   name: 'Account',
@@ -65,6 +66,11 @@ export default {
     this.$store.dispatch('projectStore/fetchMyProjects')
   },
   methods: {
+    copyAddress () {
+      const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
+      utils.copyAddress(document, this.$refs.lndQrcode, profile.wallet.keyInfo.address)
+      this.$notify({ type: 'info', title: 'Copied', text: 'STX Address to clipboard.' })
+    },
     stxAddress () {
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
       if (profile.wallet && profile.wallet.keyInfo.address) {

@@ -108,6 +108,11 @@ const routes: Array<RouteConfig> = [
     components: { default: AssetDetails, header: MainNavbar, footer: MainFooter }
   },
   {
+    path: '/favourites',
+    name: 'favourites',
+    components: { default: MyAssets, header: MainNavbar, footer: MainFooter }
+  },
+  {
     path: '/my-assets',
     name: 'my-assets',
     components: { default: MyAssets, header: MainNavbar, footer: MainFooter }

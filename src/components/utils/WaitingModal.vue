@@ -13,7 +13,7 @@
       </template>
       <template #modal-footer class="text-center">
         <div class="w-100">
-          <p class="footer-text text-white">{{modalMessage}}</p>
+          <p class="footer-text text-white" v-html="modalMessage"></p>
         </div>
       </template>
   </b-modal>
