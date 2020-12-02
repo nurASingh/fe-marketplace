@@ -4,7 +4,7 @@
   <div id="result-item" class="mb-4">
     <img width="100%" :src="result.assetUrl"/>
     <!-- <div style="position: absolute; top: -20px; left: 15px; font-size: 2rem;"><b-badge variant="light">{{result.nftIndex}} <span class="sr-only">NFT</span></b-badge></div> -->
-    <div><a href="#" :class="(amIOwner()) ? 'result__item--my-btn' : 'result__item--like-btn'"><b-icon icon="heart"></b-icon></a></div>
+    <div><a href="#" :class="(amIOwner()) ? 'result__item--my-btn' : 'result__item--like-btn'"><img :src="likeIconTurquoise" alt="like-icon"></a></div>
     <!--<div class="result__item--description" v-if="dHover[index]" v-html="item.b1_text1[0].text"></div>-->
     <div class="result__item--overlay">
       <div class="result__item--description">
@@ -35,6 +35,8 @@ export default {
   props: ['result'],
   data () {
     return {
+      likeIconTurquoise: '@/assets/img/Favorite_button_turquoise_empty.png',
+      likeIconPurple: '@/assets/img/Favorite_button_purple_empty.png',
     }
   },
   methods: {

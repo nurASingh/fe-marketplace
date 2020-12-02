@@ -15,6 +15,8 @@ import Community from '../views/Community.vue'
 import Collections from '../views/Collections.vue'
 import Creators from '../views/Creators.vue'
 import FourOFour from '../views/FourOFour.vue'
+import GetInTouch from '../views/GetInTouch.vue'
+import Post from '../views/Post.vue'
 
 import Account from '../views/Account.vue'
 import Wallet from '../views/Wallet.vue'
@@ -132,6 +134,16 @@ const routes: Array<RouteConfig> = [
     // this generates a separate chunk (about.[hash].js) for this route
     // which is lazy-loaded when the route is visited.
     component: () => import(/* webpackChunkName: "about" */ '../views/Marketplace.vue')
+  },
+  {
+    path: '/get-in-touch',
+    name: 'get-in-touch',
+    components: { default: GetInTouch, header: MainNavbar, footer: MainFooter }
+  },
+  {
+    path: '/:uid',
+    name: 'post',
+    components: { default: Post, header: MainNavbar, footer: MainFooter }
   },
   {
     path: '/404',

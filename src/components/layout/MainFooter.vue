@@ -26,8 +26,8 @@
               <div>Risidio</div>
               <div>Who we are</div>
               <div>What we do</div>
-              <div>Work with Us</div>
-              <div>Get in Touch</div>
+              <div><router-link to="/work-with-us">Work with Us</router-link></div>
+              <div><router-link to="/get-in-touch">Get in Touch</router-link></div>
             </div>
         </div>
       </div>
