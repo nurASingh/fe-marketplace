@@ -27,8 +27,8 @@
               <div>Risidio</div>
               <div>Who we are</div>
               <div>What we do</div>
-              <div>Work with Us</div>
-              <div>Get in Touch</div>
+              <div><router-link to="/work-with-us">Work with Us</router-link></div>
+              <div><router-link to="/get-in-touch">Get in Touch</router-link></div>
             </div>
         </div>
       </div>
@@ -81,7 +81,7 @@ export default {
   },
   data () {
     return {
-      logo: require('@/assets/img/Group 15980.svg'),
+      logo: require('@/assets/img/risidio_collection_logo.svg'),
       year: new Date().getFullYear(),
       discordLogo: require('@/assets/img/discord-logo.svg'),
       instagramLogo: require('@/assets/img/instagram-logo.svg'),
@@ -129,7 +129,7 @@ footer a {
 /* FOOTER LOGO COLUMN */
 .footer-logo {
   width: auto;
-  height: 70px;
+  height: 71px;
 }
 
 footer .navbar-brand {

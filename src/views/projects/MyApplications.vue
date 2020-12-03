@@ -13,7 +13,7 @@
                   <b-card-img :src="project.imageUrl" alt="Image" class="rounded-0"></b-card-img>
                 </b-col>
                 <b-col md="8">
-                  <b-card-body>
+                  <b-card-body class="ml-4">
                     <div class="d-flex justify-content-between">
                       <p class="text-30-500">{{project.title}}</p>
                       <router-link :to="'/connect-app/' + project.projectId"><b-icon icon="pencil"/></router-link>

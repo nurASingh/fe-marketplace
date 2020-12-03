@@ -85,7 +85,7 @@ export default {
       dims: { width: 250, height: 250 },
       result: 'Saving data to your storage - back in a mo!',
       project: {
-        logo: require('@/assets/img/Group 15980.svg'),
+        logo: require('@/assets/img/risidio_collection_logo.svg'),
         projectId: null,
         mintPrice: '',
         title: '',
@@ -98,7 +98,7 @@ export default {
       },
       files: [],
       doValidate: true,
-      defaultBadge: require('@/assets/img/Group 15980.svg'),
+      defaultBadge: require('@/assets/img/risidio_collection_logo.svg'),
       defaultBadgeData: null
     }
   },
