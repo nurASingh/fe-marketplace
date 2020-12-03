@@ -90,7 +90,7 @@ export default {
   data () {
     return {
       query: null,
-      logo: require('@/assets/img/Group 15980.svg')
+      logo: require('@/assets/img/risidio_collection_logo.svg')
     }
   },
   methods: {
@@ -272,6 +272,10 @@ nav .navbar__login .nav-link {
 /* NAV LOGO */
 nav .navbar-brand {
   height: 84px;
+}
+nav .navbar-brand img {
+  width: auto;
+  height: 71px;
 }
 
 /* DROPDOWN MENUS */

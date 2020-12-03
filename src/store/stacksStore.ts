@@ -141,7 +141,7 @@ const stacksStore = {
     result: null,
     contracts: [],
     appName: 'Risidio Auctions',
-    appLogo: '/img/Group 15980.svg',
+    appLogo: '/img/risidio_collection_logo.svg',
     macsWallet: mac,
     skysWallet: sky
   },
