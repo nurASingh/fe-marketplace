@@ -10,6 +10,8 @@
     <div class="col-8">{{mac.keyInfo.address}}</div>
     <div class="col-3">Rates</div>
     <div class="col-8"><a href="#" @click.prevent="fetchRates">fetch rates</a></div>
+    <div class="col-3">Invoices</div>
+    <div class="col-8"><a href="#" @click.prevent="loadInvoice">load</a></div>
   </div>
 </div>
 </template>
@@ -27,12 +29,18 @@ export default {
     return {
       mac: mac,
       searchApi: SEARCH_API,
-      stacksApi: STACKS_API
+      stacksApi: STACKS_API,
+      result: null
     }
   },
   methods: {
     fetchRates: function () {
       this.$store.dispatch('fetchRatesFromBinance')
+    },
+    loadInvoice: function () {
+      this.$store.dispatch('paymentStore/fetchPayment').then((result) => {
+        this.result = result
+      })
     }
   },
   computed: {

@@ -134,6 +134,20 @@ const resolveError = function (reject, error) {
     reject(error)
   }
 }
+const handleFetchWalletInternal = function (wallet, response, commit, resolve) {
+  wallet.nonce = response.data.nonce
+  wallet.balance = utils.fromOnChainAmount(response.data.balance)
+  commit('setMacsWallet', wallet)
+  resolve(wallet)
+}
+const handleCallContractRisidio = function (response, dispatch, resolve) {
+  pollTxStatus(dispatch, response.data).then((txResponse) => {
+    console.log(txResponse)
+  })
+  resolve(response)
+  dispatch('fetchMacSkyWalletInfo')
+}
+
 const stacksStore = {
   namespaced: true,
   state: {
@@ -193,23 +207,20 @@ const stacksStore = {
           httpMethod: 'get',
           postData: null
         }
-        axios.post(MESH_API + '/v2/accounts', data).then(response => {
-          wallet.nonce = response.data.nonce
-          wallet.balance = utils.fromOnChainAmount(response.data.balance)
-          commit('setMacsWallet', wallet)
-          resolve(wallet)
-        }).catch(() => {
-          const wallet = state.wallet
-          const useApi = STACKS_API + '/v2/accounts/' + wallet.keyInfo.address
-          axios.get(useApi).then(response => {
-            wallet.nonce = response.data.nonce
-            wallet.balance = utils.fromOnChainAmount(response.data.balance)
-            commit('setMacsWallet', wallet)
-            resolve(wallet)
+        if (state.provider === 'risidio') {
+          axios.post(MESH_API + '/v2/accounts', data).then(response => {
+            handleFetchWalletInternal(wallet, response, commit, resolve)
           }).catch((error) => {
             resolveError(reject, error)
           })
-        })
+        } else {
+          const useApi = STACKS_API + '/v2/accounts/' + wallet.keyInfo.address
+          axios.get(useApi).then(response => {
+            handleFetchWalletInternal(wallet, response, commit, resolve)
+          }).catch((error) => {
+            resolveError(reject, error)
+          })
+        }
       })
     },
     callContractBlockstack ({ state }, data) {
@@ -280,24 +291,20 @@ const stacksStore = {
             const headers = {
               'Content-Type': 'application/octet-stream'
             }
-            axios.post(MESH_API + '/v2/broadcast', txdata, { headers: headers }).then(response => {
-              pollTxStatus(dispatch, response.data).then((txResponse) => {
-                console.log(txResponse)
-              })
-              resolve(response)
-              dispatch('fetchMacSkyWalletInfo')
-            }).catch(() => {
-              const useApi = STACKS_API + '/v2/transactions'
-              axios.post(useApi, txdata).then((response) => {
-                pollTxStatus(dispatch, response.data).then((txResponse) => {
-                  console.log(txResponse)
-                })
-                resolve(response)
-                dispatch('fetchMacSkyWalletInfo')
+            if (state.provider === 'risidio') {
+              axios.post(MESH_API + '/v2/broadcast', txdata, { headers: headers }).then(response => {
+                handleCallContractRisidio(response, dispatch, resolve)
               }).catch((error) => {
                 resolveError(reject, error)
               })
-            })
+            } else {
+              const useApi = STACKS_API + '/v2/transactions'
+              axios.post(useApi, txdata).then((response) => {
+                handleCallContractRisidio(response, dispatch, resolve)
+              }).catch((error) => {
+                resolveError(reject, error)
+              })
+            }
           }
         })
       })
@@ -347,19 +354,23 @@ const stacksStore = {
         const headers = {
           'Content-Type': 'application/json'
         }
-        axios.post(MESH_API + '/v2/accounts', txoptions).then(response => {
-          dispatch('fetchMacSkyWalletInfo')
-          data.result = utils.fromHex(data.functionName, response.data.result)
-          resolve(data.result)
-        }).catch((error) => {
+        if (state.provider === 'risidio') {
+          axios.post(MESH_API + '/v2/accounts', txoptions).then(response => {
+            dispatch('fetchMacSkyWalletInfo')
+            data.result = utils.fromHex(data.functionName, response.data.result)
+            resolve(data.result)
+          }).catch((error) => {
+            resolveError(reject, error)
+          })
+        } else {
           axios.post(STACKS_API + path, txoptions.postData, { headers: headers }).then(response => {
             dispatch('fetchMacSkyWalletInfo')
             data.result = utils.fromHex(data.functionName, response.data.result)
             resolve(data.result)
-          }).catch(() => {
+          }).catch((error) => {
             resolveError(reject, error)
           })
-        })
+        }
       })
     },
     lookupContractInterface ({ commit }, projectId) {
@@ -371,29 +382,13 @@ const stacksStore = {
           httpMethod: 'GET'
         }
         axios.post(MESH_API + '/v2/accounts', txoptions).then(response => {
-          store.commit('projectStore/addContractData', { projectId: projectId, interface: response.data })
-          commit('setResult', { projectId: projectId, interface: response.data })
           resolve({ projectId: projectId, interface: response.data })
         }).catch(() => {
           axios.get(STACKS_API + '/v2/contracts/interface/' + contractAddress + '/' + contractName + '?proof=0').then(response => {
-            store.commit('projectStore/addContractData', { projectId: projectId, interface: response.data })
-            commit('setResult', { projectId: projectId, interface: response.data })
             resolve({ projectId: projectId, interface: response.data })
           }).catch((error) => {
             resolveError(reject, error)
           })
-        })
-      })
-    },
-    lookupContractInfo ({ commit }, projectId) {
-      return new Promise((resolve, reject) => {
-        const address = STACKS_API.replace('20443', '3999')
-        axios.get(address + '/extended/v1/contract/' + projectId + '?proof=0').then(response => {
-          store.commit('projectStore/addContractData', { projectId: projectId, info: response.data })
-          commit('setResult', { projectId: projectId, info: response.data })
-          resolve({ projectId: projectId, interface: response.data })
-        }).catch((error) => {
-          resolveError(reject, error)
         })
       })
     },
@@ -416,17 +411,21 @@ const stacksStore = {
           const headers = {
             'Content-Type': 'application/octet-stream'
           }
-          axios.post(MESH_API + '/v2/broadcast', txdata, { headers: headers }).then(response => {
-            postDeploy(resolve, dispatch, project.projectId, contractId, response.data)
-          }).catch(() => {
+
+          if (state.provider === 'risidio') {
+            axios.post(MESH_API + '/v2/broadcast', txdata, { headers: headers }).then(response => {
+              postDeploy(resolve, dispatch, project.projectId, contractId, response.data)
+            }).catch((error) => {
+              resolveError(reject, error)
+            })
+          } else {
             const useApi = STACKS_API + '/v2/transactions'
             axios.post(useApi, txdata, { headers: { 'Content-Type': 'application/octet-stream' } }).then(response => {
               postDeploy(resolve, dispatch, project.projectId, contractId, response.data)
             }).catch((error) => {
-              console.log('Error broadcasting tx.. ', error)
               resolveError(reject, error)
             })
-          })
+          }
         }).catch((error) => {
           resolveError(reject, error)
         })

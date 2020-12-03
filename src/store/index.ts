@@ -6,6 +6,7 @@ import applicationStore from './applicationStore'
 import contentStore from './contentStore'
 import searchStore from './searchStore'
 import stacksStore from './stacksStore'
+import paymentStore from './paymentStore'
 import projectStore from './projectStore'
 import rates from 'risidio-rates'
 import searchIndexService from '@/services/searchIndexService'
@@ -19,7 +20,8 @@ export default new Vuex.Store({
     contentStore,
     searchStore,
     projectStore,
-    stacksStore
+    stacksStore,
+    paymentStore
   },
   state: {
     apiKey: null,

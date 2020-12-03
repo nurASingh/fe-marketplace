@@ -92,9 +92,10 @@ const projectStore = {
           const profile = store.getters[APP_CONSTANTS.KEY_PROFILE]
           projectService.fetchMyProjects(profile).then((rootFile: any) => {
             rootFile.projects.forEach((project) => {
-              store.dispatch('stacksStore/lookupContractInterface', project.projectId).then((intface) => {
-                if (intface) {
-                  commit('addContractData', { projectId: project.projectId, interface: intface })
+              store.dispatch('stacksStore/lookupContractInterface', project.projectId).then((data) => {
+                store.commit('addContractData', data)
+                if (data) {
+                  commit('addContractData', { projectId: project.projectId, interface: data.interface })
                 }
               }).catch(() => {
                 project.txId = null
