@@ -181,7 +181,7 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="scss">
 .text-price {
   font-weight: 800;
   font-size: 24px;

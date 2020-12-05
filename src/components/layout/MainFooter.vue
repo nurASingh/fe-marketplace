@@ -10,25 +10,25 @@
         </div>
         <div class="col-lg-7 col-12 d-flex columns3-content__container">
             <div class="footer__column-content ml-lg-auto">
-              <div>Marketplace</div>
-              <div>Gallery</div>
-              <div>Collections</div>
-              <div>Artists</div>
-              <div>Applications</div>
+              <div><router-link to="/marketplace">Marketplace</router-link></div>
+              <div><router-link to="/marketplace">Gallery</router-link></div>
+              <div><router-link to="/marketplace">Collections</router-link></div>
+              <div><router-link to="/marketplace">Artists</router-link></div>
+              <div><router-link to="/marketplace">Applications</router-link></div>
             </div>
             <div class="footer__column-content">
-              <div>About</div>
-              <div><router-link to="/admin-app">How It Works</router-link></div>
-              <div>Payments Methods</div>
-              <div>Cryptocurrencies</div>
-              <div>FAQs</div>
+              <div>How It Works</div>
+              <div><router-link to="/community?uid=self-owned-identity">Self Owned Identity</router-link></div>
+              <div><router-link to="/community?uid=user-journeys-stx-funds">Getting Testnet STX</router-link></div>
+              <div><router-link to="/community?uid=user-journeys-buying">Buying and Selling</router-link></div>
+              <div><router-link to="/community?uid=tech-tales-clarity-registry">Clarity Contracts</router-link></div>
             </div>
             <div class="footer__column-content">
-              <div>Risidio</div>
-              <div>Who we are</div>
               <div>What we do</div>
-              <div><router-link to="/work-with-us">Work with Us</router-link></div>
               <div><router-link to="/get-in-touch">Get in Touch</router-link></div>
+              <div><router-link to="/admin-app">Developers</router-link></div>
+              <div class="text-secondary">leveller</div>
+              <div class="text-secondary">leveller</div>
             </div>
         </div>
       </div>

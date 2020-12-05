@@ -4,31 +4,31 @@
     <div class="text2"><router-link to="/account"><b-icon class="mr-2" icon="person"></b-icon> Account</router-link></div>
     <div class="text2 mb-2"><router-link to="/wallet"><b-icon class="mr-2" icon="wallet2"></b-icon> Wallet</router-link></div>
     <div class="text-xlight mb-0 ml-4 d-flex justify-content-between">
-      <span>Balance</span>
+      <span class="ml-2 pl-1">Balance</span>
       <div><span>STX</span> <span class="text-info">{{ balance }}</span></div>
     </div>
     <div class="text-xlight ml-4 d-flex justify-content-between">
-      <span ref="lndQrcode" style="white-space: nowrap;">Address </span>
+      <span class="ml-2 pl-1" ref="lndQrcode" style="white-space: nowrap;">Address </span>
       <span>{{ stxAddress }} <a href="#" @click.prevent="copyAddress" class=""><b-icon icon="files"></b-icon></a></span>
     </div>
     <div class="text-xlight ml-4 d-flex justify-content-between">
-      <span class="text-capitalize">Using {{walletMode}} Wallet</span>
+      <span class="ml-2 pl-1 text-capitalize">Using {{walletMode}} Wallet</span>
     </div>
     <div v-if="walletMode === 'risidio'">
       <div class="text-xlight mb-0 ml-4 d-flex justify-content-between">
-        <span>Macs Balance</span>
+        <span class="ml-2 pl-1">Macs Balance</span>
         <div><span>STX</span> <span class="text-info">{{ balanceMac }}</span></div>
       </div>
       <div class="text-xlight ml-4 d-flex justify-content-between">
-        <span>Macs Address</span>
+        <span class="ml-2 pl-1">Macs Address</span>
         <span>{{ stxAddressMac }}</span>
       </div>
       <div class="text-xlight mb-0 ml-4 d-flex justify-content-between">
-        <span>Skys Balance</span>
+        <span class="ml-2 pl-1">Skys Balance</span>
         <div><span>STX</span> <span class="text-info">{{ balanceSky }}</span></div>
       </div>
       <div class="text-xlight ml-4 d-flex justify-content-between">
-        <span>Skys Address</span>
+        <span class="ml-2 pl-1">Skys Address</span>
         <span>{{ stxAddressSky }}</span>
       </div>
     </div>
@@ -43,13 +43,13 @@
       <router-link to="/admin-app"><b-icon class="mr-2" icon="gear" /> Developers</router-link>
     </div>
     <div class="text-xlight mb-2 ml-4">
-      <router-link to="/admin-app">Connect Application</router-link>
+      <router-link class="ml-2 pl-1" to="/admin-app">Connect Application</router-link>
     </div>
     <div class="text-xlight mb-2 ml-4">
-      <span v-if="myProjects.length > 0"><router-link to="/my-apps">My Applications</router-link></span>
+      <span class="ml-2 pl-1" v-if="myProjects.length > 0"><router-link to="/my-apps">My Applications</router-link></span>
     </div>
     <div class="text-xlight mb-2 ml-4">
-      <span v-if="showSysLink"><router-link to="/my-app-settings">System Settings</router-link></span>
+      <span class="ml-2 pl-1" v-if="showSysLink"><router-link to="/my-app-settings">System Settings</router-link></span>
     </div>
   </div>
 </div>

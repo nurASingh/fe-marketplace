@@ -7,7 +7,9 @@ import {
   makeContractDeploy,
   callReadOnlyFunction,
   uintCV, bufferCV,
-  standardPrincipalCV
+  standardPrincipalCV,
+  makeStandardSTXPostCondition,
+  FungibleConditionCode
 } from '@stacks/transactions'
 import { openContractCall, FinishedTxData } from '@stacks/connect'
 import {
@@ -16,6 +18,7 @@ import {
 import axios from 'axios'
 import BigNum from 'bn.js'
 import searchIndexService from '@/services/searchIndexService'
+import { connectWebSocketClient } from '@stacks/blockchain-api-client'
 
 let STX_CONTRACT_ADDRESS = process.env.VUE_APP_STACKS_CONTRACT_ADDRESS
 let STX_CONTRACT_NAME = process.env.VUE_APP_STACKS_CONTRACT_NAME
@@ -24,14 +27,28 @@ const sky = JSON.parse(process.env.VUE_APP_WALLET_SKY || '')
 const contractDeployFee = 12000
 
 const STACKS_API = process.env.VUE_APP_API_STACKS
-const STACKS_API_EXT = process.env.VUE_APP_API_STACKS_EXT
-const STACKS_POLLING = process.env.VUE_APP_API_POLLING
+// const STACKS_API_EXT = process.env.VUE_APP_API_STACKS_EXT
+// const STACKS_POLLING = process.env.VUE_APP_API_POLLING
 const MESH_API = process.env.VUE_APP_API_MESH
 // const network = new StacksTestnet()
 // network.coreApiUrl = STACKS_API
 let provider = 'connect'
 if (MESH_API.indexOf('local') > -1) {
   provider = 'risidio'
+}
+
+const pollTxStatus = function (txId) {
+  return new Promise((resolve) => {
+    let sub
+    const subscribe = async txId => {
+      const client = await connectWebSocketClient('ws://stacks-node-api.blockstack.org/')
+      sub = await client.subscribeTxUpdates(txId, update => {
+        resolve(update)
+      })
+      console.log({ client, sub })
+    }
+    subscribe(txId)
+  })
 }
 const setAddresses = function () {
   const config = store.getters[APP_CONSTANTS.KEY_CONFIGURATION]
@@ -40,6 +57,7 @@ const setAddresses = function () {
     STX_CONTRACT_NAME = config.addresses.stxContractName
   }
 }
+/**
 const pollTxStatus = function (dispatch, txId) {
   return new Promise((resolve) => {
     let counter = 0
@@ -64,6 +82,7 @@ const pollTxStatus = function (dispatch, txId) {
     }, 5000)
   })
 }
+**/
 const handleSetTradeInfo = function (asset, result, resolve) {
   asset.hexResp = (result && result.data) ? result.data : ''
   // if (asset.tradeInfo.biddingEndTime && typeof asset.tradeInfo.biddingEndTime === 'string' && asset.tradeInfo.biddingEndTime.indexOf('-') > -1) {
@@ -141,8 +160,8 @@ const handleFetchWalletInternal = function (wallet, response, commit, resolve) {
   resolve(wallet)
 }
 const handleCallContractRisidio = function (response, dispatch, resolve) {
-  pollTxStatus(dispatch, response.data).then((txResponse) => {
-    console.log(txResponse)
+  pollTxStatus(response.data).then((txResponse) => {
+    resolve(txResponse)
   })
   resolve(response)
   dispatch('fetchMacSkyWalletInfo')
@@ -236,7 +255,7 @@ const stacksStore = {
           contractName: contractName,
           functionName: data.functionName,
           functionArgs: (data.functionArgs) ? data.functionArgs : [],
-          // network: network,
+          postConditions: (data.postConditions) ? data.postConditions : [],
           appDetails: {
             name: state.appName,
             icon: state.appLogo
@@ -276,7 +295,8 @@ const stacksStore = {
           fee: new BigNum(1800),
           senderKey: wallet.keyInfo.privateKey,
           nonce: new BigNum(nonce),
-          network
+          network,
+          postConditions: (data.postConditions) ? data.postConditions : []
         }
         makeContractCall(txOptions).then((transaction) => {
           if (state.provider !== 'risidio') {
@@ -383,6 +403,7 @@ const stacksStore = {
         }
         axios.post(MESH_API + '/v2/accounts', txoptions).then(response => {
           resolve({ projectId: projectId, interface: response.data })
+          commit('addValue', response)
         }).catch(() => {
           axios.get(STACKS_API + '/v2/contracts/interface/' + contractAddress + '/' + contractName + '?proof=0').then(response => {
             resolve({ projectId: projectId, interface: response.data })
@@ -464,16 +485,26 @@ const stacksStore = {
       return new Promise((resolve, reject) => {
         // (asset-hash (buff 32)) (sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint)
         const asset = purchaseInfo.asset
+        const profile = store.getters['authStore/getMyProfile']
+        const amount = new BigNum(utils.toOnChainAmount(asset.tradeInfo.buyNowOrStartingPrice))
+        const standardSTXPostCondition = makeStandardSTXPostCondition(
+          profile.stxAddress,
+          FungibleConditionCode.GreaterEqual,
+          amount
+        )
+
         const nftIndex = uintCV(asset.nftIndex)
         const spCV = standardPrincipalCV(mac.keyInfo.address)
         const functionArgs = [spCV, nftIndex]
         const data: any = {
+          postConditions: [standardSTXPostCondition],
           contractAddress: asset.projectId.split('.')[0],
           contractName: asset.projectId.split('.')[1],
           functionName: 'transfer',
           functionArgs: functionArgs,
           wallet: (state.provider === 'risidio' && purchaseInfo.useWallet && purchaseInfo.useWallet === 'sky') ? state.skysWallet : state.macsWallet
         }
+
         const methos = (state.provider === 'risidio') ? 'callContractRisidio' : 'callContractBlockstack'
         dispatch(methos, data).then((result) => {
           handleBuyNow(asset, result, resolve, purchaseInfo)

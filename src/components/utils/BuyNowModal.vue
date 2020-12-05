@@ -1,27 +1,27 @@
 <template>
   <b-modal id="buy-now-modal">
-    <b-container class="text-white" fluid v-if="clarityAsset">
+    <b-container class="" fluid v-if="clarityAsset">
       <div class="row mt-5">
         <div class="col-12">
-          <div class="text-17-500 text-white">
+          <div class="text-17-500 ">
             Transfering: {{asset.title}}
           </div>
-          <div class="mt-3 text-11-500 text-left text-white">
+          <div class="mt-3 text-11-500 text-left ">
             From: {{asset.owner}} [{{clarityAsset.owner}}]
           </div>
-          <div class="mt-3 text-11-500 text-left text-white">
+          <div class="mt-3 text-11-500 text-left">
             To {{profile.username}}
           </div>
         </div>
       </div>
-      <div class="row mt-5 mx-5">
+      <div class="row mt-5">
         <div class="col-12">
           <div class="bb d-flex justify-content-between">
             <div>
-              <span class="text-stx mt-2">Price</span>
+              <p class="mt-2">Price</p>
             </div>
             <div>
-              <span class="text-stx mr-3">STX</span><span class="text-price">{{buyingPrice()}}</span>
+              <span class="text-stx mr-3">STX</span><span class="text-price text-secondary">{{buyingPrice()}}</span>
             </div>
           </div>
           <div class="d-flex justify-content-end">
@@ -33,7 +33,7 @@
       </div>
       <div class="row mt-5" v-if="walletMode === 'risidio'">
         <div class="col-12">
-          <div class="text1 text-white">
+          <div class="text1 ">
             <b-form-checkbox @change="changeWalletMode()" name="check-button" switch>
               <span v-if="useWallet === 'mac'">Wallet 1 ({{stxAddressMac}})</span>
               <span v-else>Wallet 2 ({{stxAddressSky}})</span>
@@ -49,12 +49,12 @@
         </div>
       </div>
     </b-container>
-    <b-container class="text-white" fluid v-else>
+    <b-container class="" fluid v-else>
       <div class="w-100 text-center mt-5">
-        <b-icon icon="circle-fill" animation="throb" variant="light" font-scale="8"></b-icon>
+        <b-icon icon="circle-fill" animation="throb" variant="light" font-scale="6"></b-icon>
       </div>
       <div class="mt-5 w-100">
-        <p class="footer-text text-white text-center">{{modalMessage}}</p>
+        <p class="footer-text  text-center">{{modalMessage}}</p>
       </div>
     </b-container>
     <template #modal-footer class="text-center">
@@ -161,4 +161,25 @@ export default {
 }
 </script>
 <style lang="scss" >
+#buy-now-modal {
+.modal-content {
+  background-color: #fff !important;
+  border-radius: 20px;
+  min-height: 200px;
+  color: #000;
+}
+.modal-header {
+    border-bottom: 0px solid #fff;
+  border-radius: 20px;
+}
+.modal-footer {
+    border-top: 0px solid #fff;
+  border-radius: 20px;
+  padding: 0;
+}
+footer {
+  height: 0px;
+    background-color: #fff;
+}
+}
 </style>

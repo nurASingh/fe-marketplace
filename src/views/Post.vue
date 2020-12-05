@@ -1,92 +1,103 @@
 <template>
-<section class="bg-white" :sectionDimensions="sectionDimensions">
+<div class="container-fluid mt-5" style="background-color: #F5F5F5;">
+<section class="container" v-if="content">
   <!-- Vue conditional to check if there is any content in document -->
-  <div :style="bannerImage" class="d-flex align-items-center flex-column first-section">
-    <div class="my-auto text-center heading">
-      <h2 class="mb-5 text-white">{{ $prismic.richTextAsPlain(fields.title) }}</h2>
-      <p class="text-white">
-        {{ Intl.DateTimeFormat('en-US', dateOptions).format(new Date(fields.date)) }} &middot; {{ fields.author }}
-      </p>
-    </div>
-    <div class="mb-4 back">
-      <router-link to="./"><span class="text-danger">&#10094;</span> Back to Blog</router-link>
-      <!-- Button to edit document in dashboard
-      <prismic-edit-button :documentId="documentId"/> -->
-    </div>
-    <div class="banner-overlay"></div>
-  </div>
-  <div class="row">
-      <div class="pt-5 pb-5 col-lg-8">
-        <!-- Slice Block Componenet tag -->
-        <div class="post-body">
-          <slices-block :slices="slices" class="outer-container"/>
-              <div class="back-bottom">
-                <router-link to="./"><span class="text-danger">&#10094;</span> Back to Blog</router-link>
-                <!-- Button to edit document in dashboard
-                <prismic-edit-button :documentId="documentId"/> -->
-              </div>
+  <div class="row"><div class="col-lg-8"></div></div>
+  <div class="row bg-white">
+    <div class="col-lg-8">
+      <div class="row">
+        <div class="mt-0 pt-4 pb-5 col-lg-12">
+          <div class="row">
+            <div class="col-lg-4">
+              <img height="auto" width="100%" :src="content.blog_home_image.url" />
+            </div>
+            <div class="col-lg-8">
+              <h1 class="mb-5">{{ $prismic.richTextAsPlain(content.title) }}</h1>
+              <p class="">
+                {{ Intl.DateTimeFormat('en-US', dateOptions).format(new Date(content.date)) }} &middot; {{ author }}
+              </p>
+            </div>
+          </div>
         </div>
       </div>
-      <!-- sidebar -->
-      <div class="col-lg-4 sidebar">
-        <h3>Related Post</h3>
-        <div class="button-container"><button><router-link to="./">View All</router-link></button></div>
+      <div class="row">
+          <div class="pt-5 pb-5 col-lg-10">
+            <!-- Slice Block Componenet tag -->
+            <div class="post-body">
+              <slices-block :slices="slices" class="outer-container"/>
+            </div>
+          </div>
+          <!-- sidebar -->
       </div>
+    </div>
+    <div class="pt-5 col-lg-4 sidebar">
+      <div class="footer__column-content">
+        <h3 class="mt-5">How It Works</h3>
+        <div><router-link to="/community?uid=user-journeys-stx-funds">Getting Testnet STX</router-link></div>
+        <div><router-link to="/community?uid=user-journeys-manage-listings">Mint a Loop</router-link></div>
+        <h3 class="mt-5">Other Stories</h3>
+        <div><router-link to="/community?uid=lambda-v-stacks">Stacks vs AWS Lmbda</router-link></div>
+        <div><router-link to="/community?uid=self-owned-identity">Decentralised Identity</router-link></div>
+        <div><router-link to="/community?uid=how-it-works">User Data</router-link></div>
+        <h3 class="mt-5">Up Close</h3>
+        <div><router-link to="/community?uid=tech-tales-clarity-registry">Registry Clarity Contract</router-link></div>
+        <div><router-link to="/community?uid=tech-tales-clarity-minting">Minting Clarity Contract</router-link></div>
+      </div>
+    </div>
   </div>
 </section>
+</div>
 </template>
 
 <script>
 // Importing all the slices components
-import SlicesBlock from '../components/SlicesBlock.vue'
+// import PrismicItems from '@/components/utils/PrismicItems'
+import SlicesBlock from '@/components/SlicesBlock.vue'
 
 export default {
   name: 'post',
   components: {
+    // PrismicItems,
     SlicesBlock
   },
   data () {
     return {
       dateOptions: { year: 'numeric', month: 'short', day: '2-digit' },
       documentId: '',
-      fields: {
-        title: null,
-        date: null,
-        author: null,
-        img: null
-      },
+      author: null,
+      content: null,
       slices: []
     }
   },
-  methods: {
-    getContent (uid) {
-      // Query to get post content
-      this.$prismic.client.getByUID('post', uid)
-        .then((document) => {
-          if (document) {
-            this.documentId = document.id
-            this.fields.title = document.data.title
-            this.fields.date = document.data.date
-            this.fields.img = document.data.blog_home_image.url
-            if (document.data.author && document.data.author.length > 0) {
-              this.fields.author = document.data.author[0].text
-            }
-
-            // Set slices as variable
-            this.slices = document.data.body
-          } else {
-            // returns error page
-            this.$router.push({ name: 'not-found' })
-          }
-        })
+  watch: {
+    '$route' () {
+      this.getContent(this.$route.query.uid)
     }
   },
   created () {
-    this.getContent(this.$route.params.uid)
+    this.getContent(this.$route.query.uid)
   },
   beforeRouteUpdate (to, from, next) {
     this.getContent(to.params.uid)
     next()
+  },
+  methods: {
+    getContent (uid) {
+      // Query to get post content
+      this.$prismic.client.getByUID('post', uid).then((document) => {
+        if (document) {
+          this.content = document.data
+          if (document.data.author && document.data.author.length > 0) {
+            this.author = document.data.author[0].text
+          }
+          this.slices = document.data.body
+        } else {
+          this.getContent('lambda-v-stacks')
+        }
+      }).catch((err) => {
+        console.log('huh? ' + err)
+      })
+    }
   },
   computed: {
   }
@@ -95,52 +106,33 @@ export default {
 
 <style>
 /* BANNER */
-.first-section p {
-  text-align: center;
-  margin: 0;
-}
-.first-section .banner-overlay {
-  background-color: rgba(0, 0, 0, 0.6);
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  top: 0;
-}
-.first-section .heading {
-  z-index: 1;
-}
-.first-section .back {
-  z-index: 1;
-  width: 100%;
-  padding-left: 5rem;
-}
-.first-section .back a {
-  color: #fff;
-  font-size: 10px;
-}
 /* POST */
+p {
+  font-size: 1.5rem;
+}
 .post-body {
   color: #000;
-  padding: 0 5rem;
   margin: 0 auto;
 }
 .post-body h3 {
   margin-bottom: 1.5rem;
 }
 .post-body a {
-  color: #E9493D;
+  color: #352bf5;
+  text-decoration: none;
+}
+.post-body a:hover {
   text-decoration: underline;
 }
 .post-body a:hover {
-  color: #E9493D;
+  color: #352bf5;
+  text-decoration: none;
+}
+.post-body a:hover {
   text-decoration: underline;
 }
 .post-body .back-bottom {
   margin-top: 2.5rem;
-}
-.post-body .back-bottom a {
-  font-size: 12px;
-  text-decoration: none;
 }
 /* SIDEBAR */
 .sidebar {
@@ -176,7 +168,7 @@ export default {
 }
 .sidebar button a {
   text-align: center;
-  font-size: 11px;
+  font-size: 1.2rem;
   font-weight: 700;
   letter-spacing: 0px;
   color: #FFFFFF;

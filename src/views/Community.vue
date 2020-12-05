@@ -1,20 +1,16 @@
 <template>
-<div class="container px-0" style="margin-top: 128px;">
-  <div class="">
-    <div class="w-75 p-2">
-      <div class="p-5">
-        <p class="text-40-300">Community @ Risidio</p>
-      </div>
-    </div>
-  </div>
+<div class="px-0" style="margin-top: 128px;">
+  <post />
 </div>
 </template>
 
 <script>
+import Post from './Post'
 
 export default {
   name: 'Community',
   components: {
+    Post
   },
   data () {
     return {

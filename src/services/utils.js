@@ -19,6 +19,24 @@ const utils = {
       flasher.classList.remove('flasher')
     }, 1000)
   },
+  makeFlasher: function (flasher) {
+    flasher.classList.add('flasher')
+    setTimeout(function () {
+      flasher.classList.remove('flasher')
+      setTimeout(function () {
+        flasher.classList.add('flasher')
+        setTimeout(function () {
+          flasher.classList.remove('flasher')
+          setTimeout(function () {
+            flasher.classList.add('flasher')
+            setTimeout(function () {
+              flasher.classList.remove('flasher')
+            }, 300)
+          }, 300)
+        }, 300)
+      }, 300)
+    }, 300)
+  },
   fromMicroAmount: function (amountMicroStx) {
     try {
       if (amountMicroStx === 0) return 0

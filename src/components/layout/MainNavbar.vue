@@ -8,16 +8,11 @@
     <span> </span>
     <span> </span>
   </b-navbar-toggle>
-  <!--<b-navbar-nav class="navbar__login d-md-block d-xl-none">
-  <div v-if="avatar" v-b-toggle.login-sidebar class="navbar__account"><span class="text-info" v-html="avatar"></span></div>
-  <div v-else        v-b-toggle.login-sidebar class="navbar__account"><span><b-icon style="width: 30px; height: 30px;" class="text-info" icon="person-fill"/></span></div>
-  </b-navbar-nav>-->
-
   <!-- Mobile Design for login menu -->
   <b-navbar-nav class="navbar__login d-xl-none">
     <b-nav-item v-if="loggedIn">
       <div v-if="avatar" v-b-toggle.login-sidebar class="navbar__account"><span v-html="avatar"></span><span class="text-info navbar__account--text">Account</span></div>
-      <div v-else v-b-toggle.login-sidebar class="navbar__account"><span><b-icon icon="person-fill" class="navbar__default-account-icon"/></span><span class="text-info navbar__account--text">Account</span></div>
+      <div v-else v-b-toggle.login-sidebar class="navbar__account"><span><b-icon icon="person" class="navbar__default-account-icon"/></span><span class="text-info navbar__account--text">Account</span></div>
       <side-bar />
     </b-nav-item>
     <b-nav-item @click.prevent="startLogin()" href="#" v-else><button class="login-button button-secondary">Login</button></b-nav-item>
@@ -58,13 +53,13 @@
     </b-navbar-nav>
     <b-navbar-nav class="ml-xl-auto align-items-xl-center">
       <wallet-toggle />
-      <b-nav-item><router-link class="text-white" to="/community?how-it-works">How It Works</router-link></b-nav-item>
+      <b-nav-item><router-link class="text-white" to="/community?uid=lambda-v-stacks">How It Works</router-link></b-nav-item>
     </b-navbar-nav>
 
     <b-navbar-nav class="navbar__login d-flex">
       <b-nav-item class="navbar__login--loogedin" v-if="loggedIn">
         <div v-if="avatar" v-b-toggle.login-sidebar class="navbar__account d-flex align-items-center"><span v-html="avatar"></span><span class="text-white navbar__account--text">Account</span></div>
-        <div v-else v-b-toggle.login-sidebar class="navbar__account d-flex align-items-center"><span><b-icon icon="person-fill" class="navbar__default-account-icon"/></span><span class="text-white navbar__account--text">Account</span></div>
+        <div v-else v-b-toggle.login-sidebar class="navbar__account d-flex align-items-center"><span><b-icon icon="person" class="navbar__default-account-icon"/></span><span class="text-white navbar__account--text">Account</span></div>
         <side-bar />
       </b-nav-item>
       <b-nav-item @click.prevent="startLogin()" href="#" v-else><button class="login-button button-secondary">Login</button></b-nav-item>

@@ -106,8 +106,8 @@ export default {
       result: null,
       params: {
         platformAddress: PLATFORM_ADDRESS,
-        tokenName: 'token-name',
-        tokenSymbol: 'token-symbol',
+        tokenName: 'tokenName',
+        tokenSymbol: 'tokenSymbol',
         mintPrice: '100000',
         token: 'token_name',
         contractName: null,
@@ -418,12 +418,12 @@ export default {
         this.$notify({ type: 'error', title: 'Project Details', text: 'Please enter a secure (https) callback url for your tokens - we append the asset hash to retrieve meta data.' })
         result = false
       }
-      if (!this.params.tokenName || this.params.tokenName.startsWith('token-')) {
+      if (!this.params.tokenName || this.params.tokenName.indexOf('token') > -1) {
         this.$notify({ type: 'error', title: 'Token Name', text: 'Please enter a descriptive name.' })
         result = false
       }
-      if (!this.params.tokenSymbol || this.params.tokenSymbol.startsWith('token-')) {
-        this.$notify({ type: 'error', title: 'Token Symbol', text: 'Please enter a symbol for your token - convention is 3 or 4 luppercase letters or digits.' })
+      if (!this.params.tokenSymbol || this.params.tokenSymbol.indexOf('token') > -1) {
+        this.$notify({ type: 'error', title: 'Token Symbol', text: 'Please enter a symbol for your token - convention is 3 or 4 uppercase letters or digits.' })
         result = false
       }
       let tokenUrl
@@ -455,8 +455,8 @@ export default {
       // contractName = this.this.files[0].name.split(/\./)[1]
       const projectPlus = this.project
       let source = this.contractSource.replaceAll('params.contractOwner', this.params.contractOwner)
-      source = source.replaceAll('params.token-name', this.params.tokenName)
-      source = source.replaceAll('params.token-symbol', this.params.tokenSymbol)
+      source = source.replaceAll('params.tokenName', this.params.tokenName)
+      source = source.replaceAll('params.tokenSymbol', this.params.tokenSymbol)
       source = source.replaceAll('params.mintPrice', this.params.mintPrice)
       source = source.replaceAll('params.platformAddress', this.params.platformAddress)
       source = source.replaceAll('params.callBack', utils.stringToHex(this.params.callBack))
