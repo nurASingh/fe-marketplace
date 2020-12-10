@@ -1,5 +1,5 @@
-import { UserSession } from 'blockstack'
-// import { UserSession } from '@stacks/auth'
+// import { UserSession } from 'blockstack'
+import { UserSession } from '@stacks/auth'
 import { Storage } from '@stacks/storage'
 import moment from 'moment'
 import axios from 'axios'
@@ -21,6 +21,16 @@ const getNewRootFile = function () {
   return newRootFile
 }
 
+const getFile = function (path) {
+  return new Promise((resolve) => {
+    storage.getFile(path).then((gaiaFile) => {
+      resolve(gaiaFile)
+    }).catch(() => {
+      resolve()
+    })
+  })
+}
+
 const projectService = {
   initProject: function (profile) {
     return new Promise((resolve) => {
@@ -29,22 +39,22 @@ const projectService = {
         return
       }
       const rootFile = getNewRootFile()
-      userSession.getFile(PROJECT_ROOT_PATH, { decrypt: false }).then((file) => {
+      storage.getFile(PROJECT_ROOT_PATH, { decrypt: false }).then((file) => {
         if (!file) {
-          userSession.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false })
+          storage.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false })
           resolve(rootFile)
         } else {
           resolve(JSON.parse(file))
         }
       }).catch(() => {
-        userSession.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false })
+        storage.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false })
         resolve(rootFile)
       })
     })
   },
   fetchUserProjects: function (username) {
     return new Promise((resolve, reject) => {
-      userSession.getFile(PROJECT_ROOT_PATH, { username: username, decrypt: false }).then((file) => {
+      storage.getFile(PROJECT_ROOT_PATH, { username: username, decrypt: false }).then((file) => {
         if (!file) {
           resolve()
         } else {
@@ -62,10 +72,10 @@ const projectService = {
         resolve(getNewRootFile())
         return
       }
-      userSession.getFile(PROJECT_ROOT_PATH, { decrypt: false }).then((file) => {
+      storage.getFile(PROJECT_ROOT_PATH, { decrypt: false }).then((file) => {
         if (!file) {
           const rootFile = getNewRootFile()
-          userSession.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false })
+          storage.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false })
           resolve(rootFile)
         } else {
           const rootFile = JSON.parse(file)
@@ -84,22 +94,25 @@ const projectService = {
         contentType: imageData.mimeType,
         encrypt: false
       }
-      userSession.putFile(path, imageData.imageBuffer, options).then(function () {
-        userSession.getFileUrl(path).then((gaiaUrl) => {
-          resolve(gaiaUrl)
-        }).catch(() => {
+      getFile(path).then((file) => {
+        if (file) console.log('overwriting file: ' + file)
+        storage.putFile(path, imageData.imageBuffer, options).then(function () {
+          storage.getFileUrl(path).then((gaiaUrl) => {
+            resolve(gaiaUrl)
+          }).catch(() => {
+            resolve()
+          })
+        }).catch((error) => {
+          console.log(error)
           resolve()
         })
-      }).catch((error) => {
-        console.log(error)
-        resolve()
       })
     })
   },
   saveProject: function (rootFile) {
     return new Promise((resolve, reject) => {
       rootFile.updated = moment({}).valueOf()
-      userSession.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false }).then(() => {
+      storage.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false }).then(() => {
         resolve(rootFile)
       }).catch((error) => {
         reject(error)

@@ -445,7 +445,7 @@ const stacksStore = {
         // (asset-hash (buff 32)) (sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint)
         const asset = purchaseInfo.asset
         const profile = store.getters['authStore/getMyProfile']
-        const amount = new BigNum(utils.toOnChainAmount(asset.tradeInfo.buyNowOrStartingPrice))
+        const amount = new BigNum(utils.toOnChainAmount(asset.tradeInfo.buyNowOrStartingPrice + 1))
         const standardSTXPostCondition = makeStandardSTXPostCondition(
           profile.stxAddress,
           FungibleConditionCode.GreaterEqual,

@@ -35,6 +35,7 @@
         <h3 class="mt-5">How It Works</h3>
         <div><router-link to="/community?uid=user-journeys-stx-funds">Getting Testnet STX</router-link></div>
         <div><router-link to="/community?uid=user-journeys-manage-listings">Mint a Loop</router-link></div>
+        <div><router-link to="/community?uid=how-to-buy">Buying</router-link></div>
         <h3 class="mt-5">Other Stories</h3>
         <div><router-link to="/community?uid=lambda-v-stacks">Stacks vs AWS Lmbda</router-link></div>
         <div><router-link to="/community?uid=self-owned-identity">Decentralised Identity</router-link></div>
