@@ -1,5 +1,5 @@
-// import { UserSession } from 'blockstack'
-import { UserSession } from '@stacks/auth'
+import { UserSession } from 'blockstack'
+// import { UserSession } from '@stacks/auth'
 import { Storage } from '@stacks/storage'
 import moment from 'moment'
 import axios from 'axios'
@@ -29,22 +29,22 @@ const projectService = {
         return
       }
       const rootFile = getNewRootFile()
-      storage.getFile(PROJECT_ROOT_PATH, { decrypt: false }).then((file) => {
+      userSession.getFile(PROJECT_ROOT_PATH, { decrypt: false }).then((file) => {
         if (!file) {
-          storage.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false })
+          userSession.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false })
           resolve(rootFile)
         } else {
           resolve(JSON.parse(file))
         }
       }).catch(() => {
-        storage.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false })
+        userSession.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false })
         resolve(rootFile)
       })
     })
   },
   fetchUserProjects: function (username) {
     return new Promise((resolve, reject) => {
-      storage.getFile(PROJECT_ROOT_PATH, { username: username, decrypt: false }).then((file) => {
+      userSession.getFile(PROJECT_ROOT_PATH, { username: username, decrypt: false }).then((file) => {
         if (!file) {
           resolve()
         } else {
@@ -62,10 +62,10 @@ const projectService = {
         resolve(getNewRootFile())
         return
       }
-      storage.getFile(PROJECT_ROOT_PATH, { decrypt: false }).then((file) => {
+      userSession.getFile(PROJECT_ROOT_PATH, { decrypt: false }).then((file) => {
         if (!file) {
           const rootFile = getNewRootFile()
-          storage.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false })
+          userSession.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false })
           resolve(rootFile)
         } else {
           const rootFile = JSON.parse(file)
@@ -84,13 +84,14 @@ const projectService = {
         contentType: imageData.mimeType,
         encrypt: false
       }
-      storage.putFile(path, imageData.imageBuffer, options).then(function () {
-        storage.getFileUrl(path).then((gaiaUrl) => {
+      userSession.putFile(path, imageData.imageBuffer, options).then(function () {
+        userSession.getFileUrl(path).then((gaiaUrl) => {
           resolve(gaiaUrl)
         }).catch(() => {
           resolve()
         })
-      }).catch(() => {
+      }).catch((error) => {
+        console.log(error)
         resolve()
       })
     })
@@ -98,7 +99,7 @@ const projectService = {
   saveProject: function (rootFile) {
     return new Promise((resolve, reject) => {
       rootFile.updated = moment({}).valueOf()
-      storage.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false }).then(() => {
+      userSession.putFile(PROJECT_ROOT_PATH, JSON.stringify(rootFile), { encrypt: false }).then(() => {
         resolve(rootFile)
       }).catch((error) => {
         reject(error)

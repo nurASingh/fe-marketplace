@@ -54,7 +54,7 @@ const projectStore = {
     }
   },
   actions: {
-    toggleFavourite ({ state, commit }: any, favourite: any) {
+    toggleFavourite ({ commit }: any, favourite: any) {
       return new Promise((resolve, reject) => {
         const profile = store.getters[APP_CONSTANTS.KEY_PROFILE]
         projectService.fetchMyProjects(profile).then((rootFile: any) => {
@@ -74,7 +74,7 @@ const projectStore = {
         })
       })
     },
-    fetchFavourites ({ state, commit }: any, favourite: any) {
+    fetchFavourites ({ state }: any) {
       return new Promise((resolve, reject) => {
         const profile = store.getters[APP_CONSTANTS.KEY_PROFILE]
         projectService.fetchMyProjects(profile).then((rootFile: any) => {
@@ -250,9 +250,10 @@ const projectStore = {
             })
             **/
           }).catch((error) => {
-            console.log(error)
             reject(error)
           })
+        }).catch((error) => {
+          reject(error)
         })
       })
     },

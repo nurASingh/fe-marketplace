@@ -5,6 +5,13 @@ import searchIndexService from '@/services/searchIndexService'
 
 const KEY_GAIA_PROJECT = 'getGaiaProject'
 const mac = JSON.parse(process.env.VUE_APP_WALLET_MAC || '')
+const STX_CONTRACT_ADDRESS = process.env.VUE_APP_STACKS_CONTRACT_ADDRESS
+const MESH_API = process.env.VUE_APP_API_MESH
+
+let appContractAddress = mac.keyInfo.address + '.appmap'
+if (MESH_API.indexOf('local') === -1) {
+  appContractAddress = STX_CONTRACT_ADDRESS + '.appmap'
+}
 
 const applicationStore = {
   namespaced: true,
@@ -15,7 +22,7 @@ const applicationStore = {
     },
     gaiaProjects: [],
     appCounter: -1,
-    appmapContractId: mac.keyInfo.address + '.appmap'
+    appmapContractId: appContractAddress
   },
   getters: {
     getAppmapTxId: (state: any) => {

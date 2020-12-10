@@ -121,10 +121,6 @@ export default {
 (impl-trait 'params.platformAddress.nft-interface.tradable-nft-trait)
 
 ;; Non Fungible Token, modeled after ERC-721 via transferable-nft-trait
-;; Note this is a basic implementation - no support yet for setting approvals for assets
-;; NFT are identified by nft-index (uint) which is tied via a reverse lookup to a real world
-;; asset hash - SHA 256 32 byte value. The Asset Hash is used to tie arbitrary real world
-;; data to the NFT
 (define-non-fungible-token my-nft uint)
 
 ;; data structures
@@ -149,16 +145,10 @@ export default {
 (define-constant not-found (err u11))
 (define-constant amount-not-set (err u12))
 (define-constant seller-not-found (err u13))
-(define-constant asset-not-registered (err u14))
 (define-constant transfer-error (err u15))
-(define-constant not-approved-to-sell (err u16))
 
 (define-constant same-spender-err (err u1))
 (define-constant failed-to-mint-err (err u5))
-
-;;(define-constant not-approved-spender-err (err u2))
-;;(define-constant failed-to-move-token-err (err u3))
-;;(define-constant unauthorized-transfer-err (err u4))
 
 ;; public methods
 ;; --------------
@@ -239,8 +229,8 @@ export default {
             (seller1 (nft-get-owner? my-nft nft-index))
             (ahash (get asset-hash (map-get? my-nft-data {nft-index: nft-index})))
         )
-        (asserts! (is-some ahash) asset-not-registered)
-        (asserts! (is-eq (unwrap! saleType seller-not-found) u1) not-approved-to-sell)
+        (asserts! (is-some ahash) transfer-error)
+        (asserts! (is-eq (unwrap! saleType seller-not-found) u1) transfer-error)
         (asserts! (> (unwrap! amount amount-not-set) u0) amount-not-set)
         (asserts! (is-eq buyer tx-sender) same-spender-err)
         (asserts! (not (is-eq (unwrap! seller1 seller-not-found) seller)) seller-not-found)
@@ -275,9 +265,6 @@ export default {
 
 ;; read only methods
 ;; ---------------
-(define-read-only (get-administrator)
-    (var-get administrator))
-
 (define-read-only (is-administrator)
     (ok (is-eq (var-get administrator) tx-sender)))
 
