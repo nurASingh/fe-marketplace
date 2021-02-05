@@ -8,7 +8,7 @@
     </div>
     <account-links/>
     <div class="login-sidebar__item-group">
-      <div class="text2"><span @click="logout()"><b-icon class="mr-2" icon="power" /> Logout</span></div>
+      <div class="text2"><a href="#" @click="logout()"><b-icon class="mr-2" icon="power" /> Logout</a></div>
     </div>
   </div>
 </b-sidebar>

@@ -62,7 +62,7 @@ export default {
     deployed: function (data) {
       this.deployedProject = data.project
       this.$root.$emit('bv::show::modal', 'success-modal')
-      this.$store.commit('setModalMessage', 'Contract has been deployed to Stacks blockchain.')
+      this.$store.commit('setModalMessage', 'Contract deployment transaction sent to Stacks blockchain - check explorer for progress.')
       this.$store.dispatch('applicationStore/lookupApplications')
     },
     useMyAddress: function () {

@@ -11,8 +11,6 @@
 </template>
 
 <script>
-import moment from 'moment'
-import { APP_CONSTANTS } from '@/app-constants'
 
 export default {
   name: 'TradeInfo',

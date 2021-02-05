@@ -6,7 +6,7 @@ import applicationStore from './applicationStore'
 import contentStore from './contentStore'
 import searchStore from './searchStore'
 import stacksStore from './stacksStore'
-import paymentStore from './paymentStore'
+import openNodeStore from './openNodeStore'
 import projectStore from './projectStore'
 import rates from 'risidio-rates'
 import searchIndexService from '@/services/searchIndexService'
@@ -21,7 +21,7 @@ export default new Vuex.Store({
     searchStore,
     projectStore,
     stacksStore,
-    paymentStore
+    openNodeStore
   },
   state: {
     apiKey: null,
@@ -139,16 +139,21 @@ export default new Vuex.Store({
   actions: {
     fetchRatesFromBinance ({ commit }) {
       return new Promise(() => {
+        /**
         rates.fetchSTXRates().then((rates) => {
           commit('setXgeRates', rates)
-          searchIndexService.addExchangeRates({ ratesModel: rates })
+          searchIndexService.addExchangeRates({ binanceRates: rates })
+        })
+        **/
+        searchIndexService.getExchangeRates().then((rates: any) => {
+          commit('setXgeRates', rates.binanceRates)
         })
       })
     },
     fetchRatesFromDb ({ commit }) {
       return new Promise(() => {
         searchIndexService.getExchangeRates().then((rates: any) => {
-          commit('setXgeRates', rates.ratesModel)
+          commit('setXgeRates', rates.binanceRates)
         })
         setInterval(function () {
           rates.fetchSTXRates().then((rates) => {

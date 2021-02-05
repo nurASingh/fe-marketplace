@@ -1,11 +1,32 @@
 import axios from 'axios'
 
 const SEARCH_API_PATH = process.env.VUE_APP_API_SEARCH
+const MESH_API_PATH = process.env.VUE_APP_API_MESH
 
 /**
  *  The service is a client to the brightblock sever side grpc client.
  **/
 const searchIndexService = {
+  addExchangeRates: function (rates: any) {
+    return new Promise(function (resolve, reject) {
+      axios.post(MESH_API_PATH + '/v1/rates/', rates).then((result) => {
+        resolve(result.data)
+      }).catch((error) => {
+        reject(new Error('Unable index record: ' + error))
+      })
+    })
+  },
+
+  getExchangeRates: function () {
+    return new Promise(function (resolve, reject) {
+      axios.get(MESH_API_PATH + '/v1/rates/').then((result) => {
+        resolve(result.data)
+      }).catch((error) => {
+        reject(new Error('Unable index record: ' + error))
+      })
+    })
+  },
+
   removeRecord: function (field: string, value: string) {
     return new Promise(function (resolve, reject) {
       axios.get(SEARCH_API_PATH + '/removeRecord/' + field + '/' + value).then((result) => {
@@ -29,26 +50,6 @@ const searchIndexService = {
   addTradeInfo: function (asset: any) {
     return new Promise(function (resolve, reject) {
       axios.post(SEARCH_API_PATH + '/v1/trade-info/' + asset.assetHash, asset.tradeInfo).then((result) => {
-        resolve(result.data)
-      }).catch((error) => {
-        reject(new Error('Unable index record: ' + error))
-      })
-    })
-  },
-
-  addExchangeRates: function (rates: any) {
-    return new Promise(function (resolve, reject) {
-      axios.post(SEARCH_API_PATH + '/v1/rates/', rates).then((result) => {
-        resolve(result.data)
-      }).catch((error) => {
-        reject(new Error('Unable index record: ' + error))
-      })
-    })
-  },
-
-  getExchangeRates: function () {
-    return new Promise(function (resolve, reject) {
-      axios.get(SEARCH_API_PATH + '/v1/rates/').then((result) => {
         resolve(result.data)
       }).catch((error) => {
         reject(new Error('Unable index record: ' + error))

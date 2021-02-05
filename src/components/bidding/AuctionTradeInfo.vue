@@ -34,7 +34,6 @@
 import moment from 'moment'
 import { Datetime } from 'vue-datetime'
 import { APP_CONSTANTS } from '@/app-constants'
-import utils from '@/services/utils'
 
 export default {
   name: 'SellAuction',

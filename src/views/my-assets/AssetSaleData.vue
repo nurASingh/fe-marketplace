@@ -102,7 +102,7 @@ export default {
       this.$store.dispatch('stacksStore/setTradeInfo', asset).then((result) => {
         this.result = result
         this.$root.$emit('bv::hide::modal', 'waiting-modal')
-        this.$store.commit('setModalMessage', 'That worked! Others are now able to buy this item.')
+        this.$store.commit('setModalMessage', 'Transaction sent! Check the explorer for progress - people will be able to buy this item once it completes.')
         this.$root.$emit('bv::show::modal', 'success-modal')
       }).catch((error) => {
         this.result = error

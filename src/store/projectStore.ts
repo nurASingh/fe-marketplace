@@ -44,6 +44,9 @@ const projectStore = {
     setConnectedProjects (state: any, connectedProjects: any) {
       state.connectedProjects = connectedProjects
     },
+    setFavourites (state: any, favourites: any) {
+      state.favourites = favourites
+    },
     addContractData (state, data) {
       const index = state.contracts.findIndex((o) => o.projectId === data.projectId)
       if (index > -1) {
@@ -74,10 +77,11 @@ const projectStore = {
         })
       })
     },
-    fetchFavourites ({ state }: any) {
+    fetchFavourites ({ commit }: any) {
       return new Promise((resolve, reject) => {
         const profile = store.getters[APP_CONSTANTS.KEY_PROFILE]
         projectService.fetchMyProjects(profile).then((rootFile: any) => {
+          commit('setFavourites', rootFile.favourites)
           resolve(rootFile.favourites)
         }).catch((err) => {
           reject(err)

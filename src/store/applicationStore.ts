@@ -137,6 +137,9 @@ const applicationStore = {
       const index1 = state.appmap.apps.findIndex((o) => o.appCounter === data.application.appCounter)
       if (index1 > -1) {
         const application = state.appmap.apps[index1]
+        if (!application.clarityAssets) {
+          application.clarityAssets = []
+        }
         const index = application.clarityAssets.findIndex((o) => o.assetHash === data.asset.assetHash)
         if (index < 0) {
           state.appmap.apps[index1].clarityAssets.splice(0, 0, data.asset)

@@ -111,7 +111,7 @@ export default {
     confirmBuyNow () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
-      this.$store.commit('setModalMessage', 'Thank You! <br/>Transferring asset now...')
+      this.$store.commit('setModalMessage', 'Thank You! <br/>Transfer begun... check explorer for progress.')
       this.$root.$emit('bv::show::modal', 'waiting-modal')
       this.$root.$emit('bv::hide::modal', 'buy-now-modal')
       const purchaseInfo = {
@@ -120,7 +120,7 @@ export default {
       }
       this.$store.dispatch('stacksStore/buyNow', purchaseInfo).then((result) => {
         this.result = result
-        this.$store.commit('setModalMessage', 'Thank You! <br/>Transferring asset now...')
+        this.$store.commit('setModalMessage', 'Thank You! <br/>Transfer begun - check explorer for progress.')
         this.$root.$emit('bv::hide::modal', 'waiting-modal')
         this.$root.$emit('bv::show::modal', 'success-modal')
       }).catch((error) => {

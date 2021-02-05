@@ -38,7 +38,7 @@ export default {
       this.$store.dispatch('fetchRatesFromBinance')
     },
     loadInvoice: function () {
-      this.$store.dispatch('paymentStore/fetchPayment').then((result) => {
+      this.$store.dispatch('openNodeStore/fetchPayment').then((result) => {
         this.result = result
       })
     }

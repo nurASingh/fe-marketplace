@@ -7,7 +7,7 @@ import {
   makeContractDeploy,
   callReadOnlyFunction,
   uintCV, bufferCV,
-  standardPrincipalCV,
+  // standardPrincipalCV,
   makeStandardSTXPostCondition,
   FungibleConditionCode
 } from '@stacks/transactions'
@@ -425,6 +425,7 @@ const stacksStore = {
         }
         const methos = (state.provider === 'risidio') ? 'callContractRisidio' : 'callContractBlockstack'
         dispatch(methos, data).then((result) => {
+          handleSetTradeInfo(asset, result, resolve)
           pollTxStatus(result.txId).then(() => {
             handleSetTradeInfo(asset, result, resolve)
           })
@@ -445,36 +446,38 @@ const stacksStore = {
         // (asset-hash (buff 32)) (sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint)
         const asset = purchaseInfo.asset
         const profile = store.getters['authStore/getMyProfile']
-        const amount = new BigNum(utils.toOnChainAmount(asset.tradeInfo.buyNowOrStartingPrice + 1))
+        // const amount = new BigNum(utils.toOnChainAmount(asset.tradeInfo.buyNowOrStartingPrice + 1))
+        const amount = new BigNum(asset.tradeInfo.buyNowOrStartingPrice + 1)
         const standardSTXPostCondition = makeStandardSTXPostCondition(
           profile.stxAddress,
-          FungibleConditionCode.GreaterEqual,
+          FungibleConditionCode.LessEqual,
           amount
         )
 
         const nftIndex = uintCV(asset.nftIndex)
-        const spCV = standardPrincipalCV(mac.keyInfo.address)
-        const functionArgs = [spCV, nftIndex]
+        // const spCV = standardPrincipalCV(mac.keyInfo.address)
+        // const functionArgs = [spCV, nftIndex]
+        const functionArgs = [nftIndex]
         const data: any = {
           postConditions: [standardSTXPostCondition],
           contractAddress: asset.projectId.split('.')[0],
           contractName: asset.projectId.split('.')[1],
-          functionName: 'transfer',
+          functionName: 'transfer-from',
           functionArgs: functionArgs,
           wallet: (state.provider === 'risidio' && purchaseInfo.useWallet && purchaseInfo.useWallet === 'sky') ? state.skysWallet : state.macsWallet
         }
 
         const methos = (state.provider === 'risidio') ? 'callContractRisidio' : 'callContractBlockstack'
         dispatch(methos, data).then((result) => {
+          handleBuyNow(asset, result, resolve, purchaseInfo)
           pollTxStatus(result.txId).then(() => {
             handleBuyNow(asset, result, resolve, purchaseInfo)
           })
         }).catch(() => {
           data.action = 'inc-nonce'
           dispatch(methos, data).then((result) => {
-            pollTxStatus(result.txId).then(() => {
-              handleBuyNow(asset, result, resolve, purchaseInfo)
-            })
+            handleBuyNow(asset, result, resolve, purchaseInfo)
+            pollTxStatus(result.txId)
           }).catch((error) => {
             reject(error)
           })
@@ -559,6 +562,7 @@ const stacksStore = {
       return new Promise((resolve, reject) => {
         const methos = (state.provider === 'risidio') ? 'deployContractRisidio' : 'deployContractConnect'
         dispatch(methos, datum).then((result) => {
+          resolve()
           pollTxStatus(result.txId).then(() => {
             store.dispatch('projectStore/updateProject', { projectId: datum.projectId, contractId: datum.projectId, txId: result.txId }).then((project) => {
               dispatch('fetchMacSkyWalletInfo')

@@ -1,6 +1,19 @@
 # fe-marketplace
 
+Risidio Auction client application. Features include:
+
+- marketplace - bid, buy, sell
+- timed auctions
+- live auctions
+- crowdfunding
+
 ## Project setup
+
+```bash
+nvm use 12.16.3
+```
+
+or later
 
 ```bash
 npm install
@@ -38,4 +51,4 @@ npm run lint
 
 ### Customize configuration
 
-See [Configuration Reference](https://cli.vuejs.org/config/).
+See [Configuration Reference](https://cli.vuejs.org/config/)

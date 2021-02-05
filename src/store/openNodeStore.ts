@@ -2,7 +2,7 @@ import axios from 'axios'
 
 const MESH_API = process.env.VUE_APP_API_MESH
 
-const paymentStore = {
+const openNodeStore = {
   namespaced: true,
   state: {
     invoice: null
@@ -32,4 +32,4 @@ const paymentStore = {
     }
   }
 }
-export default paymentStore
+export default openNodeStore
