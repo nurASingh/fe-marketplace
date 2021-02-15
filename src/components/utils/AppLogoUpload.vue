@@ -1,5 +1,16 @@
 <template>
 <div class="">
+<!--
+  <b-form-file
+    ref="file-input"
+    v-model="file1"
+    placeholder="Choose a file or drop it here..."
+    drop-placeholder="Drop file here..."
+    accept="image/*"
+  ></b-form-file>
+  <div class="mt-3">Selected file: {{ file1 ? file1.name : '' }}</div>
+  <b-button @click="clearFiles" class="mr-2">Reset via method</b-button>
+  -->
   <div class="">
       <label style="cursor: pointer;">
         <b-button variant="info" v-html="contentModel.title" @click="chooseFiles()"></b-button> <input type="file" hidden id="file-input" @change.prevent="loadMediaObjects"/>
@@ -17,10 +28,12 @@
 
 <script>
 import _ from 'lodash'
+// import { BFormFile } from 'bootstrap-vue'
 
 export default {
   name: 'AppLogoUpload',
   components: {
+    // BFormFile
   },
   props: {
     showError: {
@@ -71,6 +84,7 @@ export default {
   },
   data () {
     return {
+      file1: null,
       mediaObjects: [],
       internalError: null,
       missing: '/img/pdf-holding.png'
@@ -95,6 +109,9 @@ export default {
   methods: {
     chooseFiles: function () {
       document.getElementById('file-input').click()
+    },
+    clearFiles () {
+      this.$refs['file-input'].reset()
     },
     clearMediaObject: function (fsize) {
       const index = _.findIndex(this.mediaObjects, function (mo) {

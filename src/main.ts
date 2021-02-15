@@ -3,7 +3,7 @@ import App from './App.vue'
 import './registerServiceWorker'
 import router from './router'
 import store from './store'
-import { BootstrapVue, BootstrapVueIcons } from 'bootstrap-vue'
+import { BootstrapVue, BootstrapVueIcons, FormFilePlugin } from 'bootstrap-vue'
 import '@/assets/scss/custom.scss'
 import Notifications from 'vue-notification'
 import VueScrollTo from 'vue-scrollto'
@@ -14,6 +14,7 @@ import htmlSerializer from './prismic/html-serializer'
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)
 Vue.use(BootstrapVueIcons)
+Vue.use(FormFilePlugin)
 Vue.use(Notifications, { closeOnClick: true, duration: 6000 })
 Vue.use(VueScrollTo)
 Vue.use(PrismicVue, {

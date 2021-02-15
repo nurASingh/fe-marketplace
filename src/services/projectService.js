@@ -1,5 +1,5 @@
 // import { UserSession } from 'blockstack'
-import { UserSession } from '@stacks/auth'
+import { UserSession } from '@stacks/connect'
 import { Storage } from '@stacks/storage'
 import moment from 'moment'
 import axios from 'axios'

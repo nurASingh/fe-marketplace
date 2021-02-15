@@ -1,8 +1,6 @@
 /* eslint-disable */
-import { UserSession, AppConfig } from '@stacks/auth'
-import { showConnect, authenticate } from '@stacks/connect'
+import { UserSession, AppConfig, showConnect, authenticate } from '@stacks/connect'
 import utils from '@/services/utils'
-// import { Person, UserSession } from 'blockstack';
 import store from '@/store'
 import {
   getAddressFromPrivateKey,
@@ -12,6 +10,7 @@ import axios from 'axios'
 
 const MESH_API = process.env.VUE_APP_API_MESH
 const STACKS_API = process.env.VUE_APP_API_STACKS
+const NETWORK = process.env.VUE_APP_NETWORK
 
 const BLOCKSTACK_LOGIN = Number(process.env.VUE_APP_BLOCKSTACK_LOGIN)
 const appConfig = new AppConfig()
@@ -112,7 +111,7 @@ const getProfile = function () {
       const loggedIn = true
       myProfile = {
         loggedIn: loggedIn,
-        stxAddress: account.profile.stxAddress,
+        stxAddress: (NETWORK === 'mainnet') ? account.profile.stxAddress.mainnet : account.profile.stxAddress.testnet,
         stxAppAddress: stxAppAddress,
         senderKey: account.privateKey,
         showAdmin: showAdmin,

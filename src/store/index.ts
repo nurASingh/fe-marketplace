@@ -32,7 +32,7 @@ export default new Vuex.Store({
       innerHeight: 0,
       innerWidth: 0
     },
-    modalMessage: 'Your requestion is being processed',
+    modalMessage: 'Your request is being processed',
     myProfile: {
       loggedIn: false
     },

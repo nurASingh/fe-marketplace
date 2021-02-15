@@ -10,12 +10,12 @@
         <div class="row">
           <div class="col-md-4 col-sm-12">
             <div class="mb-2">
-              <div :style="bannerImage" v-if="files && files.length === 0" class="d-flex align-items-center flex-column m-2 p-2 bg-white border" style="max-width: 250px; min-height: 250px;">
+              <div :style="bannerImage" v-if="files && files.length === 0" class="d-flex align-items-center flex-column m-2 p-2 bg-white border" style="width: auto; min-height: 250px;">
                 <div class="mt-5 my-auto text-center">
                   <app-logo-upload class="" :dims="dims" :contentModel="contentModel1" :showFiles="true" :mediaFiles="mediaFiles1" :limit="1" :sizeLimit="2000000" :mediaTypes="'image'" @updateMedia="setByEventLogo1($event)"/>
                 </div>
               </div>
-              <div v-else :style="bannerImage" class="d-flex align-items-end flex-column" style="max-width: 250px; min-height: 250px;">
+              <div v-else :style="bannerImage" class="d-flex align-items-end flex-column" style="width: auto; min-height: 250px;">
                 <span class="bg-dark p-1 mt-auto" style="position: relative; bottom: 0;">
                   <a class="text-white" href="#" @click.prevent="files = []" v-if="files && files.length > 0">change</a>
                 </span>
@@ -227,8 +227,8 @@ export default {
       }
       return {
         padding: '0 0 0 0',
-        'max-height': '250px',
-        'max-width': '250px',
+        'min-height': '250px',
+        width: '100%',
         'background-repeat': 'no-repeat',
         'background-image': `url(${this.files[0].dataUrl})`,
         'background-position': 'center center',
