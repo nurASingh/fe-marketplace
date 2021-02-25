@@ -7,6 +7,8 @@ import {
   makeContractDeploy,
   callReadOnlyFunction,
   uintCV, bufferCV,
+  makeSTXTokenTransfer,
+
   // standardPrincipalCV,
   makeStandardSTXPostCondition,
   FungibleConditionCode
@@ -20,6 +22,8 @@ import BigNum from 'bn.js'
 import searchIndexService from '@/services/searchIndexService'
 import { connectWebSocketClient } from '@stacks/blockchain-api-client'
 
+const network = new StacksTestnet()
+const precision = 1000000
 let STX_CONTRACT_ADDRESS = process.env.VUE_APP_STACKS_CONTRACT_ADDRESS
 let STX_CONTRACT_NAME = process.env.VUE_APP_STACKS_CONTRACT_NAME
 const mac = JSON.parse(process.env.VUE_APP_WALLET_MAC || '')
@@ -32,7 +36,7 @@ const STACKS_API = process.env.VUE_APP_API_STACKS
 const MESH_API = process.env.VUE_APP_API_MESH
 // const network = new StacksTestnet()
 // network.coreApiUrl = STACKS_API
-let provider = 'connect'
+let provider = 'risidio'
 if (MESH_API.indexOf('local') > -1) {
   provider = 'risidio'
 }
@@ -558,11 +562,68 @@ const stacksStore = {
         })
       })
     },
+    makeTransferRisidio ({ state }, data: any) {
+      return new Promise((resolve, reject) => {
+        if (data.amountStx > 500) {
+          resolve('no more than 500')
+          return
+        }
+        const amount = Math.round(data.amountStx * precision)
+        // amount = parseInt(String(amount), 16)
+        const amountBN = new BigNum(amount)
+
+        // amount = amount.div(new BigNum(1000000))
+        const senderKey = state.macsWallet.keyInfo.privateKey
+
+        let nonce = new BigNum(state.macsWallet.nonce)
+        if (data && data.action === 'inc-nonce') {
+          nonce = new BigNum(state.macsWallet.nonce + 1)
+        }
+
+        const txOptions = {
+          recipient: data.recipient,
+          amount: amountBN,
+          senderKey: senderKey,
+          network,
+          memo: 'Sending payment for game credits.',
+          nonce: nonce, // set a nonce manually if you don't want builder to fetch from a Stacks node
+          fee: new BigNum(2000) // set a tx fee if you don't want the builder to estimate
+        }
+        makeSTXTokenTransfer(txOptions).then((transaction) => {
+          const txdata = new Uint8Array(transaction.serialize())
+          const headers = {
+            'Content-Type': 'application/octet-stream'
+          }
+          axios.post(MESH_API + '/v2/broadcast', txdata, { headers: headers }).then(response => {
+            resolve(response.data)
+          }).catch(() => {
+            const useApi = STACKS_API + '/v2/transactions'
+            axios.post(useApi, txdata).then((response) => {
+              resolve(response.data)
+            }).catch((error) => {
+              if (error.response && error.response.data) {
+                if (error.response.data.message && error.response.data.message.indexOf('BadNonce') > -1) {
+                  reject(new Error('BadNonce! ' + error.response.data.message.substring(100)))
+                } else if (error.response.data.message && error.response.data.message.indexOf('NotEnoughFunds') > -1) {
+                  reject(new Error('Not enough funds in the macsWallet to send this - try decreasing the amount?'))
+                } else if (error.response.data.message && error.response.data.message.indexOf('ConflictingNonceInMempool') > -1) {
+                  reject(new Error('Error: ConflictingNonceInMempool'))
+                } else {
+                  reject(error.response.data)
+                }
+              } else {
+                reject(error.message)
+              }
+            })
+          })
+        })
+      })
+    },
     deployProjectContract ({ state, dispatch }, datum: any) {
       return new Promise((resolve, reject) => {
         const methos = (state.provider === 'risidio') ? 'deployContractRisidio' : 'deployContractConnect'
         dispatch(methos, datum).then((result) => {
-          resolve()
+          resolve(null)
           pollTxStatus(result.txId).then(() => {
             store.dispatch('projectStore/updateProject', { projectId: datum.projectId, contractId: datum.projectId, txId: result.txId }).then((project) => {
               dispatch('fetchMacSkyWalletInfo')

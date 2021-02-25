@@ -103,15 +103,6 @@ export default {
     }
   },
   watch: {
-    'project.title' (val) {
-      const contractName = (val) ? val.toLowerCase().replaceAll(' ', '_') : ''
-      if (!this.project.projectId) {
-        this.project.projectId = '.' + contractName
-      } else {
-        const contractAddr = this.project.projectId.split('.')[0]
-        this.project.projectId = contractAddr + '.' + contractName
-      }
-    }
   },
   mounted () {
     this.projectId = this.$route.params.projectId

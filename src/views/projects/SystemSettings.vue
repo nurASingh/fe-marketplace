@@ -27,6 +27,9 @@
       <b-tab title="Indexing">
         <index-settings/>
       </b-tab>
+      <b-tab title="Faucet">
+        <faucet-settings/>
+      </b-tab>
     </b-tabs>
     </div>
   </div>
@@ -39,6 +42,7 @@ import TitleBar from '@/components/admin/TitleBar'
 import AppRegistry from '@/components/admin/system/AppRegistry'
 import ApiSettings from '@/components/admin/system/ApiSettings'
 import SearchSettings from '@/components/admin/system/SearchSettings'
+import FaucetSettings from '@/components/admin/system/FaucetSettings'
 import IndexSettings from '@/components/admin/system/IndexSettings'
 import ClarityAssets from '@/components/admin/system/ClarityAssets'
 
@@ -49,6 +53,7 @@ export default {
     TitleBar,
     AppRegistry,
     SearchSettings,
+    FaucetSettings,
     IndexSettings,
     ClarityAssets,
     ApiSettings

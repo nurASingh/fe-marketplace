@@ -117,6 +117,7 @@ export default {
       // contractSourceDisplay: null,
       contractSource: `
 ;; Interface definitions
+;; (impl-trait 'ST1ESYCGJB5Z5NBHS39XPC70PGC14WAQK5XXNQYDW.nft-interface.transferable-nft-trait)
 (impl-trait 'params.platformAddress.nft-interface.tradable-nft-trait)
 
 ;; Non Fungible Token, modeled after ERC-721 via transferable-nft-trait
@@ -129,6 +130,7 @@ export default {
 ;; data structures
 (define-map my-nft-data ((nft-index uint)) ((asset-hash (buff 32)) (date uint)))
 (define-map sale-data ((nft-index uint)) ((sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint) (bidding-end-time uint)))
+(define-map beneficiaries ((nft-index uint)) ((royalties (list 10 { address: principal, amount: uint}))))
 (define-map my-nft-lookup ((asset-hash (buff 32))) ((nft-index uint)))
 (define-map transfer-map ((nft-index uint)) ((transfer-count uint)))
 (define-map transfer-history-map ((nft-index uint) (transfer-count uint)) ((from principal) (to principal) (sale-type uint) (when uint) (amount uint)))
@@ -155,12 +157,9 @@ export default {
 (define-constant same-spender-err (err u17))
 (define-constant failed-to-mint-err (err u18))
 
-;;(define-constant not-approved-spender-err (err u19))
-;;(define-constant failed-to-move-token-err (err u20))
-;;(define-constant unauthorized-transfer-err (err u21))
-
 ;; public methods
 ;; --------------
+;; the contract administrator can change the contract administrator
 (define-public (transfer-administrator (new-administrator principal))
     (begin
         (asserts! (is-eq (var-get administrator) tx-sender) not-allowed)
@@ -169,6 +168,7 @@ export default {
     )
 )
 
+;; the contract administrator can change the transfer fee charged by the contract on sale of tokens
 (define-public (change-fee (new-fee uint))
     (begin
         (asserts! (is-eq (var-get administrator) tx-sender) not-allowed)
@@ -177,6 +177,8 @@ export default {
     )
 )
 
+;; the contract administrator can change the base uri - where meta data for tokens in this contract
+;; are located
 (define-public (update-base-token-uri (new-base-token-uri (buff 100)))
     (begin
         (asserts! (is-eq (var-get administrator) tx-sender) not-allowed)
@@ -185,6 +187,7 @@ export default {
     )
 )
 
+;; the contract administrator can change the mint price
 (define-public (update-mint-price (new-mint-price uint))
     (begin
         (asserts! (is-eq (var-get administrator) tx-sender) not-allowed)
@@ -193,7 +196,14 @@ export default {
     )
 )
 
-(define-public (mint-token (asset-hash (buff 32)))
+;; mint a new token
+;; 1. transfer mint price to the administrator
+;; 2. mint the token using built in mint function
+;; 3. update the two maps - first contains the data indexed by the nft index, second
+;; provides a reverse lookup based on the asset hash - this allows tokens to be located
+;; from just a knowledge of the original asset.
+;; As above but allow a list of beneficiaries defined against the new token.
+(define-public (mint-token (asset-hash (buff 32)) (royalties (list 10 {address: principal, amount: uint})))
     (begin
         (asserts! (> (stx-get-balance tx-sender) (var-get mint-price)) failed-to-mint-err)
         (as-contract
@@ -201,6 +211,7 @@ export default {
         (nft-mint? my-nft (var-get mint-counter) tx-sender)
         (map-insert my-nft-data ((nft-index (var-get mint-counter))) ((asset-hash asset-hash) (date block-height)))
         (map-insert my-nft-lookup ((asset-hash asset-hash)) ((nft-index (var-get mint-counter))))
+        (map-insert beneficiaries ((nft-index (var-get mint-counter))) ((royalties royalties)))
         (var-set mint-counter (+ (var-get mint-counter) u1))
         (ok (var-get mint-counter))
     )
@@ -446,7 +457,7 @@ export default {
       if (!this.validate()) {
         return
       }
-      // contractName = this.this.files[0].name.split(/\./)[1]
+      this.project.projectId = this.params.contractOwner + '.' + this.params.tokenName
       const projectPlus = this.project
       let source = this.contractSource.replaceAll('params.contractOwner', this.params.contractOwner)
       source = source.replaceAll('params.tokenName', this.params.tokenName)
