@@ -7,9 +7,16 @@
     </div>
     <div v-else>
       <div v-for="(appl, idx) in appmapApps" :key="idx" class="mb-4 pb-4 border-bottom">
-        <div>Owner: <span>{{appl.owner}}</span></div>
-        <div>Contract: <span>{{appl.contractId}}</span></div>
-        <div>Base Token URI: <span>{{appl.baseTokenUri}}</span></div>
+        <div class="row">
+          <div class="col-4">
+            <img :src="appl.imageUrl" width="100%"/>
+          </div>
+          <div class="col-8">
+            <div>Owner: <span>{{appl.owner}}</span></div>
+            <div>Contract: <span>{{appl.contractId}}</span></div>
+            <div>Base Token URI: <span>{{appl.baseTokenUri}}</span></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>

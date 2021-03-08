@@ -8,19 +8,18 @@ import {
   callReadOnlyFunction,
   uintCV, bufferCV,
   makeSTXTokenTransfer,
-
   // standardPrincipalCV,
   makeStandardSTXPostCondition,
   FungibleConditionCode
 } from '@stacks/transactions'
-import { openContractDeploy, openContractCall, FinishedTxData } from '@stacks/connect'
+import { openSTXTransfer, openContractDeploy, openContractCall, FinishedTxData } from '@stacks/connect'
 import {
   StacksTestnet
 } from '@stacks/network'
 import axios from 'axios'
 import BigNum from 'bn.js'
 import searchIndexService from '@/services/searchIndexService'
-import { connectWebSocketClient } from '@stacks/blockchain-api-client'
+// import { connectWebSocketClient } from '@stacks/blockchain-api-client'
 
 const network = new StacksTestnet()
 const precision = 1000000
@@ -45,11 +44,11 @@ const pollTxStatus = function (txId) {
   return new Promise((resolve) => {
     let sub
     const subscribe = async txId => {
-      const client = await connectWebSocketClient('wss://stacks-node-api.blockstack.org/')
-      sub = await client.subscribeTxUpdates(txId, update => {
-        resolve(update)
-      })
-      console.log({ client, sub })
+      // const client = await connectWebSocketClient('wss://stacks-node-api.blockstack.org/')
+      // sub = await client.subscribeTxUpdates(txId, update => {
+      //  resolve(update)
+      // })
+      // console.log({ client, sub })
     }
     subscribe(txId)
   })
@@ -162,7 +161,7 @@ const handleCallContractRisidio = function (response, dispatch, resolve) {
     resolve(txResponse)
   })
   resolve(response)
-  dispatch('fetchMacSkyWalletInfo')
+  // dispatch('fetchMacSkyWalletInfo')
 }
 
 const stacksStore = {
@@ -374,7 +373,7 @@ const stacksStore = {
         }
         if (state.provider === 'risidio') {
           axios.post(MESH_API + '/v2/accounts', txOptions).then(response => {
-            dispatch('fetchMacSkyWalletInfo')
+            // dispatch('fetchMacSkyWalletInfo')
             data.result = utils.fromHex(data.functionName, response.data.result)
             resolve(data.result)
           }).catch((error) => {
@@ -382,7 +381,7 @@ const stacksStore = {
           })
         } else {
           axios.post(STACKS_API + path, txOptions.postData, { headers: headers }).then(response => {
-            dispatch('fetchMacSkyWalletInfo')
+            // dispatch('fetchMacSkyWalletInfo')
             data.result = utils.fromHex(data.functionName, response.data.result)
             resolve(data.result)
           }).catch((error) => {
@@ -401,7 +400,7 @@ const stacksStore = {
         }
         axios.post(MESH_API + '/v2/accounts', txOptions).then(response => {
           resolve({ projectId: projectId, interface: response.data })
-          commit('addValue', response)
+          // commit('addValue', response)
         }).catch(() => {
           axios.get(STACKS_API + '/v2/contracts/interface/' + contractAddress + '/' + contractName + '?proof=0').then(response => {
             resolve({ projectId: projectId, interface: response.data })
@@ -562,6 +561,30 @@ const stacksStore = {
         })
       })
     },
+    makeTransferBlockstack ({ state, rootGetters }, data) {
+      return new Promise((resolve, reject) => {
+        const amount = Math.round(data.amountStx * precision)
+        // amount = parseInt(amount, 16)
+        const amountBN = new BigNum(amount)
+        const recipient = data.paymentAddress
+        openSTXTransfer({
+          recipient: recipient,
+          // network: network,
+          amount: amountBN,
+          memo: 'Payment for credits',
+          appDetails: {
+            name: state.appName,
+            icon: state.appLogo
+          },
+          finished: result => {
+            resolve({ result: result })
+          }
+        }).catch((err) => {
+          console.log(err)
+          reject(err)
+        })
+      })
+    },
     makeTransferRisidio ({ state }, data: any) {
       return new Promise((resolve, reject) => {
         if (data.amountStx > 500) {
@@ -626,7 +649,7 @@ const stacksStore = {
           resolve(null)
           pollTxStatus(result.txId).then(() => {
             store.dispatch('projectStore/updateProject', { projectId: datum.projectId, contractId: datum.projectId, txId: result.txId }).then((project) => {
-              dispatch('fetchMacSkyWalletInfo')
+              // dispatch('fetchMacSkyWalletInfo')
               resolve(project)
             })
           })

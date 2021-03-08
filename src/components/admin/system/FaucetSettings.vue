@@ -16,6 +16,7 @@
           v-model="recipient"
           ></b-input>
       </div>
+      <div v-html="message"></div>
       <div class="col-8 mt-3">
         <div>
           <b-button size="lg" class="mb-3" variant="info" @click="makeTransfer">Submit</b-button>
@@ -36,7 +37,8 @@ export default {
   data () {
     return {
       recipient: null,
-      amountStx: null
+      amountStx: null,
+      message: null
     }
   },
   methods: {
@@ -47,7 +49,22 @@ export default {
       this.amountStx = 20
     },
     makeTransfer: function () {
-      this.$store.dispatch('stacksStore/makeTransferRisidio', { amountStx: this.amountStx, recipient: this.recipient })
+      this.$store.commit('setModalMessage', 'Trying the internal risidio method.')
+      this.$root.$emit('bv::show::modal', 'waiting-modal')
+      this.$store.dispatch('stacksStore/makeTransferBlockstack', { amountStx: this.amountStx, recipient: this.recipient }).then((result) => {
+        this.message = result
+        this.$root.$emit('bv::hide::modal', 'waiting-modal')
+      }).catch((error) => {
+        this.message = error
+        this.$store.commit('setModalMessage', 'Trying the stacks wallet method.')
+        this.$root.$emit('bv::show::modal', 'waiting-modal')
+        this.$store.dispatch('stacksStore/makeTransferRisidio', { amountStx: this.amountStx, recipient: this.recipient }).then((result) => {
+          this.message = result
+          this.$root.$emit('bv::hide::modal', 'waiting-modal')
+        }).catch((error) => {
+          this.message = error
+        })
+      })
     }
   },
   computed: {

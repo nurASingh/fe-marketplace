@@ -97,7 +97,7 @@ export default {
   },
   mounted () {
     this.projectId = this.$route.params.projectId
-    this.$store.dispatch('stacksStore/fetchMacSkyWalletInfo')
+    // this.$store.dispatch('stacksStore/fetchMacSkyWalletInfo')
     this.$store.dispatch('applicationStore/lookupApplications')
     /**
     this.$store.dispatch('projectStore/findProjectByProjectId', this.projectId).then((project) => {

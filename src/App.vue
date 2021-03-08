@@ -48,10 +48,11 @@ export default {
     this.$store.dispatch('authStore/fetchMyAccount').then((profile) => {
       this.loaded = true
       this.$store.dispatch('fetchRatesFromDb')
-      this.$store.dispatch('stacksStore/fetchMacSkyWalletInfo')
-      this.$store.dispatch('applicationStore/lookupApplications')
-      this.$store.dispatch('projectStore/fetchMyProjects', profile).catch((err) => {
-        console.log(err)
+      this.$store.dispatch('stacksStore/fetchMacSkyWalletInfo').then(() => {
+        this.$store.dispatch('applicationStore/lookupApplications')
+        this.$store.dispatch('projectStore/fetchMyProjects', profile).catch((err) => {
+          console.log(err)
+        })
       })
     })
     const $self = this
