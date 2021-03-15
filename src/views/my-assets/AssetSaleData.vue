@@ -109,19 +109,6 @@ export default {
         this.$store.commit('setModalMessage', 'There was an error setting trade info.')
       })
     },
-    isValid (warn) {
-      let valid = false
-      if (this.saleType === 1 && this.amountStx > 0 && this.amountStx < 100) {
-        valid = true
-      } else if (this.saleType === 2) {
-        if (this.startingPrice && this.startingPrice > 0) {
-          if (warn) {
-            this.$notify({ type: 'error', title: 'Contract Error', text: 'The contract name must be present and at least 2 characters long.' })
-          }
-        }
-      }
-      return valid
-    },
     projectName (projectId) {
       if (projectId.indexOf('.') === -1) {
         return projectId

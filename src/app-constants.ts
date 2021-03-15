@@ -7,6 +7,7 @@ export const APP_CONSTANTS = {
   KEY_CONFIGURATION: 'getConfiguration',
   KEY_SECTION_HEIGHT: 'getSectionHeight',
   KEY_SECTION_WIDTH: 'getSectionWidth',
+  KEY_GALLERY_IMAGE_WIDTH: 'getGalleryImageHeight',
 
   KEY_APP_MAP: 'applicationStore/getAppmap',
   KEY_APP_MAP_COUNTER: 'applicationStore/getAppmapCounter',

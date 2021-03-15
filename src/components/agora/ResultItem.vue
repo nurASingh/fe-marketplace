@@ -1,8 +1,8 @@
 <template>
 <div>
 <router-link :to="assetUrl">
-  <div id="result-item" class="mb-4">
-    <img style="max-width: 300px;" width="100%" :src="result.assetUrl"/>
+  <div ref="lndQrcode" class="result-item mb-4 bg-light" :style="calcHeight()">
+    <!-- <img style="max-width: 300px;" width="100%" :src="result.assetUrl"/> -->
     <!-- <div style="position: absolute; top: -20px; left: 15px; font-size: 2rem;"><b-badge variant="light">{{result.nftIndex}} <span class="sr-only">NFT</span></b-badge></div> -->
     <div><a style="position: absolute; top: 0px; right: 0; font-size: 2rem; z-index: 10;" @click.prevent="toggleFavourite()" href="#"><img ref="lndQrcode" :src="(amIOwner()) ? likeIconPurple : likeIconTurquoise" alt="like-icon"></a></div>
     <!--<div class="result__item--description" v-if="dHover[index]" v-html="item.b1_text1[0].text"></div>-->
@@ -28,6 +28,7 @@
 import { APP_CONSTANTS } from '@/app-constants'
 import moment from 'moment'
 import utils from '@/services/utils'
+import Vue from 'vue'
 
 export default {
   name: 'ResultGrid',
@@ -36,9 +37,20 @@ export default {
   props: ['result'],
   data () {
     return {
+      height: 300,
       likeIconTurquoise: require('@/assets/img/Favorite_button_turquoise_empty.png'),
       likeIconPurple: require('@/assets/img/Favorite_button_purple_empty.png')
     }
+  },
+  mounted () {
+    Vue.nextTick(function () {
+      const ele = this.$refs.lndQrcode
+      let width = 300
+      if (ele) {
+        width = ele.clientWidth
+      }
+      this.height = this.$store.getters[APP_CONSTANTS.KEY_GALLERY_IMAGE_WIDTH](width)
+    }, this)
   },
   methods: {
     hoverIn (index) {
@@ -58,6 +70,19 @@ export default {
           this.$notify({ type: 'info', title: 'Favourites', text: this.result.title + ' has been removed from your favourites.' })
         }
       })
+    },
+    calcHeight () {
+      return {
+        height: this.height + 'px',
+        width: '100%',
+        'background-repeat': 'no-repeat',
+        'background-image': `url(${this.result.assetUrl})`,
+        'background-position': 'center center',
+        '-webkit-background-size': 'contain',
+        '-moz-background-size': 'contain',
+        '-o-background-size': 'contain',
+        'background-size': 'contain'
+      }
     },
     truncateProjectId (projectId) {
       if (projectId.indexOf('.') > -1) {
@@ -113,14 +138,14 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-#result-item {
+.result-item {
   position: relative;
 }
 .flasher {
   width: 50px;
   height: 50px;
 }
-#result-item {
+.result-item {
   /* ITEMS STYLE */
 
   & .result__item--overlay {

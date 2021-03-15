@@ -193,7 +193,7 @@ export default {
         // this.$router.push('/my-app/' + project.projectId)
         this.$root.$emit('bv::hide::modal', 'waiting-modal')
         this.$root.$emit('bv::show::modal', 'success-modal')
-        this.$store.commit('setModalMessage', 'Application is now connected to the Stacks blockchain.')
+        this.$store.commit('setModalMessage', 'Project has been defined and saved.')
       }).catch((error) => {
         // this.$notify({ type: 'error', title: 'Transfers', text: 'Error message: ' + error })
         this.$store.commit('setModalMessage', 'Error occurred processing transaction.')

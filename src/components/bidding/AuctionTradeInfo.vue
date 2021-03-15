@@ -36,7 +36,7 @@ import { Datetime } from 'vue-datetime'
 import { APP_CONSTANTS } from '@/app-constants'
 
 export default {
-  name: 'SellAuction',
+  name: 'AuctionTradeInfo',
   components: {
     Datetime
   },

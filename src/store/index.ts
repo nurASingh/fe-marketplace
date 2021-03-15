@@ -71,6 +71,10 @@ export default new Vuex.Store({
     xgeRates: null
   },
   getters: {
+    getGalleryImageHeight: state => width => {
+      const snapHeight = (width * 1024) / 716
+      return snapHeight
+    },
     getExchangeRates: state => {
       return state.xgeRates
     },
@@ -150,6 +154,16 @@ export default new Vuex.Store({
         })
       })
     },
+    /**
+    fetchRates ({ state, commit }, configuration) {
+      return new Promise((resolve, reject) => {
+        MESH_API = configuration.risidioBaseApi + '/mesh'
+        axios.get(MESH_API + '/v1/rates/ticker').then(response => {
+          commit('setTickerRates', response.data)
+        })
+      })
+    },
+    **/
     fetchRatesFromDb ({ commit }) {
       return new Promise(() => {
         searchIndexService.getExchangeRates().then((rates: any) => {

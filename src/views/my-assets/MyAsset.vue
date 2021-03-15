@@ -123,7 +123,11 @@ export default {
     },
     projectUrl () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      return decodeURI(asset.assetProjectUrl.replace('_minted', ''))
+      if (asset.assetProjectUrl) {
+        return decodeURI(asset.assetProjectUrl.replace('_minted', ''))
+      } else {
+        return asset.assetProjectUrl
+      }
     }
   }
 }

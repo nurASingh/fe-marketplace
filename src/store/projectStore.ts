@@ -57,6 +57,22 @@ const projectStore = {
     }
   },
   actions: {
+    initSchema ({ state, commit }, profile: any) {
+      return new Promise((resolve) => {
+        if (state.rootFile) {
+          resolve(state.rootFile)
+        } else {
+          projectService.initProject(profile).then((rootFile: object) => {
+            commit('rootFile', rootFile)
+            resolve(rootFile)
+          }).catch(() => {
+            projectService.initProject({}).then((rootFile: object) => {
+              resolve(rootFile)
+            })
+          })
+        }
+      })
+    },
     toggleFavourite ({ commit }: any, favourite: any) {
       return new Promise((resolve, reject) => {
         const profile = store.getters[APP_CONSTANTS.KEY_PROFILE]

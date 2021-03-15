@@ -46,12 +46,12 @@ export default {
     this.adminPage = this.isHeaderLess()
     this.$store.dispatch('applicationStore/lookupApplications')
     this.$store.dispatch('authStore/fetchMyAccount').then((profile) => {
-      this.loaded = true
       this.$store.dispatch('fetchRatesFromDb')
       this.$store.dispatch('stacksStore/fetchMacSkyWalletInfo').then(() => {
         this.$store.dispatch('applicationStore/lookupApplications')
-        this.$store.dispatch('projectStore/fetchMyProjects', profile).catch((err) => {
-          console.log(err)
+        this.$store.dispatch('projectStore/initSchema', profile).then(() => {
+          this.loaded = true
+          this.$store.dispatch('projectStore/fetchMyProjects', profile)
         })
       })
     })
