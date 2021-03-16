@@ -130,7 +130,8 @@ export default {
 (define-map my-nft-data ((nft-index uint)) ((asset-hash (buff 32)) (max-editions uint) (edition uint) (date uint) (series-original uint)))
 (define-map my-nft-edition-pointer ((nft-index uint)) ((current-edition uint)))
 (define-map sale-data ((nft-index uint)) ((sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint) (bidding-end-time uint)))
-(define-map beneficiaries ((nft-index uint)) ((royalties (list 10 { address: principal, amount: uint}))))
+;; (define-map beneficiaries ((nft-index uint)) ((royalties (list u10 { address: principal, amount: uint}))))
+(define-map beneficiaries ((nft-index uint)) ((addresses (list u10 principal)) (shares (list u10 uint))))
 (define-map my-nft-lookup ((asset-hash (buff 32)) (edition uint)) ((nft-index uint)))
 (define-map transfer-map ((nft-index uint)) ((transfer-count uint)))
 (define-map transfer-history-map ((nft-index uint) (transfer-count uint)) ((from principal) (to principal) (sale-type uint) (when uint) (amount uint)))
@@ -209,7 +210,7 @@ export default {
 ;; Note series-original in the case of the original in series is just
 ;; mintCounter - for editions this provides a safety hook back to the original in cases
 ;; where the asset hash is unknown (ie cant be found from my-nft-lookup).
-(define-public (mint-token (asset-hash (buff 32)) (max-editions uint) (royalties (list 10 {address: principal, amount: uint})))
+(define-public (mint-token (asset-hash (buff 32)) (max-editions uint) (addresses (list u10 principal)) (shares (list u10 uint)))
     (let
         (
             (mintCounter (var-get mint-counter))
@@ -222,7 +223,7 @@ export default {
         (map-insert my-nft-data ((nft-index mintCounter)) ((asset-hash asset-hash) (max-editions max-editions) (edition u0) (date block-height) (series-original mintCounter)))
         (map-insert my-nft-edition-pointer ((nft-index mintCounter)) ((current-edition u1)))
         (map-insert my-nft-lookup ((asset-hash asset-hash) (edition u0)) ((nft-index mintCounter)))
-        (map-insert beneficiaries ((nft-index mintCounter)) ((royalties royalties)))
+        (map-insert beneficiaries ((nft-index mintCounter)) ((addresses addresses) (shares shares)))
         ;; finally - mint the NFT and step the counter
         (nft-mint? my-nft mintCounter tx-sender)
         (var-set mint-counter (+ mintCounter u1))
@@ -312,6 +313,7 @@ export default {
         (stx-transfer? (/ (* amount platformFee) u100) tx-sender (var-get administrator))
         (stx-transfer? (/ (* amount (- u100 platformFee)) u100) tx-sender owner)
         (nft-transfer? my-nft nft-index owner tx-sender)
+        (ok nft-index)
     )
 )
 
@@ -381,12 +383,12 @@ export default {
 )
 
 (define-read-only (get-transfer-count (nft-index uint))
-    (let
-        (
-            (count (default-to u0 (get transfer-count (map-get? transfer-map (tuple (nft-index nft-index))))))
-        )
-        (ok count)
-    )
+  (let
+      (
+          (count (default-to u0 (get transfer-count (map-get? transfer-map (tuple (nft-index nft-index))))))
+      )
+      (ok count)
+  )
 )
 
 (define-read-only (get-token-name)
@@ -402,18 +404,22 @@ export default {
 (define-private (payment-split (nft-index uint))
     (let
         (
-            (royalties (unwrap! (get royalties (map-get? beneficiaries {nft-index: nft-index})) failed-to-mint-err))
-            (numbRoyalties (len (unwrap! (get royalties (map-get? beneficiaries {nft-index: nft-index})) failed-to-mint-err)))
+            (addresses (unwrap! (get addresses (map-get? beneficiaries {nft-index: nft-index})) failed-to-mint-err))
+            (shares (unwrap! (get shares (map-get? beneficiaries {nft-index: nft-index})) failed-to-mint-err))
             (saleType (unwrap! (get sale-type (map-get? sale-data {nft-index: nft-index})) amount-not-set))
-            (amount (unwrap! (get amount-stx (map-get? sale-data {nft-index: nft-index})) amount-not-set))
+            (saleAmount (unwrap! (get amount-stx (map-get? sale-data {nft-index: nft-index})) amount-not-set))
             (owner (unwrap! (nft-get-owner? my-nft nft-index) seller-not-found))
-            (platformFee (var-get platform-fee))
         )
         (asserts! (or (is-eq saleType u1) (is-eq saleType u2)) not-approved-to-sell)
-        (asserts! (> (stx-get-balance tx-sender) amount) failed-to-mint-err)
+        (asserts! (> (stx-get-balance tx-sender) saleAmount) failed-to-mint-err)
+        ;;(pay-royalty saleAmount (element-at addresses u0))
+        (ok true)
+    )
+)
 
-        (stx-transfer? (/ (* amount platformFee) u100) tx-sender (var-get administrator))
-        (stx-transfer? (/ (* amount (- u100 platformFee)) u100) tx-sender owner)
+(define-private (pay-royalty (saleAmount uint) (payee principal))
+    (begin
+        (stx-transfer? (/ (* saleAmount u5) u10000) tx-sender payee)
         (ok true)
     )
 )
