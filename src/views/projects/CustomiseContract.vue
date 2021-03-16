@@ -237,27 +237,34 @@ export default {
 (define-public (mint-edition (nft-index uint) (edition uint))
     (let
         (
+            ;; before we start... check the hash corresponds to a minted asset
+            (ahash (unwrap! (get asset-hash (map-get? my-nft-data {nft-index: nft-index})) failed-to-mint-err))
             (mintCounter (var-get mint-counter))
-            (saleType (get sale-type (map-get? sale-data {nft-index: nft-index})))
-            (ahash (get asset-hash (map-get? my-nft-data {nft-index: nft-index})))
-            (amount (get amount-stx (map-get? sale-data {nft-index: nft-index})))
-            (maxEditions (get max-editions (map-get? my-nft-data {nft-index: nft-index})))
+            (editionCounter (unwrap! (get current-edition (map-get? my-nft-edition-pointer {nft-index: nft-index})) failed-to-mint-err))
+            (saleType (unwrap! (get sale-type (map-get? sale-data {nft-index: nft-index})) amount-not-set))
+            (amount (unwrap! (get amount-stx (map-get? sale-data {nft-index: nft-index})) amount-not-set))
+            (maxEditions (unwrap! (get max-editions (map-get? my-nft-data {nft-index: nft-index})) failed-to-mint-err))
         )
-        (asserts! (or (is-eq (unwrap! saleType seller-not-found) u1) (is-eq (unwrap! saleType seller-not-found) u2)) not-approved-to-sell)
-        (asserts! (is-none (get nft-index (map-get? my-nft-lookup ((asset-hash (unwrap! ahash not-found)) (edition edition))))) failed-to-mint-err)
-        (asserts! (> edition u1) failed-to-mint-err) ;; edition 1 minted by mint-token
-        (asserts! (> (stx-get-balance tx-sender) (unwrap! amount amount-not-set)) failed-to-mint-err)
-        (asserts! (> edition (unwrap! amount amount-not-set)) not-allowed)
-        (asserts! (is-some ahash) asset-not-registered)
-        (asserts! (is-some amount) not-allowed)
-        ;; set max editions to zero to indicate this is an edition
-        (map-insert my-nft-data ((nft-index mintCounter)) ((asset-hash (unwrap! ahash not-found)) (max-editions u0) (edition edition) (date block-height) (series-original nft-index)))
+        (asserts! (or (is-eq saleType u1) (is-eq saleType u2)) not-approved-to-sell)
+        (asserts! (is-none (get nft-index (map-get? my-nft-lookup ((asset-hash ahash) (edition edition))))) failed-to-mint-err)
+        (asserts! (> edition u0) failed-to-mint-err)
+        (asserts! (<= edition maxEditions) not-allowed)
+        (asserts! (> (stx-get-balance tx-sender) amount) failed-to-mint-err)
+
+        ;; set the current-edition pointer to next edition
+        (map-set my-nft-edition-pointer ((nft-index nft-index)) ((current-edition (+ editionCounter u1))))
+
+        ;; set max editions to zero and edition to current edition pointer to indicate this is an edition
+        (map-insert my-nft-data ((nft-index mintCounter)) ((asset-hash ahash) (max-editions u0) (edition editionCounter) (date block-height) (series-original nft-index)))
+
         ;; put the nft index into the list of editions in the look up map
-        (map-insert my-nft-lookup ((asset-hash (unwrap! ahash not-found)) (edition edition)) ((nft-index mintCounter)))
+        (map-insert my-nft-lookup ((asset-hash ahash) (edition edition)) ((nft-index mintCounter)))
+
         ;;
         ;; requires payemnt split..
         ;;
-        ;; finally - mint the NFT and step the counter
+
+        ;; finally - mint the NFT and step the contract wide nft counter
         (nft-mint? my-nft mintCounter tx-sender)
         (var-set mint-counter (+ mintCounter u1))
         (ok mintCounter)
@@ -288,22 +295,23 @@ export default {
 (define-public (transfer-from (nft-index uint))
     (let
         (
-            (saleType (get sale-type (map-get? sale-data {nft-index: nft-index})))
-            (amount (get amount-stx (map-get? sale-data {nft-index: nft-index})))
-            (owner (nft-get-owner? my-nft nft-index))
+            (saleType (unwrap! (get sale-type (map-get? sale-data {nft-index: nft-index})) amount-not-set))
+            (amount (unwrap! (get amount-stx (map-get? sale-data {nft-index: nft-index})) amount-not-set))
+            (owner (unwrap! (nft-get-owner? my-nft nft-index) seller-not-found))
             (ahash (get asset-hash (map-get? my-nft-data {nft-index: nft-index})))
+            (platformFee (var-get platform-fee))
         )
         (asserts! (is-some ahash) asset-not-registered)
-        (asserts! (is-eq (unwrap! saleType seller-not-found) u1) not-approved-to-sell)
-        (asserts! (> (unwrap! amount amount-not-set) u0) amount-not-set)
+        (asserts! (is-eq saleType u1) not-approved-to-sell)
+        (asserts! (> amount u0) amount-not-set)
         (let ((count (inc-transfer-count nft-index)))
-            (add-transfer nft-index (- count u1) (unwrap! owner seller-not-found) tx-sender (unwrap! saleType seller-not-found) u0 (unwrap! amount amount-not-set))
+            (add-transfer nft-index (- count u1) owner tx-sender saleType u0 amount)
         )
         ;; (map-set my-nft-data { nft-index: nft-index } { asset-hash: (unwrap! ahash not-found),  edition: edition, date: block-height, series-original: nft-index })
         (map-set sale-data { nft-index: nft-index } { amount-stx: u0, bidding-end-time: u0, increment-stx: u0, reserve-stx: u0, sale-type: u0 })
-        (stx-transfer? (/ (* (unwrap! amount amount-not-set) (var-get platform-fee)) u100) tx-sender (var-get administrator))
-        (stx-transfer? (/ (* (unwrap! amount amount-not-set) (- u100 (var-get platform-fee))) u100) tx-sender (unwrap! owner seller-not-found))
-        (nft-transfer? my-nft nft-index (unwrap! owner seller-not-found) tx-sender)
+        (stx-transfer? (/ (* amount platformFee) u100) tx-sender (var-get administrator))
+        (stx-transfer? (/ (* amount (- u100 platformFee)) u100) tx-sender owner)
+        (nft-transfer? my-nft nft-index owner tx-sender)
     )
 )
 
