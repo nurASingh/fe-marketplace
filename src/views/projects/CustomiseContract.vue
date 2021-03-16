@@ -258,16 +258,16 @@ export default {
         (map-insert my-nft-data ((nft-index mintCounter)) ((asset-hash ahash) (max-editions u0) (edition editionCounter) (date block-height) (series-original nft-index)))
 
         ;; put the nft index into the list of editions in the look up map
-        (map-insert my-nft-lookup ((asset-hash ahash) (edition edition)) ((nft-index mintCounter)))
+        (map-insert my-nft-lookup ((asset-hash ahash) (edition editionCounter)) ((nft-index mintCounter)))
 
-        ;;
-        ;; requires payemnt split..
-        ;;
-
-        ;; finally - mint the NFT and step the contract wide nft counter
+        ;; mint the NFT and update the counter for the next..
         (nft-mint? my-nft mintCounter tx-sender)
         (var-set mint-counter (+ mintCounter u1))
-        (ok mintCounter)
+
+        ;; finally send the payments - or roll everything back.
+        (if (is-ok (payment-split nft-index))
+            (ok mintCounter) not-allowed
+        )
     )
 )
 
@@ -399,10 +399,22 @@ export default {
 
 ;; private methods
 ;; ---------------
-(define-private (payment-split (nft-index uint) (amount uint))
-    (if (is-eq (some tx-sender) (nft-get-owner? my-nft nft-index))
+(define-private (payment-split (nft-index uint))
+    (let
+        (
+            (royalties (unwrap! (get royalties (map-get? beneficiaries {nft-index: nft-index})) failed-to-mint-err))
+            (numbRoyalties (len (unwrap! (get royalties (map-get? beneficiaries {nft-index: nft-index})) failed-to-mint-err)))
+            (saleType (unwrap! (get sale-type (map-get? sale-data {nft-index: nft-index})) amount-not-set))
+            (amount (unwrap! (get amount-stx (map-get? sale-data {nft-index: nft-index})) amount-not-set))
+            (owner (unwrap! (nft-get-owner? my-nft nft-index) seller-not-found))
+            (platformFee (var-get platform-fee))
+        )
+        (asserts! (or (is-eq saleType u1) (is-eq saleType u2)) not-approved-to-sell)
+        (asserts! (> (stx-get-balance tx-sender) amount) failed-to-mint-err)
+
+        (stx-transfer? (/ (* amount platformFee) u100) tx-sender (var-get administrator))
+        (stx-transfer? (/ (* amount (- u100 platformFee)) u100) tx-sender owner)
         (ok true)
-        not-allowed
     )
 )
 
