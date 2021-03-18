@@ -27,7 +27,7 @@ let STX_CONTRACT_ADDRESS = process.env.VUE_APP_STACKS_CONTRACT_ADDRESS
 let STX_CONTRACT_NAME = process.env.VUE_APP_STACKS_CONTRACT_NAME
 const mac = JSON.parse(process.env.VUE_APP_WALLET_MAC || '')
 const sky = JSON.parse(process.env.VUE_APP_WALLET_SKY || '')
-const contractDeployFee = 20000
+const contractDeployFee = 35000
 
 const STACKS_API = process.env.VUE_APP_API_STACKS
 // const STACKS_API_EXT = process.env.VUE_APP_API_STACKS_EXT
@@ -419,7 +419,8 @@ const stacksStore = {
         const reservePrice = uintCV(utils.toOnChainAmount(asset.tradeInfo.reservePrice))
         const buyNowOrStartingPrice = uintCV(utils.toOnChainAmount(asset.tradeInfo.buyNowOrStartingPrice))
         const biddingEndTime = uintCV(asset.tradeInfo.biddingEndTime)
-        const functionArgs = [buffer, saleType, incrementPrice, reservePrice, buyNowOrStartingPrice, biddingEndTime]
+        const auctionId = uintCV(asset.tradeInfo.biddingEndTime)
+        const functionArgs = [buffer, saleType, incrementPrice, reservePrice, buyNowOrStartingPrice, biddingEndTime, auctionId]
         const data: any = {
           contractAddress: asset.projectId.split('.')[0],
           contractName: asset.projectId.split('.')[1],

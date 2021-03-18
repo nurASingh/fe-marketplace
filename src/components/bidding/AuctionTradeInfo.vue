@@ -53,7 +53,7 @@ export default {
         incrementPrice: 1,
         buyNowOrStartingPrice: 0,
         reservePrice: 0,
-        biddingEndTime: String(moment({}).valueOf())
+        biddingEndTime: String(moment().unix())
       }
     }
   },
@@ -99,7 +99,7 @@ export default {
       this.$emit('setTradeInfo', chainTradeInfo)
     },
     checkEndTime () {
-      const now = moment({}).valueOf()
+      const now = moment().unix()
       const diff = this.tradeInfo.biddingEndTime - now
       return diff > 0
     },
