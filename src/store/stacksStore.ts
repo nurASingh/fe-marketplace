@@ -27,7 +27,7 @@ let STX_CONTRACT_ADDRESS = process.env.VUE_APP_STACKS_CONTRACT_ADDRESS
 let STX_CONTRACT_NAME = process.env.VUE_APP_STACKS_CONTRACT_NAME
 const mac = JSON.parse(process.env.VUE_APP_WALLET_MAC || '')
 const sky = JSON.parse(process.env.VUE_APP_WALLET_SKY || '')
-const contractDeployFee = 35000
+const contractDeployFee = 40000
 
 const STACKS_API = process.env.VUE_APP_API_STACKS
 // const STACKS_API_EXT = process.env.VUE_APP_API_STACKS_EXT

@@ -233,17 +233,10 @@ const applicationStore = {
         const functionArgs = [`0x${serializeCV(uintCV(appdata.index)).toString('hex')}`]
         const config = {
           contractId: appdata.application.contractId,
-          functionName: 'get-token-info-full',
+          functionName: 'get-token-by-index',
           functionArgs: functionArgs
         }
         store.dispatch('stacksStore/callContractReadOnly', config).then((clarityAsset) => {
-          // const buffer = `0x${serializeCV(bufferCV(Buffer.from(clarityAsset.assetHash, 'hex'))).toString('hex')}` // Buffer.from(hash.toString(CryptoJS.enc.Hex), 'hex')
-          // const myConfig = {
-          //  contractId: appdata.application.contractId,
-          //  functionName: 'get-index',
-          //  functionArgs: [buffer]
-          // }
-          // store.dispatch('stacksStore/callContractReadOnly', myConfig).then((nftIndex) => {
           clarityAsset.nftIndex = appdata.index
           appdata.application.numberCalls++
           commit('addClarityAssetToAppmap', { application: appdata.application, asset: clarityAsset })

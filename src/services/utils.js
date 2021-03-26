@@ -106,8 +106,6 @@ const utils = {
     }
     if (method === 'get-mint-price') {
       return res.value.value.toNumber()
-    } else if (method === 'get-index') {
-      return res.value.value.toNumber()
     } else if (method === 'get-mint-counter') {
       return res.value.value.toNumber()
     } else if (method === 'get-app-counter') {
@@ -119,19 +117,27 @@ const utils = {
         status: res.value.data.status.value.toNumber(),
         storageModel: res.value.data['storage-model'].value.toNumber()
       }
-    } else if (method === 'get-token-info') {
-      return {
-        // owner: td.decode(res.value.data.owner.buffer),
-        assetHash: res.value.data['asset-hash'].buffer.toString('hex'),
-        date: res.value.data.date.value.toNumber()
-      }
-    } else if (method === 'get-token-info-full') {
+    } else if (method === 'get-token-by-index' || method === 'get-token-by-hash' || method === 'get-edition-by-hash') {
       const clarityAsset = {}
-      if (res.value.data.owner) {
-        clarityAsset.owner = res.value.data.owner.address.hash160
+      const tokenData = res.value.value.data
+      clarityAsset.nftIndex = tokenData.nftIndex.value.toNumber()
+      clarityAsset.editionCounter = tokenData.editionCounter.value.toNumber()
+      clarityAsset.transferCounter = tokenData.transferCounter.value.toNumber()
+      clarityAsset.highBidCounter = tokenData.bidCounter.value.toNumber()
+      clarityAsset.offerCounter = tokenData.offerCounter.value.toNumber()
+      if (tokenData.owner) {
+        clarityAsset.owner = tokenData.owner.address.hash160
       }
-      if (res.value.data['sale-data']) {
-        const saleData = res.value.data['sale-data']
+      clarityAsset.tradeInfo = {
+        saleType: 0,
+        buyNowOrStartingPrice: 0,
+        incrementPrice: 0,
+        reservePrice: 0,
+        biddingEndTime: 0,
+        auctionId: 0
+      }
+      if (tokenData.saleData) {
+        const saleData = tokenData.saleData
         if (saleData.value) {
           const tradeInfo = {}
           tradeInfo.biddingEndTime = saleData.value.data['bidding-end-time'].value.toNumber()
@@ -139,15 +145,18 @@ const utils = {
           tradeInfo.reservePrice = this.fromMicroAmount(saleData.value.data['reserve-stx'].value.toNumber())
           tradeInfo.buyNowOrStartingPrice = this.fromMicroAmount(saleData.value.data['amount-stx'].value.toNumber())
           tradeInfo.saleType = saleData.value.data['sale-type'].value.toNumber()
+          tradeInfo.saleCycle = saleData.value.data['sale-cycle-index'].value.toNumber()
           clarityAsset.tradeInfo = tradeInfo
         }
       }
-      if (res.value.data['token-info']) {
-        clarityAsset.assetHash = res.value.data['token-info'].value.data['asset-hash'].buffer.toString('hex')
-        clarityAsset.date = res.value.data['token-info'].value.data.date.value.toNumber()
+      if (tokenData.tokenInfo) {
+        clarityAsset.assetHash = tokenData.tokenInfo.value.data['asset-hash'].buffer.toString('hex')
+        clarityAsset.edition = tokenData.tokenInfo.value.data.edition.value.toNumber()
+        clarityAsset.seriesOriginal = tokenData.tokenInfo.value.data['series-original'].value.toNumber()
+        clarityAsset.date = tokenData.tokenInfo.value.data.date.value.toNumber()
       }
-      if (res.value.data['transfer-count']) {
-        clarityAsset.transferCount = res.value.data['transfer-count'].value.toNumber()
+      if (tokenData.transferCounter) {
+        clarityAsset.transferCount = tokenData.transferCounter.value.toNumber()
       }
       return clarityAsset
     } else if (method === 'get-sale-data') {
@@ -156,7 +165,6 @@ const utils = {
         incrementPrice: this.fromMicroAmount(res.value.data['increment-stx'].value.toNumber()),
         reservePrice: this.fromMicroAmount(res.value.data['reserve-stx'].value.toNumber()),
         buyNowOrStartingPrice: this.fromMicroAmount(res.value.data['amount-stx'].value.toNumber()),
-        auctionId: this.fromMicroAmount(res.value.data['auction-id'].value.toNumber()),
         saleType: res.value.data['sale-type'].value.toNumber()
       }
     } else if (method === 'get-base-token-uri') {
