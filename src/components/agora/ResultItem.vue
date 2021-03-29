@@ -49,7 +49,7 @@ export default {
       if (ele) {
         width = ele.clientWidth
       }
-      this.height = this.$store.getters[APP_CONSTANTS.KEY_GALLERY_IMAGE_WIDTH](width)
+      this.height = width // this.$store.getters[APP_CONSTANTS.KEY_GALLERY_IMAGE_WIDTH](width)
     }, this)
   },
   methods: {
@@ -78,10 +78,10 @@ export default {
         'background-repeat': 'no-repeat',
         'background-image': `url(${this.result.assetUrl})`,
         'background-position': 'center center',
-        '-webkit-background-size': 'contain',
-        '-moz-background-size': 'contain',
-        '-o-background-size': 'contain',
-        'background-size': 'contain'
+        '-webkit-background-size': 'cover',
+        '-moz-background-size': 'cover',
+        '-o-background-size': 'cover',
+        'background-size': 'cover'
       }
     },
     truncateProjectId (projectId) {

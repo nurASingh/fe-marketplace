@@ -77,7 +77,7 @@ export default {
       } else if (this.searchType === 'projects') {
         mapped = this.searchResults.map(function (a) { return { id: $self.contract(a.contractId), owner: a.owner, updated: moment(a.updated).format('YYYY-MM-DD HH:mm:SS'), title: a.gaiaProject.title, type: a.gaiaProject.objType, assetUrl: '<img width="50px" height="50px" src="' + a.gaiaProject.imageUrl + '"/>' } })
       } else {
-        mapped = this.searchResults.map(function (a) { return { owner: a.owner, updated: moment(a.updated).format('YYYY-MM-DD HH:mm:SS'), title: a.title, assetUrl: (a.assetProjectUrl) ? '<a href="' + a.assetProjectUrl + '" target="_blank"><img width="50px" height="50px" src="' + a.assetUrl + '"/></a>' : '', projectId: a.projectId } })
+        mapped = this.searchResults.map(function (a) { return { owner: a.owner, updated: moment(a.updated).format('YYYY-MM-DD HH:mm:SS'), title: a.title, assetUrl: '<a href="' + a.assetProjectUrl + '" target="_blank"><img width="50px" height="50px" src="' + a.assetUrl + '"/></a>', projectId: a.projectId } })
       }
       return mapped
     },

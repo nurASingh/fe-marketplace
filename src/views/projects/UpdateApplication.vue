@@ -41,6 +41,14 @@
                   ></b-textarea>
               </div>
               <div class="mb-4">
+                <div class="text2">Gaia Filename</div>
+                <b-input
+                  id="gaiaFilename"
+                  ref="gaiaFilename"
+                  v-model="project.gaiaFilename"
+                  ></b-input>
+              </div>
+              <div class="mb-4">
                 <div class="text2">Contract Id <a v-if="!project.txId" href="#" @click.prevent="useMyAddress()">(use my address)</a></div>
                 <b-input
                   id="projectId"
@@ -87,6 +95,7 @@ export default {
       project: {
         logo: require('@/assets/img/risidio_collection_logo.svg'),
         projectId: null,
+        gaiaFilename: '',
         mintPrice: '',
         title: '',
         description: ''
