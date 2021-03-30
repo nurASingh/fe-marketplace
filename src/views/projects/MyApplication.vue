@@ -26,6 +26,12 @@
                     <div class="mb-2 text1"><span>Contract found on the <a class="text-info" :href="openContractUrl()" target="_blank">Stacks Blockchain</a>  <a href="#" @click="showContractData = !showContractData">show contract</a></span></div>
                     <div class="mb-2 text1" v-if="appmapProject">
                       Application is registered with the marketplace (#{{appmapProject.appCounter}})
+                      <div v-if="appmapProject.status === 0" class="mb-2 text1">
+                         <a href="#" @click.prevent="disableApplication(1)">disable</a>
+                      </div>
+                      <div v-else-if="appmapProject.status === 1" class="mb-2 text1">
+                         <a href="#" @click.prevent="disableApplication(0)">enable</a>
+                      </div>
                     </div>
                     <div class="mt-4 mb-2 text1" v-else>
                       <b-button @click.prevent="connectApp()" variant="info">Connect App to Marketplace</b-button>
@@ -149,6 +155,31 @@ export default {
           this.result = error
           this.$store.commit('setModalMessage', 'Error occurred processing transaction.')
         })
+      })
+    },
+    disableApplication (status) {
+      const project = this.$store.getters[APP_CONSTANTS.KEY_MY_PROJECT](this.projectId)
+      const appmapContractId = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_CONTRACT_ID]
+      const owner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].username
+      const functionArgs = [bufferCV(Buffer.from(owner)), bufferCV(Buffer.from(project.gaiaFilename)), bufferCV(Buffer.from(this.projectId)), intCV(0), intCV(status)]
+      const data = {
+        contractAddress: appmapContractId.split('.')[0],
+        contractName: appmapContractId.split('.')[1],
+        functionName: 'set-app-status',
+        functionArgs: functionArgs,
+        eventCode: 'disable-application'
+      }
+      const walletMode = this.$store.getters[APP_CONSTANTS.KEY_WALLET_MODE]
+      const method = (walletMode === 'risidio') ? 'stacksStore/callContractRisidio' : 'stacksStore/callContractBlockstack'
+      this.$root.$emit('bv::show::modal', 'waiting-modal')
+      this.$store.dispatch(method, data).then((result) => {
+        this.result = result
+        this.$root.$emit('bv::hide::modal', 'waiting-modal')
+        this.$root.$emit('bv::show::modal', 'success-modal')
+        this.$store.commit('setModalMessage', 'Application is now connected to the Stacks blockchain.')
+      }).catch((error) => {
+        this.result = error
+        this.$store.commit('setModalMessage', 'Error occurred processing transaction.')
       })
     },
     openContractUrl () {

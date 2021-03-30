@@ -24,6 +24,10 @@ Vue.use(PrismicVue, {
 })
 
 Vue.config.productionTip = false
+declare global {
+  interface Window { eventBus: any }
+}
+window.eventBus = new Vue()
 
 new Vue({
   router,

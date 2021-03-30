@@ -1,9 +1,10 @@
-import projectService from '@/services/projectService.js'
-import store from '.'
-import { uintCV, intCV, serializeCV } from '@stacks/transactions'
-import searchIndexService from '@/services/searchIndexService'
+import SockJS from 'sockjs-client'
+import Stomp from '@stomp/stompjs'
+import axios from 'axios'
 
-const KEY_GAIA_PROJECT = 'getGaiaProject'
+let socket = null
+let stompClient = null
+
 const mac = JSON.parse(process.env.VUE_APP_WALLET_MAC || '')
 const STX_CONTRACT_ADDRESS = process.env.VUE_APP_STACKS_CONTRACT_ADDRESS
 const MESH_API = process.env.VUE_APP_API_MESH
@@ -12,19 +13,52 @@ let appContractAddress = mac.keyInfo.address + '.appmap'
 if (MESH_API.indexOf('local') === -1) {
   appContractAddress = STX_CONTRACT_ADDRESS + '.appmap'
 }
+const loadAssetsFromGaia = function (dispatch, state) {
+  try {
+    state.appMapContract.applications.forEach((app) => {
+      if (app.tokenContract && app.tokenContract.tokens) {
+        app.tokenContract.tokens.forEach((token) => {
+          dispatch('fetchGaiaData', { gaiaFilename: app.gaiaFilename, gaiaUsername: token.tokenInfo['gaia-username'].value, assetHash: token.tokenInfo['asset-hash'].valueHex })
+        })
+      }
+    })
+  } catch (err) {
+  }
+}
+const subscribeApiNews = function (commit, connectUrl) {
+  if (!socket) socket = new SockJS(connectUrl + '/api-news')
+  if (!stompClient) stompClient = Stomp.over(socket)
+  stompClient.connect({}, function () {
+    stompClient.subscribe('/queue/rates-news', function (response) {
+      const rates = JSON.parse(response.body)
+      commit('setTickerRates', rates.tickerRates)
+    })
+    stompClient.subscribe('/queue/contract-news', function (response) {
+      const appMapContract = JSON.parse(response.body)
+      commit('setAppMapContract', appMapContract)
+    })
+  },
+  function (error) {
+    console.log(error)
+  })
+}
 
 const applicationStore = {
   namespaced: true,
   state: {
-    rootFile: null,
+    rpayContractData: null,
     appmap: {
       apps: []
     },
     gaiaProjects: [],
     appCounter: -1,
+    tickerRates: null,
     appmapContractId: appContractAddress
   },
   getters: {
+    getRpayContractData: (state: any) => {
+      return state.rpayContractData
+    },
     getAppmapTxId: (state: any) => {
       return state.appmap.txId
     },
@@ -40,6 +74,10 @@ const applicationStore = {
       return null
     },
     getClarityAssets: (state: any) => (appCounter: string) => {
+      const application = state.rpayContractData.applications[appCounter]
+      if (application && application.tokenContract) {
+        return application.tokenContract.tokens
+      }
       const index = state.appmap.apps.findIndex((o) => o.appCounter === appCounter)
       if (index > -1) {
         return state.appmap.apps[index].clarityAssets
@@ -67,15 +105,15 @@ const applicationStore = {
       return state.appCounter
     },
     getAppmapProject: (state: any) => projectId => {
-      const index = state.appmap.apps.findIndex((o) => o.contractId === projectId)
+      const index = state.rpayContractData.applications.findIndex((o) => o.contractId === projectId)
       if (index > -1) {
-        return state.appmap.apps[index]
+        return state.rpayContractData.applications[index]
       }
     },
     getApplication: (state: any) => appCounter => {
-      const index = state.appmap.apps.findIndex((o) => o.appCounter === appCounter)
+      const index = state.rpayContractData.applications.findIndex((o) => o.appCounter === appCounter)
       if (index > -1) {
-        return state.appmap.apps[index]
+        return state.rpayContractData.applications[index]
       }
     },
     getGaiaProject: (state: any) => projectId => {
@@ -87,9 +125,13 @@ const applicationStore = {
     }
   },
   mutations: {
-    rootFile (state: any, rootFile: any) {
-      state.rootFile = rootFile
+    setAppMapContract (state, appMapContract) {
+      state.rpayContractData = appMapContract
     },
+    setTickerRates (state, tickerRates) {
+      state.tickerRates = tickerRates
+    }
+    /**
     setAppCounter (state, appCounter) {
       state.appCounter = appCounter
     },
@@ -108,17 +150,17 @@ const applicationStore = {
       state.appmap = appmap
     },
     addBaseTokenUriToAppmap (state, data) {
-      const index = state.appmap.apps.findIndex((o) => o.appCounter === data.application.appCounter)
+      const index = state.rpayContractData.applications.findIndex((o) => o.appCounter === data.application.appCounter)
       if (index > -1) {
-        state.appmap.apps[index].baseTokenUri = data.baseTokenUri
+        state.rpayContractData.applications[index].baseTokenUri = data.baseTokenUri
       }
     },
     addAppToAppmap (state, application) {
-      const index = state.appmap.apps.findIndex((o) => o.appCounter === application.appCounter)
+      const index = state.rpayContractData.applications.findIndex((o) => o.appCounter === application.appCounter)
       if (index < 0) {
-        state.appmap.apps.splice(application.appCounter, 0, application)
+        state.rpayContractData.applications.splice(application.appCounter, 0, application)
       } else {
-        state.appmap.apps.splice(index, 1, application)
+        state.rpayContractData.applications.splice(index, 1, application)
       }
     },
     addTradeInfoToAppmap (state, data) {
@@ -148,10 +190,35 @@ const applicationStore = {
         }
       }
     }
+    **/
   },
   actions: {
-    lookupApplications ({ state, commit, dispatch }: any) {
+    initialiseWebsockets ({ commit, dispatch }) {
+      return new Promise((resolve) => {
+        try {
+          subscribeApiNews(commit, MESH_API)
+          dispatch('fetchContractData')
+          resolve(null)
+        } catch (err) {
+          console.log(err)
+        }
+      })
+    },
+    fetchContractData ({ state, dispatch, commit }) {
       return new Promise((resolve, reject) => {
+        axios.get(MESH_API + '/v2/appmap').then(response => {
+          commit('setAppMapContract', response.data)
+          loadAssetsFromGaia(dispatch, state)
+          resolve(response.data)
+        }).catch((error) => {
+          reject(error)
+        })
+      })
+    },
+    lookupApplications ({ state }: any) {
+      return new Promise((resolve) => {
+        resolve(state.rpayContractData)
+        /**
         store.dispatch('stacksStore/callContractReadOnly', { contractId: state.appmapContractId, functionName: 'get-app-counter' }).then((appCounter) => {
           commit('setAppCounter', appCounter)
           for (let i = 0; i < state.appCounter; i++) {
@@ -160,8 +227,10 @@ const applicationStore = {
         }).catch((e) => {
           reject(e)
         })
+        **/
       })
-    },
+    }
+    /**
     lookupApplicationByIndex: function ({ state, commit, dispatch, getters }: any, appCounter: number) {
       return new Promise(function (resolve, reject) {
         const index = state.appmap.apps.findIndex((o) => o.appCounter === appCounter)
@@ -246,23 +315,6 @@ const applicationStore = {
           } else if (!appdata.application.mintCounter) {
             resolve(clarityAsset)
           }
-          /**
-          dispatch('lookupTradeInfo', { application: appdata.application, nftIndex: nftIndex }).then((tradeInfo) => {
-            clarityAsset.tradeInfo = tradeInfo
-            commit('addClarityAssetToAppmap', { application: appdata.application, asset: clarityAsset })
-            resolve(clarityAsset)
-            if (appdata.application.numberCalls >= appdata.application.mintCounter) {
-              searchIndexService.addRecords(appdata.application)
-            }
-          }).catch(() => {
-            if (appdata.application.numberCalls >= appdata.application.mintCounter) {
-              searchIndexService.addRecords(appdata.application)
-            }
-          })
-          **/
-          // }).catch((e) => {
-          //  reject(e)
-          // })
         }).catch((e) => {
           reject(e)
         })
@@ -300,6 +352,7 @@ const applicationStore = {
         })
       })
     }
+    **/
   }
 }
 export default applicationStore

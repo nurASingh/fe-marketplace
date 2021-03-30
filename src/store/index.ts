@@ -39,8 +39,13 @@ export default new Vuex.Store({
     categories: [
       {
         icon: 'easel',
-        displayName: 'Digital Art',
+        displayName: 'Artwork',
         name: 'artwork'
+      },
+      {
+        icon: 'file-music',
+        displayName: 'Music & Sounds',
+        name: 'music'
       },
       {
         icon: 'card-list',

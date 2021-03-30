@@ -14,6 +14,7 @@ export const APP_CONSTANTS = {
   KEY_APP_MAP_TX_ID: 'applicationStore/getAppmapTxId',
   KEY_APP_MAP_PROJECT: 'applicationStore/getAppmapProject',
   KEY_APP_MAP_APPLICATION_BY_COUNTER: 'applicationStore/getApplication',
+  KEY_APP_RPAY_REGISTRY: 'applicationStore/getRpayContractData',
   KEY_APP_MAP_CONTRACT_ID: 'applicationStore/getAppmapContractId',
   KEY_APP_MAP_TRADE_INFO: 'applicationStore/getAppmapTradeInfo',
   KEY_APP_MAP_CLARITY_ASSETS: 'applicationStore/getClarityAssets',

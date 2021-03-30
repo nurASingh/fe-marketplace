@@ -41,9 +41,6 @@ const projectStore = {
     rootFile (state: any, rootFile: any) {
       state.rootFile = rootFile
     },
-    setConnectedProjects (state: any, connectedProjects: any) {
-      state.connectedProjects = connectedProjects
-    },
     setFavourites (state: any, favourites: any) {
       state.favourites = favourites
     },
@@ -104,7 +101,7 @@ const projectStore = {
         })
       })
     },
-    fetchMyProjects ({ dispatch, state, commit }: any, forced: boolean) {
+    fetchMyProjects ({ rootGetters, state, commit }: any, forced: boolean) {
       return new Promise((resolve, reject) => {
         if (state.rootFile && !forced) {
           resolve(state.rootFile)
@@ -112,6 +109,15 @@ const projectStore = {
           const profile = store.getters[APP_CONSTANTS.KEY_PROFILE]
           projectService.fetchMyProjects(profile).then((rootFile: any) => {
             rootFile.projects.forEach((project) => {
+              const rpayContractData = rootGetters['applicationStore/getRpayContractData']
+              if (rpayContractData && rpayContractData.applications && rpayContractData.applications.length > 0) {
+                rpayContractData.applications.forEach((app) => {
+                  if (app.contractId === project.projectId) {
+                    commit('addContractData', { projectId: app.contractId })
+                  }
+                })
+              }
+              /**
               store.dispatch('stacksStore/lookupContractInterface', project.projectId).then((data) => {
                 commit('addContractData', data)
                 if (data) {
@@ -122,6 +128,7 @@ const projectStore = {
                 dispatch('updateProject', project)
                 resolve(rootFile)
               })
+              **/
             })
             commit('rootFile', rootFile)
             resolve(rootFile)

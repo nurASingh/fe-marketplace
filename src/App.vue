@@ -44,11 +44,11 @@ export default {
   mounted () {
     this.adminPage = this.$route.name.indexOf('-app') > -1
     this.adminPage = this.isHeaderLess()
+    this.$store.dispatch('applicationStore/initialiseWebsockets')
     this.$store.dispatch('applicationStore/lookupApplications')
     this.$store.dispatch('authStore/fetchMyAccount').then((profile) => {
       this.$store.dispatch('fetchRatesFromDb')
       this.$store.dispatch('stacksStore/fetchMacSkyWalletInfo').then(() => {
-        this.$store.dispatch('applicationStore/lookupApplications')
         this.$store.dispatch('projectStore/initSchema', profile).then(() => {
           this.loaded = true
           this.$store.dispatch('projectStore/fetchMyProjects', profile)
