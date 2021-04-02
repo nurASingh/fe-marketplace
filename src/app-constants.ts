@@ -37,5 +37,7 @@ export const APP_CONSTANTS = {
   KEY_WALLET_MODE: 'stacksStore/getWalletMode',
   KEY_MACS_WALLET: 'stacksStore/getMacsWallet',
   KEY_SKYS_WALLET: 'stacksStore/getSkysWallet',
-  KEY_CONTRACT_DATA: 'stacksStore/getContractData'
+  KEY_CONTRACT_DATA: 'stacksStore/getContractData',
+
+  KEY_CONTRACT_ASSET_FROM_HASH: 'contractStore/getContractAssetFromHash'
 }

@@ -3,6 +3,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import authStore from './authStore'
 import applicationStore from './applicationStore'
+import contractStore from './contractStore'
 import contentStore from './contentStore'
 import searchStore from './searchStore'
 import stacksStore from './stacksStore'
@@ -17,6 +18,7 @@ export default new Vuex.Store({
   modules: {
     authStore,
     applicationStore,
+    contractStore,
     contentStore,
     searchStore,
     projectStore,

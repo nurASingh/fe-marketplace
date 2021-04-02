@@ -57,7 +57,7 @@
             <div class="col-2">Minted</div><div class="col-10">{{application.tokenContract.mintCounter}}</div>
             <div class="row text-danger ml-4 mt-3 border-bottom mb-3 pb-2" v-for="(token, index) in application.tokenContract.tokens" :key="index">
               <div class="col-2">NFT</div><div class="col-10">#<a href="#" class="text-small text-info" @click.prevent="loadToken(application.contractId, token.nftIndex)">{{token.nftIndex}}</a></div>
-              <div class="col-2">TokenInfo</div><div class="col-10"><a href="#" class="text-small text-info" @click.prevent="loadToken(application.contractId, token.nftIndex, token.tokenInfo['asset-hash'].valueHex)">{{token.tokenInfo['asset-hash'].valueHex}}</a></div>
+              <div class="col-2">TokenInfo</div><div class="col-10"><a href="#" class="text-small text-info" @click.prevent="loadToken(application.contractId, token.nftIndex, token.tokenInfo.assetHash)">{{token.tokenInfo.assetHash}}</a></div>
               <div class="col-2">Owner</div><div class="col-10">{{token.owner}}</div>
               <div class="col-2">Offers</div><div class="col-10">{{token.offers}}</div>
               <div class="col-2">SaleData</div><div class="col-10">Type={{token.saleData['sale-type'].value}}, Opening/Guide Amount {{token.saleData['amount-stx'].value}}</div>

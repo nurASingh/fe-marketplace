@@ -26,6 +26,30 @@ const sortResults = function (state, resultSet) {
   return resultSet
 }
 
+const matchResults = function (rootGetters, resultSet) {
+  const results = []
+  resultSet.forEach((searchResult) => {
+    const token = rootGetters[APP_CONSTANTS.KEY_CONTRACT_ASSET_FROM_HASH](searchResult.assetHash)
+    if (token) {
+      searchResult.contractId = token.contractId
+      searchResult.contractStatus = token.status
+      searchResult.nftIndex = token.nftIndex
+      searchResult.saleData = token.saleData
+      results.push(searchResult)
+    }
+  })
+  return results
+}
+
+const matchResult = function (rootGetters, result) {
+  const token = rootGetters[APP_CONSTANTS.KEY_CONTRACT_ASSET_FROM_HASH](result.assetHash)
+  if (token) {
+    result.nftIndex = token.nftIndex
+    result.saleData = token.saleData
+  }
+  return result
+}
+
 const searchStore = {
   namespaced: true,
   state: {
@@ -102,21 +126,23 @@ const searchStore = {
         })
       })
     },
-    findAssetByHash ({ commit }: any, assetHash: string) {
+    findAssetByHash ({ commit, rootGetters }: any, assetHash: string) {
       return new Promise((resolve, reject) => {
         searchIndexService.findAssetByHash(assetHash).then((response: any) => {
-          commit('addSearchResult', response.data)
-          resolve(response.data)
+          const result = matchResult(rootGetters, response.data)
+          commit('addSearchResult', result)
+          resolve(result)
         }).catch((error) => {
           reject(new Error('Unable index record: ' + error))
         })
       })
     },
-    findAssets ({ commit }: any) {
+    findAssets ({ commit, rootGetters }: any) {
       return new Promise((resolve, reject) => {
         searchIndexService.findAssets().then((resultSet) => {
-          commit('setSearchResults', resultSet)
-          resolve(resultSet)
+          const results = matchResults(rootGetters, resultSet)
+          commit('setSearchResults', results)
+          resolve(results)
         }).catch((error) => {
           reject(new Error('Unable index record: ' + error))
         })
@@ -132,63 +158,69 @@ const searchStore = {
         })
       })
     },
-    findBySearchTerm ({ commit }: any, query: string) {
+    findBySearchTerm ({ commit, rootGetters }: any, query: string) {
       return new Promise((resolve, reject) => {
         if (query && query.length > 0) {
           query += '*'
           searchIndexService.findByTitleOrDescriptionOrCategoryOrKeyword(query).then((resultSet) => {
-            commit('setSearchResults', resultSet)
-            resolve(resultSet)
+            const results = matchResults(rootGetters, resultSet)
+            commit('setSearchResults', results)
+            resolve(results)
           }).catch((error) => {
             reject(new Error('Unable index record: ' + error))
           })
         } else {
           query += '*'
           searchIndexService.findAssets().then((resultSet) => {
-            commit('setSearchResults', resultSet)
-            resolve(resultSet)
+            const results = matchResults(rootGetters, resultSet)
+            commit('setSearchResults', results)
+            resolve(results)
           }).catch((error) => {
             reject(new Error('Unable index record: ' + error))
           })
         }
       })
     },
-    findByProjectId ({ commit }: any, projectId: string) {
+    findByProjectId ({ commit, rootGetters }: any, projectId: string) {
       return new Promise((resolve, reject) => {
         searchIndexService.findByProjectId(projectId).then((resultSet) => {
-          commit('setSearchResults', resultSet)
-          resolve(resultSet)
+          const results = matchResults(rootGetters, resultSet)
+          commit('setSearchResults', results)
+          resolve(results)
         }).catch((error) => {
           reject(new Error('Unable index record: ' + error))
         })
       })
     },
-    findBySaleType ({ commit }: any, saleType: number) {
+    findBySaleType ({ commit, rootGetters }: any, saleType: number) {
       return new Promise((resolve, reject) => {
         searchIndexService.findBySaleType(saleType).then((resultSet) => {
-          commit('setSearchResults', resultSet)
-          resolve(resultSet)
+          const results = matchResults(rootGetters, resultSet)
+          commit('setSearchResults', results)
+          resolve(results)
         }).catch((error) => {
           reject(new Error('Unable index record: ' + error))
         })
       })
     },
-    findByObject ({ commit }: any, category: any) {
+    findByObject ({ commit, rootGetters }: any, category: any) {
       return new Promise((resolve, reject) => {
         searchIndexService.findByObject(category.name).then((resultSet) => {
-          commit('setSearchResults', resultSet)
-          resolve(resultSet)
+          const results = matchResults(rootGetters, resultSet)
+          commit('setSearchResults', results)
+          resolve(results)
         }).catch((error) => {
           reject(new Error('Unable index record: ' + error))
         })
       })
     },
-    findByOwner ({ commit }: any) {
+    findByOwner ({ commit, rootGetters }: any) {
       return new Promise((resolve, reject) => {
         const profile = store.getters[APP_CONSTANTS.KEY_PROFILE]
         searchIndexService.findByOwner(profile.username).then((resultSet) => {
-          commit('setSearchResults', resultSet)
-          resolve(resultSet)
+          const results = matchResults(rootGetters, resultSet)
+          commit('setSearchResults', results)
+          resolve(results)
         }).catch((error) => {
           reject(new Error('Unable index record: ' + error))
         })

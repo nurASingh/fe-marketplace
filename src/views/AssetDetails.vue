@@ -94,7 +94,7 @@ export default {
     },
     buyingPrice () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      const rate = this.$store.getters[APP_CONSTANTS.KEY_STX_AMOUNT](asset.tradeInfo.buyNowOrStartingPrice)
+      const rate = this.$store.getters[APP_CONSTANTS.KEY_STX_AMOUNT](asset.saleData.buyNowOrStartingPrice)
       return rate
     },
     isOwner () {
@@ -104,9 +104,9 @@ export default {
     },
     isBuyNow () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      if (!asset.tradeInfo || !asset.tradeInfo.saleType === 1) return false
+      if (!asset.saleData || !asset.saleData.saleType === 1) return false
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
-      return profile.loggedIn && asset.tradeInfo.saleType === 1 && asset.tradeInfo.buyNowOrStartingPrice > 0
+      return profile.loggedIn && asset.saleData.saleType === 1 && asset.saleData.buyNowOrStartingPrice > 0
     },
     confirmBuyNow () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
@@ -133,18 +133,18 @@ export default {
     },
     isPlaceBid () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      if (!asset.tradeInfo || !asset.tradeInfo.saleType === 2) return false
+      if (!asset.saleData || !asset.saleData.saleType === 2) return false
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
-      return profile.loggedIn && asset.tradeInfo.saleType === 2
+      return profile.loggedIn && asset.saleData.saleType === 2
     },
     saleType () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      if (asset.tradeInfo) {
-        if (asset.tradeInfo.saleType === 0) {
+      if (asset.saleData) {
+        if (asset.saleData.saleType === 0) {
           return 'Pre Sale'
-        } else if (asset.tradeInfo.saleType === 1) {
+        } else if (asset.saleData.saleType === 1) {
           return 'On Sale'
-        } else if (asset.tradeInfo.saleType === 2) {
+        } else if (asset.saleData.saleType === 2) {
           return 'On Auction'
         }
       }
@@ -163,7 +163,7 @@ export default {
     },
     rate () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      const rate = this.$store.getters[APP_CONSTANTS.KEY_EXCHANGE_RATE](asset.tradeInfo.buyNowOrStartingPrice)
+      const rate = this.$store.getters[APP_CONSTANTS.KEY_EXCHANGE_RATE](asset.saleData.buyNowOrStartingPrice)
       return rate
     },
     clarityAsset () {

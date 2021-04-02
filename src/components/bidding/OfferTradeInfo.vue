@@ -18,12 +18,12 @@ export default {
   props: ['submitData'],
   data () {
     return {
-      tradeInfo: this.tradeInfo
+      saleData: this.saleData
     }
   },
   mounted () {
     const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.$route.params.assetHash)
-    if (asset && asset.tradeInfo) this.tradeInfo = asset.tradeInfo
+    if (asset && asset.saleData) this.saleData = asset.saleData
     return asset
   },
   methods: {

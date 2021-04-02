@@ -74,8 +74,8 @@ export default {
     biddingEndsDisplay () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
       let bd
-      if (asset.tradeInfo && asset.tradeInfo.biddingEndTime) {
-        bd = moment(asset.tradeInfo.biddingEndTime).format('LLLL')
+      if (asset.saleData && asset.saleData.biddingEndTime) {
+        bd = moment(asset.saleData.biddingEndTime).format('LLLL')
       }
       return bd
     },

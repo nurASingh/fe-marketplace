@@ -44,8 +44,7 @@ export default {
   mounted () {
     this.adminPage = this.$route.name.indexOf('-app') > -1
     this.adminPage = this.isHeaderLess()
-    this.$store.dispatch('applicationStore/initialiseWebsockets')
-    this.$store.dispatch('applicationStore/lookupApplications')
+    this.$store.dispatch('contractStore/initialiseTheOne')
     this.$store.dispatch('authStore/fetchMyAccount').then((profile) => {
       this.$store.dispatch('fetchRatesFromDb')
       this.$store.dispatch('stacksStore/fetchMacSkyWalletInfo').then(() => {

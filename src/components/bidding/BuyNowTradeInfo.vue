@@ -4,7 +4,7 @@
     <div role="group">
       <label for="input-live"><span class="text2">Buy Now Price (STX)</span></label>
       <b-input-group>
-        <b-form-input type="number" v-model="tradeInfo.buyNowOrStartingPrice" class="input" placeholder="STX"></b-form-input>
+        <b-form-input type="number" v-model="saleData.buyNowOrStartingPrice" class="input" placeholder="STX"></b-form-input>
       </b-input-group>
     </div>
   </div>
@@ -26,7 +26,7 @@ export default {
   },
   data () {
     return {
-      tradeInfo: {
+      saleData: {
         saleType: 1,
         buyNowOrStartingPrice: 0,
         incrementPrice: 0,
@@ -37,20 +37,20 @@ export default {
   },
   mounted () {
     const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.$route.params.assetHash)
-    if (asset && asset.tradeInfo) this.tradeInfo = asset.tradeInfo
+    if (asset && asset.saleData) this.saleData = asset.saleData
     return asset
   },
   methods: {
     submit: function () {
-      if (!this.tradeInfo.buyNowOrStartingPrice || this.tradeInfo.buyNowOrStartingPrice <= 0) {
+      if (!this.saleData.buyNowOrStartingPrice || this.saleData.buyNowOrStartingPrice <= 0) {
         this.$notify({ type: 'error', title: 'Price', text: 'Please enter the buy now price.' })
         return
       }
-      this.tradeInfo.saleType = 1
-      this.tradeInfo.incrementPrice = 0
-      this.tradeInfo.reservePrice = 0
-      this.tradeInfo.biddingEndTime = 0
-      this.$emit('setTradeInfo', this.tradeInfo)
+      this.saleData.saleType = 1
+      this.saleData.incrementPrice = 0
+      this.saleData.reservePrice = 0
+      this.saleData.biddingEndTime = 0
+      this.$emit('setTradeInfo', this.saleData)
     }
   },
   computed: {

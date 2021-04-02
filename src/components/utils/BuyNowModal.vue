@@ -101,8 +101,8 @@ export default {
       }
     },
     buyingPrice () {
-      if (this.clarityAsset.tradeInfo) {
-        return this.$store.getters[APP_CONSTANTS.KEY_STX_AMOUNT](this.clarityAsset.tradeInfo.buyNowOrStartingPrice)
+      if (this.clarityAsset.saleData) {
+        return this.$store.getters[APP_CONSTANTS.KEY_STX_AMOUNT](this.clarityAsset.saleData.buyNowOrStartingPrice)
       }
       return 0
     },
@@ -145,8 +145,8 @@ export default {
       return profile
     },
     rate () {
-      if (this.clarityAsset.tradeInfo) {
-        return this.$store.getters[APP_CONSTANTS.KEY_EXCHANGE_RATE](this.clarityAsset.tradeInfo.buyNowOrStartingPrice)
+      if (this.clarityAsset.saleData) {
+        return this.$store.getters[APP_CONSTANTS.KEY_EXCHANGE_RATE](this.clarityAsset.saleData.buyNowOrStartingPrice)
       }
       return 0
     },

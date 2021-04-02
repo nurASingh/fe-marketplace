@@ -15,7 +15,7 @@
       <div v-for="(asset, idx1) in clarityAssets" :key="idx1">
         <div><a href="#" @click.prevent="lookupTradeInfo(asset.nftIndex)">Asset {{asset.nftIndex}}:</a> {{asset.assetHash}}</div>
         <trade-info-lucene :assetHash="asset.assetHash"/>
-        <trade-info :tradeInfo="asset.tradeInfo" v-if="asset.tradeInfo"/>
+        <sale-data :saleData="asset.saleData" v-if="asset.saleData"/>
       </div>
     </div>
   </div>
@@ -24,13 +24,13 @@
 
 <script>
 import { APP_CONSTANTS } from '@/app-constants'
-import TradeInfo from './TradeInfo'
+import SaleData from './SaleData'
 import TradeInfoLucene from './TradeInfoLucene'
 
 export default {
   name: 'ClarityAssets',
   components: {
-    TradeInfo,
+    SaleData,
     TradeInfoLucene
   },
   data () {
@@ -51,8 +51,8 @@ export default {
     },
     lookupTradeInfo (nftIndex) {
       const application = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_APPLICATION_BY_COUNTER](this.appCounter)
-      this.$store.dispatch('applicationStore/lookupTradeInfo', { application: application, nftIndex: nftIndex }).then((tradeInfo) => {
-        this.tradeInfo = tradeInfo
+      this.$store.dispatch('applicationStore/lookupTradeInfo', { application: application, nftIndex: nftIndex }).then((saleData) => {
+        this.saleData = saleData
       })
     }
   },

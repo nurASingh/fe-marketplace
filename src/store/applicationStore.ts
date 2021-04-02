@@ -18,7 +18,7 @@ const loadAssetsFromGaia = function (dispatch, state) {
     state.appMapContract.applications.forEach((app) => {
       if (app.tokenContract && app.tokenContract.tokens) {
         app.tokenContract.tokens.forEach((token) => {
-          dispatch('fetchGaiaData', { gaiaFilename: app.gaiaFilename, gaiaUsername: token.tokenInfo['gaia-username'].value, assetHash: token.tokenInfo['asset-hash'].valueHex })
+          dispatch('fetchGaiaData', { gaiaFilename: app.gaiaFilename, gaiaUsername: token.tokenInfo.gaiaUsername, assetHash: token.tokenInfo.assetHash })
         })
       }
     })
@@ -90,7 +90,7 @@ const applicationStore = {
         const assets = state.appmap.apps[index].clarityAssets
         const index1 = assets.findIndex((o) => o.assetHash === data.assetHash)
         if (index1 > -1) {
-          return assets[index1].tradeInfo
+          return assets[index1].saleData
         }
       }
       return null
@@ -170,7 +170,7 @@ const applicationStore = {
         if (application && application.clarityAssets) {
           const index = application.clarityAssets.findIndex((o) => o.nftIndex === data.nftIndex)
           if (index > -1) {
-            application.clarityAssets[index].tradeInfo = data.tradeInfo
+            application.clarityAssets[index].saleData = data.saleData
           }
         }
       }
@@ -328,10 +328,10 @@ const applicationStore = {
           functionName: 'get-sale-data',
           functionArgs: functionArgs
         }
-        store.dispatch('stacksStore/callContractReadOnly', config).then((tradeInfo) => {
-          data.tradeInfo = tradeInfo
+        store.dispatch('stacksStore/callContractReadOnly', config).then((saleData) => {
+          data.saleData = saleData
           commit('addTradeInfoToAppmap', data)
-          resolve(tradeInfo)
+          resolve(saleData)
         }).catch((error) => {
           reject(error)
         })

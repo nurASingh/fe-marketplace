@@ -78,7 +78,7 @@ export default {
   mounted () {
     this.assetHash = this.$route.params.assetHash
     this.$store.dispatch('searchStore/findAssetByHash', this.assetHash).then((asset) => {
-      if (asset.tradeInfo && asset.tradeInfo.saleType > 0) this.saleType = asset.tradeInfo.saleType
+      if (asset.saleData && asset.saleData.saleType > 0) this.saleType = asset.saleData.saleType
       this.loading = false
     })
   },
@@ -90,13 +90,13 @@ export default {
         this.submitDataAuction++
       }
     },
-    setTradeInfo (tradeInfo) {
+    setTradeInfo (saleData) {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
       if (typeof asset.nftIndex === 'undefined' || asset.projectId.indexOf('.') < 0) {
         this.$notify({ type: 'error', title: 'Not Registered', text: 'This item isn\'t registered on-chain.' })
         return
       }
-      asset.tradeInfo = tradeInfo
+      asset.saleData = saleData
       this.$store.commit('setModalMessage', 'Calling wallet to sign and send... transactions can take a few minutes to confirm!')
       this.$root.$emit('bv::show::modal', 'waiting-modal')
       this.$store.dispatch('stacksStore/setTradeInfo', asset).then((result) => {

@@ -104,22 +104,22 @@ export default {
       return (id && id.indexOf('.') > -1) ? id.split('.')[0] : '?'
     },
     saleType () {
-      if (this.result.tradeInfo && this.result.tradeInfo.saleType === 0) {
+      if (this.result.saleData && this.result.saleData.saleType === 0) {
         return 'not selling'
-      } else if (this.result.tradeInfo && this.result.tradeInfo.saleType === 1) {
+      } else if (this.result.saleData && this.result.saleData.saleType === 1) {
         return 'buy now'
-      } else if (this.result.tradeInfo && this.result.tradeInfo.saleType === 2) {
+      } else if (this.result.saleData && this.result.saleData.saleType === 2) {
         return 'place bid'
-      } else if (this.result.tradeInfo && this.result.tradeInfo.saleType === 3) {
+      } else if (this.result.saleData && this.result.saleData.saleType === 3) {
         return 'make offer'
       }
     },
     buyingPrice () {
-      const rate = this.$store.getters[APP_CONSTANTS.KEY_STX_AMOUNT](this.result.tradeInfo.buyNowOrStartingPrice)
+      const rate = this.$store.getters[APP_CONSTANTS.KEY_STX_AMOUNT](this.result.saleData.buyNowOrStartingPrice)
       return rate
     },
     buyingPriceConversion () {
-      const rate = this.$store.getters[APP_CONSTANTS.KEY_EXCHANGE_RATE](this.result.tradeInfo.buyNowOrStartingPrice)
+      const rate = this.$store.getters[APP_CONSTANTS.KEY_EXCHANGE_RATE](this.result.saleData.buyNowOrStartingPrice)
       return rate
     },
     created (created) {
