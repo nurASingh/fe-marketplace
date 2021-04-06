@@ -1,4 +1,5 @@
 export const APP_CONSTANTS = {
+  KEY_RPAY_CONFIGURATION: 'getRpayConfiguration',
   KEY_MODAL_MESSAGE: 'getModalMessage',
   KEY_EXCHANGE_RATE: 'getExchangeRateFormatted',
   KEY_STX_AMOUNT: 'getStxAmountFormatted',
@@ -8,17 +9,6 @@ export const APP_CONSTANTS = {
   KEY_SECTION_HEIGHT: 'getSectionHeight',
   KEY_SECTION_WIDTH: 'getSectionWidth',
   KEY_GALLERY_IMAGE_WIDTH: 'getGalleryImageHeight',
-
-  KEY_APP_MAP: 'applicationStore/getAppmap',
-  KEY_APP_MAP_COUNTER: 'applicationStore/getAppmapCounter',
-  KEY_APP_MAP_TX_ID: 'applicationStore/getAppmapTxId',
-  KEY_APP_MAP_PROJECT: 'applicationStore/getAppmapProject',
-  KEY_APP_MAP_APPLICATION_BY_COUNTER: 'applicationStore/getApplication',
-  KEY_APP_RPAY_REGISTRY: 'applicationStore/getRpayContractData',
-  KEY_APP_MAP_CONTRACT_ID: 'applicationStore/getAppmapContractId',
-  KEY_APP_MAP_TRADE_INFO: 'applicationStore/getAppmapTradeInfo',
-  KEY_APP_MAP_CLARITY_ASSETS: 'applicationStore/getClarityAssets',
-  KEY_APP_MAP_CLARITY_ASSET: 'applicationStore/getClarityAsset',
 
   SET_CURRENT_SEARCH: 'searchStore/setCurrentSearch',
   KEY_CURRENT_SEARCH: 'searchStore/getCurrentSearch',
@@ -39,5 +29,9 @@ export const APP_CONSTANTS = {
   KEY_SKYS_WALLET: 'stacksStore/getSkysWallet',
   KEY_CONTRACT_DATA: 'stacksStore/getContractData',
 
-  KEY_CONTRACT_ASSET_FROM_HASH: 'contractStore/getContractAssetFromHash'
+  KEY_REGISTRY: 'rpayStacksContractStore/getRegistry',
+  KEY_REGISTRY_CONTRACT_ID: 'rpayStacksContractStore/getRegistryContractId',
+  KEY_TRADE_INFO_FROM_HASH: 'rpayStacksContractStore/getTradeInfoFromHash',
+  KEY_APPLICATION_FROM_REGISTRY_BY_CONTRACT_ID: 'rpayStacksContractStore/getApplicationFromRegistryByContractId',
+  KEY_ASSET_FROM_CONTRACT_BY_HASH: 'rpayStacksContractStore/getAssetFromContractByHash'
 }

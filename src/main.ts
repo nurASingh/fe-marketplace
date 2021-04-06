@@ -10,6 +10,7 @@ import VueScrollTo from 'vue-scrollto'
 import PrismicVue from 'prismic-vue'
 import linkResolver from './prismic/link-resolver'
 import htmlSerializer from './prismic/html-serializer'
+import RisidioPay from 'risidio-pay'
 
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)
@@ -22,6 +23,7 @@ Vue.use(PrismicVue, {
   linkResolver,
   htmlSerializer
 })
+Vue.use(RisidioPay)
 
 Vue.config.productionTip = false
 declare global {

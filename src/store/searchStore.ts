@@ -29,7 +29,7 @@ const sortResults = function (state, resultSet) {
 const matchResults = function (rootGetters, resultSet) {
   const results = []
   resultSet.forEach((searchResult) => {
-    const token = rootGetters[APP_CONSTANTS.KEY_CONTRACT_ASSET_FROM_HASH](searchResult.assetHash)
+    const token = rootGetters[APP_CONSTANTS.KEY_ASSET_FROM_CONTRACT_BY_HASH](searchResult.assetHash)
     if (token) {
       searchResult.contractId = token.contractId
       searchResult.contractStatus = token.status
@@ -42,7 +42,7 @@ const matchResults = function (rootGetters, resultSet) {
 }
 
 const matchResult = function (rootGetters, result) {
-  const token = rootGetters[APP_CONSTANTS.KEY_CONTRACT_ASSET_FROM_HASH](result.assetHash)
+  const token = rootGetters[APP_CONSTANTS.KEY_ASSET_FROM_CONTRACT_BY_HASH](result.assetHash)
   if (token) {
     result.nftIndex = token.nftIndex
     result.saleData = token.saleData

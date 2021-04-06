@@ -118,8 +118,8 @@ export default {
       })
     },
     findApplications () {
-      const appmap = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP]
-      this.searchResults = appmap.apps
+      const appmap = this.$store.getters[APP_CONSTANTS.KEY_REGISTRY]
+      this.searchResults = appmap.applications
       this.searchType = 'projects'
     },
     contract (contractId) {

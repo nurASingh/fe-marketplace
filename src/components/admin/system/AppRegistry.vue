@@ -38,13 +38,13 @@
       </div>
   </div>
 
-    <div class="upload-preview bg-info text-warning text-small text-bold  my-5 p-4" v-if="appMapContract">
+    <div class="upload-preview bg-info text-warning text-small text-bold  my-5 p-4" v-if="registry">
       <div class="row border-bottom mb-3 pb-2">
         <div class="col-12"><h3>All Contract Data</h3></div>
-        <div class="col-2">administrator</div><div class="col-10">{{appMapContract.administrator}}</div>
-        <div class="col-2">appCounter</div><div class="col-10">{{appMapContract.appCounter}}</div>
+        <div class="col-2">administrator</div><div class="col-10">{{registry.administrator}}</div>
+        <div class="col-2">appCounter</div><div class="col-10">{{registry.appCounter}}</div>
       </div>
-      <div class="row border-bottom mb-3 pb-2" v-for="(application, index) in appMapContract.applications" :key="index">
+      <div class="row border-bottom mb-3 pb-2" v-for="(application, index) in registry.applications" :key="index">
         <div class="col-2">Contract Id</div><div class="col-10">{{application.contractId}}</div>
         <div class="col-2">App-Index</div><div class="col-10">{{application.appIndex}}</div>
         <div class="col-2">Storage</div><div class="col-10">{{application.storageModel}}</div>
@@ -103,7 +103,6 @@ export default {
       this.deployedProject = data.project
       this.$root.$emit('bv::show::modal', 'success-modal')
       this.$store.commit('setModalMessage', 'Contract deployment transaction sent to Stacks blockchain - check explorer for progress.')
-      this.$store.dispatch('applicationStore/lookupApplications')
     },
     useMyAddress: function () {
       const contractAddress = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
@@ -121,16 +120,16 @@ export default {
   },
   computed: {
     appmapCounter () {
-      const appmapCounter = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_COUNTER]
-      return appmapCounter
+      const registry = this.$store.getters[APP_CONSTANTS.KEY_REGISTRY]
+      return registry.appCounter
     },
-    appMapContract () {
-      const appMapContract = this.$store.getters[APP_CONSTANTS.KEY_APP_RPAY_REGISTRY]
-      return appMapContract
+    registry () {
+      const registry = this.$store.getters[APP_CONSTANTS.KEY_REGISTRY]
+      return registry
     },
     appmapApps () {
-      const appmap = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP]
-      if (appmap) return appmap.apps
+      const appmap = this.$store.getters[APP_CONSTANTS.KEY_REGISTRY]
+      if (appmap) return appmap.applications
       return []
     }
   }

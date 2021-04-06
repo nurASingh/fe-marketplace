@@ -11,6 +11,7 @@
     <notifications :duration="10000" classes="r-notifs" position="bottom right" width="30%"/>
     <waiting-modal/>
     <success-modal />
+    <risidio-pay :configuration="configuration"/>
   </div>
 </template>
 
@@ -18,12 +19,14 @@
 import { APP_CONSTANTS } from '@/app-constants'
 import SuccessModal from '@/components/utils/SuccessModal'
 import WaitingModal from '@/components/utils/WaitingModal'
+import RisidioPay from 'risidio-pay'
 
 export default {
   name: 'App',
   components: {
     SuccessModal,
-    WaitingModal
+    WaitingModal,
+    RisidioPay
   },
   data () {
     return {
@@ -44,7 +47,6 @@ export default {
   mounted () {
     this.adminPage = this.$route.name.indexOf('-app') > -1
     this.adminPage = this.isHeaderLess()
-    this.$store.dispatch('contractStore/initialiseTheOne')
     this.$store.dispatch('authStore/fetchMyAccount').then((profile) => {
       this.$store.dispatch('fetchRatesFromDb')
       this.$store.dispatch('stacksStore/fetchMacSkyWalletInfo').then(() => {
@@ -56,6 +58,14 @@ export default {
     })
     const $self = this
     let resizeTimer
+    const configuration = this.$store.getters[APP_CONSTANTS.KEY_RPAY_CONFIGURATION]
+    if (window.eventBus && window.eventBus.$on) {
+      window.eventBus.$on('rpayEvent', function (data) {
+        if (data.opcode === 'configured') {
+          $self.$store.dispatch('rpayStacksContractStore/fetchContractData', configuration)
+        }
+      })
+    }
     window.addEventListener('resize', function () {
       clearTimeout(resizeTimer)
       resizeTimer = setTimeout(function () {
@@ -107,6 +117,10 @@ export default {
     }
   },
   computed: {
+    configuration () {
+      const configuration = this.$store.getters[APP_CONSTANTS.KEY_RPAY_CONFIGURATION]
+      return configuration
+    },
     sectionDimensions () {
       return 'min-height: 100vh; width: auto;'
     }

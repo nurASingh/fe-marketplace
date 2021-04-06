@@ -167,7 +167,7 @@ export default {
       return rate
     },
     clarityAsset () {
-      const clarityAsset = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_CLARITY_ASSET](this.assetHash)
+      const clarityAsset = this.$store.getters[APP_CONSTANTS.KEY_ASSET_FROM_CONTRACT_BY_HASH](this.assetHash)
       return clarityAsset
     },
     asset () {

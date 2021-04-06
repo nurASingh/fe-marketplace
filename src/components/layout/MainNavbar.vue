@@ -117,7 +117,7 @@ export default {
   },
   computed: {
     projects () {
-      const appmap = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP]
+      const appmap = this.$store.getters[APP_CONSTANTS.KEY_REGISTRY]
       if (appmap) return appmap.apps
       return []
     },

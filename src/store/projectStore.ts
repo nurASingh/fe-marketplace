@@ -109,9 +109,9 @@ const projectStore = {
           const profile = store.getters[APP_CONSTANTS.KEY_PROFILE]
           projectService.fetchMyProjects(profile).then((rootFile: any) => {
             rootFile.projects.forEach((project) => {
-              const rpayContractData = rootGetters['applicationStore/getRpayContractData']
-              if (rpayContractData && rpayContractData.applications && rpayContractData.applications.length > 0) {
-                rpayContractData.applications.forEach((app) => {
+              const registry = rootGetters[APP_CONSTANTS.KEY_REGISTRY]
+              if (registry && registry.applications && registry.applications.length > 0) {
+                registry.applications.forEach((app) => {
                   if (app.contractId === project.projectId) {
                     commit('addContractData', { projectId: app.contractId })
                   }

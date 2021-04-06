@@ -1,5 +1,5 @@
 <template>
-<div>
+<div v-if="loaded">
   <div class="row mb-5">
     <side-menu class="col-3 mr-0 pr-0 pt-5"/>
     <div class="col-9 pt-5">
@@ -84,6 +84,7 @@ import {
 } from '@stacks/transactions'
 
 const STACKS_API = process.env.VUE_APP_API_STACKS
+const REGISTRY_CONTRACT_ID = process.env.VUE_APP_REGISTRY_CONTRACT_ID
 
 export default {
   name: 'MyApplication',
@@ -99,13 +100,13 @@ export default {
       projectId: null,
       loaded: false,
       dims: { width: 250, height: 250 },
+      contractInterface: null,
       showContractData: false
     }
   },
   mounted () {
     this.projectId = this.$route.params.projectId
     // this.$store.dispatch('stacksStore/fetchMacSkyWalletInfo')
-    this.$store.dispatch('applicationStore/lookupApplications')
     /**
     this.$store.dispatch('projectStore/findProjectByProjectId', this.projectId).then((project) => {
       this.project = project
@@ -113,6 +114,12 @@ export default {
       this.loaded = true
     })
     **/
+    this.$store.dispatch('stacksStore/lookupContractInterface', this.projectId).then((data) => {
+      this.contractInterface = data
+      this.loaded = true
+    }).catch(() => {
+      this.loaded = true
+    })
   },
   methods: {
     deleteApp (project) {
@@ -122,12 +129,11 @@ export default {
     },
     connectApp: function () {
       const project = this.$store.getters[APP_CONSTANTS.KEY_MY_PROJECT](this.projectId)
-      const appmapContractId = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_CONTRACT_ID]
       const owner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].username
       const functionArgs = [bufferCV(Buffer.from(owner)), bufferCV(Buffer.from(project.gaiaFilename)), bufferCV(Buffer.from(this.projectId)), intCV(0)]
       const data = {
-        contractAddress: appmapContractId.split('.')[0],
-        contractName: appmapContractId.split('.')[1],
+        contractAddress: REGISTRY_CONTRACT_ID.split('.')[0],
+        contractName: REGISTRY_CONTRACT_ID.split('.')[1],
         functionName: 'register-app',
         functionArgs: functionArgs,
         eventCode: 'connect-application'
@@ -159,7 +165,7 @@ export default {
     },
     disableApplication (status) {
       const project = this.$store.getters[APP_CONSTANTS.KEY_MY_PROJECT](this.projectId)
-      const appmapContractId = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_CONTRACT_ID]
+      const appmapContractId = this.$store.getters[APP_CONSTANTS.KEY_REGISTRY_CONTRACT_ID]
       const owner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].username
       const functionArgs = [bufferCV(Buffer.from(owner)), bufferCV(Buffer.from(project.gaiaFilename)), bufferCV(Buffer.from(this.projectId)), intCV(0), intCV(status)]
       const data = {
@@ -209,12 +215,8 @@ export default {
       return project
     },
     appmapProject () {
-      const appmap = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_PROJECT](this.projectId)
+      const appmap = this.$store.getters[APP_CONSTANTS.KEY_APPLICATION_FROM_REGISTRY_BY_CONTRACT_ID](this.projectId)
       return appmap
-    },
-    contractInterface () {
-      const contract = this.$store.getters[APP_CONSTANTS.KEY_CONTRACT](this.projectId)
-      return contract
     }
   }
 }

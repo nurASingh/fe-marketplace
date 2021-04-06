@@ -119,12 +119,6 @@ export default {
         this.searchType = 'users'
       })
     },
-    findApplications () {
-      this.$store.dispatch('applicationStore/findApplications').then((results) => {
-        this.searchResults = results
-        this.searchType = 'applications'
-      })
-    },
     findAssets () {
       this.$store.dispatch('searchStore/findAssets').then((results) => {
         this.searchResults = results

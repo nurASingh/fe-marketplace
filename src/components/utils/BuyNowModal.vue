@@ -79,19 +79,6 @@ export default {
       useWallet: 'mac'
     }
   },
-  mounted () {
-    const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-    const appData = {
-      application: {
-        contractId: asset.projectId
-      },
-      index: asset.nftIndex
-    }
-    this.$store.dispatch('applicationStore/lookupMintedAssets', appData).then((clarityAsset) => {
-      this.clarityAsset = clarityAsset
-      this.loading = false
-    })
-  },
   methods: {
     changeWalletMode () {
       if (this.useWallet === 'mac') {
@@ -101,8 +88,9 @@ export default {
       }
     },
     buyingPrice () {
-      if (this.clarityAsset.saleData) {
-        return this.$store.getters[APP_CONSTANTS.KEY_STX_AMOUNT](this.clarityAsset.saleData.buyNowOrStartingPrice)
+      const token = this.$store.getters[APP_CONSTANTS.KEY_ASSET_FROM_CONTRACT_BY_HASH](this.assetHash)
+      if (token.saleData) {
+        return this.$store.getters[APP_CONSTANTS.KEY_STX_AMOUNT](token.saleData.buyNowOrStartingPrice)
       }
       return 0
     },
@@ -145,8 +133,9 @@ export default {
       return profile
     },
     rate () {
-      if (this.clarityAsset.saleData) {
-        return this.$store.getters[APP_CONSTANTS.KEY_EXCHANGE_RATE](this.clarityAsset.saleData.buyNowOrStartingPrice)
+      const token = this.$store.getters[APP_CONSTANTS.KEY_ASSET_FROM_CONTRACT_BY_HASH](this.assetHash)
+      if (token.saleData) {
+        return this.$store.getters[APP_CONSTANTS.KEY_EXCHANGE_RATE](token.saleData.buyNowOrStartingPrice)
       }
       return 0
     },

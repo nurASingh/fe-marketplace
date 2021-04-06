@@ -1,21 +1,24 @@
 <template>
 <div>
-  <a class="mx-2" href="#" @click.prevent="indexMintedAssets()">Lookup NFT Indexes</a>
+  <a class="mx-2" href="#">Lookup NFT Indexes</a>
   <div v-for="(appl, idx) in applications" :key="idx" class="mb-4 pb-4">
     <div class="d-flex justify-content-between">
       <a href="#" @click="appCounter = appl.appCounter">App {{appl.appCounter}}: {{appl.contractId}}</a>
       <a href="#" @click="appCounter = null">close</a>
     </div>
-    <div :key="componentKey" v-if="clarityAssets">
+    <div :key="componentKey" v-if="registry">
       <div class="d-flex justify-content-between py-4 border-bottom">
         <div><a href="#" @click.prevent="showTradeInfo = !showTradeInfo">stacks</a></div>
         <div><a href="#" @click.prevent="showTradeInfoGaia = !showTradeInfoGaia">gaia</a></div>
         <div><a href="#" @click.prevent="showTradeInfoSearch = !showTradeInfoSearch">lucene</a></div>
       </div>
-      <div v-for="(asset, idx1) in clarityAssets" :key="idx1">
-        <div><a href="#" @click.prevent="lookupTradeInfo(asset.nftIndex)">Asset {{asset.nftIndex}}:</a> {{asset.assetHash}}</div>
-        <trade-info-lucene :assetHash="asset.assetHash"/>
-        <sale-data :saleData="asset.saleData" v-if="asset.saleData"/>
+      <div v-for="(application, idx1) in registry.applications" :key="idx1">
+        <div><a href="#">Application {{application.projectId}}</a></div>
+        <div v-for="(token, idx2) in application.tokens" :key="idx2">
+          <div><a href="#">Asset {{token.nftIndex}}:</a> {{token.assetHash}}</div>
+          <trade-info-lucene :assetHash="token.assetHash"/>
+          <sale-data :saleData="token.saleData" v-if="token.saleData"/>
+        </div>
       </div>
     </div>
   </div>
@@ -43,30 +46,18 @@ export default {
     }
   },
   methods: {
-    indexMintedAssets () {
-      this.$store.dispatch('applicationStore/indexMintedAssets').then((result) => {
-        this.result = result
-        this.componentKey++
-      })
-    },
-    lookupTradeInfo (nftIndex) {
-      const application = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_APPLICATION_BY_COUNTER](this.appCounter)
-      this.$store.dispatch('applicationStore/lookupTradeInfo', { application: application, nftIndex: nftIndex }).then((saleData) => {
-        this.saleData = saleData
-      })
-    }
   },
   computed: {
     applications () {
-      const appmap = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP]
-      if (appmap && appmap.apps) {
-        return appmap.apps
+      const registry = this.$store.getters[APP_CONSTANTS.KEY_REGISTRY]
+      if (registry && registry.applications) {
+        return registry.applications
       }
       return []
     },
     clarityAssets () {
-      const clarityAssets = this.$store.getters[APP_CONSTANTS.KEY_APP_MAP_CLARITY_ASSETS](this.appCounter)
-      return clarityAssets
+      const registry = this.$store.getters[APP_CONSTANTS.KEY_REGISTRY]
+      return registry
     }
   }
 }
