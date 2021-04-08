@@ -1,5 +1,8 @@
 <template>
-<div v-if="!loading">
+<div v-if="!registry">
+  <p>No applciation registry detected - are the contracts deployed?</p>
+</div>
+<div v-else>
   <h1 class="mb-4">Application Registry</h1>
   <div v-if="appmapCounter > -1">
     <div v-if="appmapCounter === 0">
@@ -89,8 +92,7 @@ export default {
       project: {
         projectId: mac.keyInfo.address + '.replacewithfilename'
       },
-      deployedProject: null,
-      loading: false
+      deployedProject: null
     }
   },
   methods: {
@@ -121,10 +123,12 @@ export default {
   computed: {
     appmapCounter () {
       const registry = this.$store.getters[APP_CONSTANTS.KEY_REGISTRY]
+      if (!registry) return 0
       return registry.appCounter
     },
     registry () {
       const registry = this.$store.getters[APP_CONSTANTS.KEY_REGISTRY]
+      if (!registry) return {}
       return registry
     },
     appmapApps () {

@@ -4,7 +4,7 @@ import { Storage } from '@stacks/storage'
 import moment from 'moment'
 import axios from 'axios'
 
-const SEARCH_API_PATH = process.env.VUE_APP_API_SEARCH
+const SEARCH_API_PATH = process.env.VUE_APP_RISIDIO_API + '/index'
 const PROJECT_ROOT_PATH = process.env.VUE_APP_PROJECT_ROOT_PATH
 
 const userSession = new UserSession()

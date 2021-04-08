@@ -30,11 +30,7 @@ const sky = JSON.parse(process.env.VUE_APP_WALLET_SKY || '')
 const contractDeployFee = 40000
 
 const STACKS_API = process.env.VUE_APP_API_STACKS
-// const STACKS_API_EXT = process.env.VUE_APP_API_STACKS_EXT
-// const STACKS_POLLING = process.env.VUE_APP_API_POLLING
-const MESH_API = process.env.VUE_APP_API_MESH
-// const network = new StacksTestnet()
-// network.coreApiUrl = STACKS_API
+const MESH_API = process.env.VUE_APP_RISIDIO_API + '/mesh'
 let provider = 'risidio'
 if (MESH_API.indexOf('local') > -1) {
   provider = 'risidio'

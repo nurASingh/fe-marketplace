@@ -55,7 +55,7 @@ export default {
       }
       return []
     },
-    clarityAssets () {
+    registry () {
       const registry = this.$store.getters[APP_CONSTANTS.KEY_REGISTRY]
       return registry
     }

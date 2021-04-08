@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const MESH_API = process.env.VUE_APP_API_MESH
+const MESH_API = process.env.VUE_APP_RISIDIO_API + '/mesh'
 
 const openNodeStore = {
   namespaced: true,

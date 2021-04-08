@@ -8,7 +8,7 @@ import {
 } from '@stacks/transactions'
 import axios from 'axios'
 
-const MESH_API = process.env.VUE_APP_API_MESH
+const MESH_API = process.env.VUE_APP_RISIDIO_API + '/mesh'
 const STACKS_API = process.env.VUE_APP_API_STACKS
 const NETWORK = process.env.VUE_APP_NETWORK
 

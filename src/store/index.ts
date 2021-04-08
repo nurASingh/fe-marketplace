@@ -12,6 +12,7 @@ import searchIndexService from '@/services/searchIndexService'
 
 Vue.use(Vuex)
 
+const RISIDIO_API_PATH = process.env.VUE_APP_RISIDIO_API
 const APPLICATION_ID = process.env.VUE_APP_SQUARE_APPLICATION_ID
 const LOCATION_ID = process.env.VUE_APP_SQUARE_LOCATION_ID
 const SQUARE_URL = process.env.VUE_APP_VUE_APP_SQUARE_URL
@@ -124,20 +125,13 @@ const gaiaAsset = {
 
 const setup = function (data) {
   if (!data.asset) data.asset = {}
-  let risidioCardMode = 'payment-flow'
+  let risidioCardMode = 'config-flow'
   if (data.flow) {
     risidioCardMode = data.flow
   }
   const useNetwork = 'testnet'
   // let beneficiaries = []
-  let risidioBaseApi = 'http://api.risidio.local'
-  if (location.href.indexOf('https://one.risidio.com') > -1 || location.href.indexOf('https://test.loopbomb.com') > -1) {
-    risidioBaseApi = 'https://tapi.risidio.com'
-  } else if (location.href.indexOf('https://loopbomb.com') > -1) {
-    risidioBaseApi = 'https://api.risidio.com'
-  } else if (location.href.indexOf('localhost') > -1) {
-    // beneficiaries = state.beneficiariesLocalhost
-  }
+  const risidioBaseApi = RISIDIO_API_PATH
   const configuration = {
     lookAndFeel: lookAndFeel,
     gaiaAsset: gaiaAsset,
