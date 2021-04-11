@@ -166,10 +166,6 @@ export default {
       const rate = this.$store.getters[APP_CONSTANTS.KEY_EXCHANGE_RATE](asset.saleData.buyNowOrStartingPrice)
       return rate
     },
-    clarityAsset () {
-      const clarityAsset = this.$store.getters[APP_CONSTANTS.KEY_ASSET_FROM_CONTRACT_BY_HASH](this.assetHash)
-      return clarityAsset
-    },
     asset () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
       return asset

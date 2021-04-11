@@ -58,6 +58,7 @@ export default {
     })
     const $self = this
     let resizeTimer
+    /**
     const configuration = this.$store.getters[APP_CONSTANTS.KEY_RPAY_CONFIGURATION]
     if (window.eventBus && window.eventBus.$on) {
       window.eventBus.$on('rpayEvent', function (data) {
@@ -66,6 +67,7 @@ export default {
         }
       })
     }
+    **/
     window.addEventListener('resize', function () {
       clearTimeout(resizeTimer)
       resizeTimer = setTimeout(function () {

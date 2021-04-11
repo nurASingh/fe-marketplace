@@ -21,11 +21,15 @@
                   <div class="mb-2 contract-id">{{project.projectId}}</div>
                   <p class="mb-2 text1">{{project.owner}}</p>
                   <p class="mb-2 text1">{{project.gaiaFilename}}</p>
+                  <p class="mb-2 text1">Origin: {{project.appOrigin}}</p>
                   <p class="mb-2 text1">{{project.description}}</p>
                   <div v-if="contractInterface">
                     <div class="mb-2 text1"><span>Contract found on the <a class="text-info" :href="openContractUrl()" target="_blank">Stacks Blockchain</a>  <a href="#" @click="showContractData = !showContractData">show contract</a></span></div>
                     <div class="mb-2 text1" v-if="appmapProject">
                       Application is registered with the marketplace (#{{appmapProject.appCounter}})
+                      <div class="mb-2 text1">
+                         <a href="#" @click.prevent="updateApp(appmapProject.appCounter)">Update Contract Data</a>
+                      </div>
                       <div v-if="appmapProject.status === 0" class="mb-2 text1">
                          <a href="#" @click.prevent="disableApplication(1)">disable</a>
                       </div>
@@ -80,7 +84,8 @@ import TitleBar from '@/components/admin/TitleBar'
 import { APP_CONSTANTS } from '@/app-constants'
 import {
   intCV,
-  bufferCV
+  bufferCV,
+  standardPrincipalCV
 } from '@stacks/transactions'
 
 const STACKS_API = process.env.VUE_APP_API_STACKS
@@ -127,10 +132,23 @@ export default {
         this.$router.push('/my-apps')
       })
     },
+    updateApp: function (appCounter) {
+      const project = this.$store.getters[APP_CONSTANTS.KEY_MY_PROJECT](this.projectId)
+      const owner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
+      const functionArgs = [intCV(appCounter), standardPrincipalCV(owner), bufferCV(Buffer.from(project.appOrigin)), bufferCV(Buffer.from(project.gaiaFilename)), bufferCV(Buffer.from(this.projectId)), intCV(0), intCV(0)]
+      const data = {
+        contractAddress: REGISTRY_CONTRACT_ID.split('.')[0],
+        contractName: REGISTRY_CONTRACT_ID.split('.')[1],
+        functionName: 'update-app',
+        functionArgs: functionArgs,
+        eventCode: 'connect-application'
+      }
+      this.connectApplication(data) // $emit('updateEventCode', data)
+    },
     connectApp: function () {
       const project = this.$store.getters[APP_CONSTANTS.KEY_MY_PROJECT](this.projectId)
-      const owner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].username
-      const functionArgs = [bufferCV(Buffer.from(owner)), bufferCV(Buffer.from(project.gaiaFilename)), bufferCV(Buffer.from(this.projectId)), intCV(0)]
+      const owner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
+      const functionArgs = [standardPrincipalCV(owner), bufferCV(Buffer.from(project.appOrigin)), bufferCV(Buffer.from(project.gaiaFilename)), bufferCV(Buffer.from(this.projectId)), intCV(0)]
       const data = {
         contractAddress: REGISTRY_CONTRACT_ID.split('.')[0],
         contractName: REGISTRY_CONTRACT_ID.split('.')[1],
@@ -163,11 +181,10 @@ export default {
         })
       })
     },
-    disableApplication (status) {
-      const project = this.$store.getters[APP_CONSTANTS.KEY_MY_PROJECT](this.projectId)
+    disableApplication (appIndex, status) {
       const appmapContractId = this.$store.getters[APP_CONSTANTS.KEY_REGISTRY_CONTRACT_ID]
-      const owner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].username
-      const functionArgs = [bufferCV(Buffer.from(owner)), bufferCV(Buffer.from(project.gaiaFilename)), bufferCV(Buffer.from(this.projectId)), intCV(0), intCV(status)]
+      // const owner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].username
+      const functionArgs = [intCV(appIndex), intCV(status)]
       const data = {
         contractAddress: appmapContractId.split('.')[0],
         contractName: appmapContractId.split('.')[1],

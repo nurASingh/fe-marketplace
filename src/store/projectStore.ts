@@ -244,6 +244,7 @@ const projectStore = {
           data.project.projectId.split('.').length !== 2 ||
           !data.project.projectId.split('.')[0].startsWith('S') ||
           !data.project.owner ||
+          !data.project.appOrigin ||
           !data.project.gaiaFilename ||
           !data.project.title ||
           !data.project.description) {

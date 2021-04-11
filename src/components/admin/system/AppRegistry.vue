@@ -53,7 +53,7 @@
         <div class="col-2">Storage</div><div class="col-10">{{application.storageModel}}</div>
         <div class="col-2">Status</div><div class="col-10">{{application.status}}</div>
           <div class="row ml-3 p-3" v-if="application.tokenContract">
-            <div class="col-2">Token</div><div class="col-10 text-bold">{{application.tokenContract.tokenSymbol}} - {{application.tokenContract.tokenName}}</div>
+            <div class="col-2">Token Contract</div><div class="col-10 text-bold">{{application.tokenContract.tokenSymbol}} - {{application.tokenContract.tokenName}}</div>
             <div class="col-2">Base URL</div><div class="col-10">{{application.tokenContract.baseTokenUri}}</div>
             <div class="col-2">administrator</div><div class="col-10">{{application.tokenContract.administrator}}</div>
             <div class="col-2">Platform</div><div class="col-10">{{application.tokenContract.platformFee}}</div>
@@ -62,12 +62,21 @@
               <div class="col-2">NFT</div><div class="col-10">#<a href="#" class="text-small text-info" @click.prevent="loadToken(application.contractId, token.nftIndex)">{{token.nftIndex}}</a></div>
               <div class="col-2">TokenInfo</div><div class="col-10"><a href="#" class="text-small text-info" @click.prevent="loadToken(application.contractId, token.nftIndex, token.tokenInfo.assetHash)">{{token.tokenInfo.assetHash}}</a></div>
               <div class="col-2">Owner</div><div class="col-10">{{token.owner}}</div>
-              <div class="col-2">Offers</div><div class="col-10">{{token.offers}}</div>
-              <div class="col-2">SaleData</div><div class="col-10">Type={{token.saleData['sale-type'].value}}, Opening/Guide Amount {{token.saleData['amount-stx'].value}}</div>
-              <div class="col-2">Max Eds.</div><div class="col-10">{{token.tokenInfo['max-editions'].value}}</div>
-              <div class="col-2">Eds.</div><div class="col-10">{{token.tokenInfo['edition'].value}}</div>
-              <div class="col-2">Block-height</div><div class="col-10">{{token.tokenInfo['date'].value}}</div>
-              <div class="col-2">Original</div><div class="col-10">{{token.tokenInfo['series-original'].value}}</div>
+              <div class="col-2">Offers</div><div class="col-10">{{token.offerCounter}}</div>
+              <div class="col-2"></div>
+              <div class="col-10">
+                <div v-for="(offer, index1) in token.offerHistory" :key="index1">
+                  <div>{{offer}}</div>
+                  <div><a href="#" @click.prevent="acceptOffer(offer, index1)">accept</a></div>
+                </div>
+              </div>
+              <div class="col-2">SaleData</div><div class="col-10">Type={{token.saleData.saleType}}, Amount {{token.saleData.buyNowOrStartingPrice}}</div>
+              <div class="col-2">Reserve</div><div class="col-10">{{token.saleData.reservePrice}}, Increment {{token.saleData.incrementPrice}}</div>
+              <div class="col-2">End time</div><div class="col-10">{{token.saleData.biddingEndTime}}</div>
+              <div class="col-2">Max Eds.</div><div class="col-10">{{token.tokenInfo.maxEditions}}</div>
+              <div class="col-2">Eds.</div><div class="col-10">{{token.tokenInfo.edition}}</div>
+              <div class="col-2">Block-height</div><div class="col-10">{{token.tokenInfo.date}}</div>
+              <div class="col-2">Original</div><div class="col-10">{{token.tokenInfo.seriesOriginal}}</div>
             </div>
           </div>
       </div>

@@ -41,6 +41,14 @@
                   ></b-textarea>
               </div>
               <div class="mb-4">
+                <div class="text2">App Origin</div>
+                <b-input
+                  id="appOrigin"
+                  ref="appOrigin"
+                  v-model="project.appOrigin"
+                  ></b-input>
+              </div>
+              <div class="mb-4">
                 <div class="text2">Gaia Filename</div>
                 <b-input
                   id="gaiaFilename"
@@ -96,6 +104,7 @@ export default {
         logo: require('@/assets/img/risidio_collection_logo.svg'),
         projectId: null,
         gaiaFilename: '',
+        appOrigin: location.origin,
         mintPrice: '',
         title: '',
         description: ''
@@ -177,6 +186,14 @@ export default {
       }
       if (!this.project.description) {
         this.$notify({ type: 'error', title: 'Application', text: 'Please enter a short description of your application' })
+        result = false
+      }
+      if (!this.project.gaiaFilename) {
+        this.$notify({ type: 'error', title: 'Application', text: 'Please enter a gaia filename of your application' })
+        result = false
+      }
+      if (!this.project.appOrigin) {
+        this.$notify({ type: 'error', title: 'Application', text: 'Please enter the app origin of your application' })
         result = false
       }
       if (!this.files.length > 0) {
