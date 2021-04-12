@@ -42,7 +42,7 @@ const fetchUserWallet = function (profile) {
       postData: null
     }
     axios.post(MESH_API + '/v2/accounts', data).then(response => {
-      const balance = utils.fromOnChainAmount(response.data.balance)
+      const balance = utils.fromMicroAmount(response.data.balance)
       const wallet = {
         keyInfo: {
           address: profile.stxAddress
@@ -55,7 +55,7 @@ const fetchUserWallet = function (profile) {
     }).catch((error) => {
       const useApi = STACKS_API + '/v2/accounts/' + profile.stxAddress
       axios.get(useApi).then(response => {
-        const balance = utils.fromOnChainAmount(response.data.balance)
+        const balance = utils.fromMicroAmount(response.data.balance)
         const wallet = {
           keyInfo: {
             address: profile.stxAddress

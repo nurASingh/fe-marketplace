@@ -148,7 +148,7 @@ const resolveError = function (reject, error) {
 }
 const handleFetchWalletInternal = function (wallet, response, commit, resolve) {
   wallet.nonce = response.data.nonce
-  wallet.balance = utils.fromOnChainAmount(response.data.balance)
+  wallet.balance = utils.fromMicroAmount(response.data.balance)
   commit('setMacsWallet', wallet)
   resolve(wallet)
 }

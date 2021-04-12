@@ -46,19 +46,6 @@ const utils = {
       return 0
     }
   },
-  fromOnChainAmount: function (amountMicroStx) {
-    try {
-      amountMicroStx = parseInt(amountMicroStx, 16)
-      if (typeof amountMicroStx === 'string') {
-        amountMicroStx = Number(amountMicroStx)
-      }
-      if (amountMicroStx === 0) return 0
-      amountMicroStx = amountMicroStx / precision
-      return Math.round(amountMicroStx * precision) / precision
-    } catch {
-      return 0
-    }
-  },
   toOnChainAmount: function (amount) {
     try {
       amount = amount * precision
