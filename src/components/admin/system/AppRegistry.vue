@@ -4,12 +4,12 @@
 </div>
 <div v-else>
   <h1 class="mb-4">Application Registry</h1>
-  <div v-if="appmapCounter > -1">
-    <div v-if="appmapCounter === 0">
+  <div v-if="registry.appCounter > -1">
+    <div v-if="registry.appCounter === 0">
       No applications registered!
     </div>
     <div v-else>
-      <div v-for="(appl, idx) in appmapApps" :key="idx" class="mb-4 pb-4 border-bottom">
+      <div v-for="(appl, idx) in registry.applications" :key="idx" class="mb-4 pb-4 border-bottom">
         <div class="row">
           <div class="col-4">
             <img :src="appl.imageUrl" width="100%"/>
@@ -130,20 +130,10 @@ export default {
     }
   },
   computed: {
-    appmapCounter () {
-      const registry = this.$store.getters[APP_CONSTANTS.KEY_REGISTRY]
-      if (!registry) return 0
-      return registry.appCounter
-    },
     registry () {
       const registry = this.$store.getters[APP_CONSTANTS.KEY_REGISTRY]
       if (!registry) return {}
       return registry
-    },
-    appmapApps () {
-      const appmap = this.$store.getters[APP_CONSTANTS.KEY_REGISTRY]
-      if (appmap) return appmap.applications
-      return []
     }
   }
 }

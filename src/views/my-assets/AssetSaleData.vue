@@ -99,7 +99,7 @@ export default {
       asset.saleData = saleData
       this.$store.commit('setModalMessage', 'Calling wallet to sign and send... transactions can take a few minutes to confirm!')
       this.$root.$emit('bv::show::modal', 'waiting-modal')
-      this.$store.dispatch('stacksStore/setTradeInfo', asset).then((result) => {
+      this.$store.dispatch('rpayStacksStore/setTradeInfo', asset).then((result) => {
         this.result = result
         this.$root.$emit('bv::hide::modal', 'waiting-modal')
         this.$store.commit('setModalMessage', 'Transaction sent! Check the explorer for progress - people will be able to buy this item once it completes.')

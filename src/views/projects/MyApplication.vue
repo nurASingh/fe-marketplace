@@ -160,7 +160,7 @@ export default {
     },
     connectApplication (data) {
       const walletMode = this.$store.getters[APP_CONSTANTS.KEY_WALLET_MODE]
-      const method = (walletMode === 'risidio') ? 'stacksStore/callContractRisidio' : 'stacksStore/callContractBlockstack'
+      const method = (walletMode === 'risidio') ? 'rpayStacksStore/callContractRisidio' : 'rpayStacksStore/callContractBlockstack'
       this.$root.$emit('bv::show::modal', 'waiting-modal')
       this.$store.dispatch(method, data).then((result) => {
         this.result = result
@@ -193,7 +193,7 @@ export default {
         eventCode: 'disable-application'
       }
       const walletMode = this.$store.getters[APP_CONSTANTS.KEY_WALLET_MODE]
-      const method = (walletMode === 'risidio') ? 'stacksStore/callContractRisidio' : 'stacksStore/callContractBlockstack'
+      const method = (walletMode === 'risidio') ? 'rpayStacksStore/callContractRisidio' : 'rpayStacksStore/callContractBlockstack'
       this.$root.$emit('bv::show::modal', 'waiting-modal')
       this.$store.dispatch(method, data).then((result) => {
         this.result = result

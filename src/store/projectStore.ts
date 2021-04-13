@@ -118,7 +118,7 @@ const projectStore = {
                 })
               }
               /**
-              store.dispatch('stacksStore/lookupContractInterface', project.projectId).then((data) => {
+              store.dispatch('rpayStacksStore/lookupContractInterface', project.projectId).then((data) => {
                 commit('addContractData', data)
                 if (data) {
                   commit('addContractData', { projectId: project.projectId, interface: data.interface })

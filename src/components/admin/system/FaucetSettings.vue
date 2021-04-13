@@ -51,14 +51,14 @@ export default {
     makeTransfer: function () {
       this.$store.commit('setModalMessage', 'Trying the internal risidio method.')
       this.$root.$emit('bv::show::modal', 'waiting-modal')
-      this.$store.dispatch('stacksStore/makeTransferBlockstack', { amountStx: this.amountStx, recipient: this.recipient }).then((result) => {
+      this.$store.dispatch('rpayStacksStore/makeTransferBlockstack', { amountStx: this.amountStx, recipient: this.recipient }).then((result) => {
         this.message = result
         this.$root.$emit('bv::hide::modal', 'waiting-modal')
       }).catch((error) => {
         this.message = error
         this.$store.commit('setModalMessage', 'Trying the stacks wallet method.')
         this.$root.$emit('bv::show::modal', 'waiting-modal')
-        this.$store.dispatch('stacksStore/makeTransferRisidio', { amountStx: this.amountStx, recipient: this.recipient }).then((result) => {
+        this.$store.dispatch('rpayStacksStore/makeTransferRisidio', { amountStx: this.amountStx, recipient: this.recipient }).then((result) => {
           this.message = result
           this.$root.$emit('bv::hide::modal', 'waiting-modal')
         }).catch((error) => {
