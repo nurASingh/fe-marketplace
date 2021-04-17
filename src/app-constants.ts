@@ -1,4 +1,5 @@
 export const APP_CONSTANTS = {
+  SET_RPAY_FLOW: 'setRpayFlow',
   KEY_RPAY_CONFIGURATION: 'getRpayConfiguration',
   KEY_MODAL_MESSAGE: 'getModalMessage',
   KEY_EXCHANGE_RATE: 'getExchangeRateFormatted',
@@ -19,7 +20,8 @@ export const APP_CONSTANTS = {
   KEY_CONTRACT: 'projectStore/getContract',
   KEY_FAVOURITES: 'projectStore/getFavourites',
 
-  KEY_PROFILE: 'authStore/getMyProfile',
+  SET_PROFILE: 'rpayAuthStore/myProfile',
+  KEY_PROFILE: 'rpayAuthStore/getMyProfile',
   KEY_EVENT_CODE: 'getEventCode',
   SET_EVENT_CODE: 'setEventCode',
   DISP_SAVE_PROJECT: 'projectStore/saveProject',

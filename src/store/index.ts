@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue'
 import Vuex from 'vuex'
-import authStore from './authStore'
+// import authStore from './authStore'
 import contentStore from './contentStore'
 import searchStore from './searchStore'
 import stacksStore from './stacksStore'
@@ -152,7 +152,6 @@ const setup = function (data) {
 
 export default new Vuex.Store({
   modules: {
-    authStore,
     contentStore,
     searchStore,
     projectStore,
@@ -218,6 +217,7 @@ export default new Vuex.Store({
     },
     getGalleryImageHeight: state => width => {
       const snapHeight = (width * 1024) / 716
+      console.log(state.configuration)
       return snapHeight
     },
     getExchangeRates: state => {
@@ -267,6 +267,9 @@ export default new Vuex.Store({
     }
   },
   mutations: {
+    setRpayFlow (state, data) {
+      state.configuration = setup(data)
+    },
     setXgeRates (state, rates) {
       state.xgeRates = rates
     },

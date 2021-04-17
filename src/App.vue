@@ -1,5 +1,14 @@
 <template>
-  <div :key="componentKey" id="app" v-if="loaded" :style="sectionDimensions">
+<b-container v-if="loading">
+  <b-row class="splash-screen vh-100 text-center" align-v="center">
+    <b-col><b-button class="main-navigation-button" variant="primary">#1</b-button></b-col>
+  </b-row>
+</b-container>
+<div v-else>
+  <div v-if="!configured">
+    <risidio-pay :configuration="configuration"/>
+  </div>
+  <div :key="componentKey" id="app" v-else :style="sectionDimensions">
     <div v-if="!adminPage">
       <router-view @set-filter="setFilter" @updateEventCode="updateEventCode" name="header" style="width: 100%; z-index: 200; position: relative; top: 0px;"/>
     </div>
@@ -13,6 +22,7 @@
     <success-modal />
     <risidio-pay :configuration="configuration"/>
   </div>
+</div>
 </template>
 
 <script>
@@ -30,6 +40,8 @@ export default {
   },
   data () {
     return {
+      loading: true,
+      configured: false,
       results: null,
       adminPage: false,
       showNavbar: false,
@@ -47,16 +59,25 @@ export default {
   mounted () {
     this.adminPage = this.$route.name.indexOf('-app') > -1
     this.adminPage = this.isHeaderLess()
-    this.$store.dispatch('authStore/fetchMyAccount').then((profile) => {
-      this.$store.dispatch('fetchRatesFromDb')
-      this.$store.dispatch('stacksStore/fetchMacSkyWalletInfo').then(() => {
-        this.$store.dispatch('projectStore/initSchema', profile).then(() => {
-          this.loaded = true
-          this.$store.dispatch('projectStore/fetchMyProjects', profile)
-        })
-      })
-    })
+    this.$store.commit(APP_CONSTANTS.SET_RPAY_FLOW, { flow: 'config-flow', asset: this.gaiaAsset })
+    this.loading = false
     const $self = this
+    if (window.eventBus && window.eventBus.$on) {
+      window.eventBus.$on('rpayEvent', function (data) {
+        if (data.opcode === 'configured') {
+          $self.$store.dispatch('rpayAuthStore/fetchMyAccount').then((profile) => {
+            $self.$store.dispatch('fetchRatesFromDb')
+            $self.$store.dispatch('stacksStore/fetchMacSkyWalletInfo').then(() => {
+              $self.$store.dispatch('projectStore/initSchema', profile).then(() => {
+                $self.configured = true
+                $self.$store.dispatch('projectStore/fetchMyProjects', profile)
+              })
+            })
+          })
+        }
+      })
+    }
+
     let resizeTimer
     /**
     const configuration = this.$store.getters[APP_CONSTANTS.KEY_RPAY_CONFIGURATION]

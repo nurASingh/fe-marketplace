@@ -76,8 +76,7 @@
               <div class="col-2">SaleData</div><div class="col-10">Type={{token.saleData.saleType}}, Amount {{token.saleData.buyNowOrStartingPrice}}</div>
               <div class="col-2">Reserve</div><div class="col-10">{{token.saleData.reservePrice}}, Increment {{token.saleData.incrementPrice}}</div>
               <div class="col-2">End time</div><div class="col-10">{{token.saleData.biddingEndTime}}</div>
-              <div class="col-2">Max Eds.</div><div class="col-10">{{token.tokenInfo.maxEditions}}</div>
-              <div class="col-2">Eds.</div><div class="col-10">{{token.tokenInfo.edition}}</div>
+              <div class="col-2">Edition</div><div class="col-10">{{token.tokenInfo.edition}} / {{token.tokenInfo.maxEditions}}</div>
               <div class="col-2">Block-height</div><div class="col-10">{{token.tokenInfo.date}}</div>
               <div class="col-2">Original</div><div class="col-10">{{token.tokenInfo.seriesOriginal}}</div>
             </div>

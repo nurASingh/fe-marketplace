@@ -91,18 +91,18 @@ export default {
   methods: {
     logout () {
       // this.$emit('updateEventCode', { eventCode: 'connect-logout' })
-      this.$store.dispatch('authStore/startLogout').then(() => {
-        localStorage.clear()
-        sessionStorage.clear()
+      this.$store.dispatch('rpayAuthStore/startLogout').then(() => {
+        // localStorage.clear()
+        // sessionStorage.clear()
       })
     },
     startLogin () {
       // this.$emit('updateEventCode', { eventCode: 'connect-login' })
-      const myProfile = this.$store.getters['authStore/getMyProfile']
+      const myProfile = this.$store.getters['rpayAuthStore/getMyProfile']
       if (myProfile.loggedIn) {
         this.$emit('connect-login', myProfile)
       } else {
-        this.$store.dispatch('authStore/startLogin')
+        this.$store.dispatch('rpayAuthStore/startLogin')
       }
     },
     mobileMenuExpandClass () {

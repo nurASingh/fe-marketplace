@@ -30,9 +30,10 @@ export default {
   methods: {
     logout () {
       // this.$emit('updateEventCode', { eventCode: 'connect-logout' })
-      this.$store.dispatch('authStore/startLogout').then(() => {
-        localStorage.clear()
-        sessionStorage.clear()
+      this.$store.dispatch('rpayAuthStore/startLogout').then(() => {
+        // localStorage.clear()
+        // sessionStorage.clear()
+        // this.$store.commit(APP_CONSTANTS.SET_PROFILE, { username: null, loggedIn: false, showAdmin: false, userData: null, authResponse: null, appPrivateKey: null })
       })
     }
   },

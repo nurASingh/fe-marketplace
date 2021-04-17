@@ -267,10 +267,10 @@ const stacksStore = {
         })
       })
     },
-    callContractRisidio ({ state, dispatch }, data) {
+    callContractRisidio ({ state, dispatch, rootGetters }, data) {
       return new Promise((resolve, reject) => {
         setAddresses()
-        const profile = store.getters['authStore/getMyProfile']
+        const profile = rootGetters.getters['rpayAuthStore/getMyProfile']
         if (!data.senderKey) {
           data.senderKey = profile.senderKey
         }
@@ -441,11 +441,11 @@ const stacksStore = {
         })
       })
     },
-    buyNow ({ state, dispatch }, purchaseInfo) {
+    buyNow ({ state, dispatch, rootGetters }, purchaseInfo) {
       return new Promise((resolve, reject) => {
         // (asset-hash (buff 32)) (sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint)
         const asset = purchaseInfo.asset
-        const profile = store.getters['authStore/getMyProfile']
+        const profile = rootGetters.getters['rpayAuthStore/getMyProfile']
         // const amount = new BigNum(utils.toOnChainAmount(asset.saleData.buyNowOrStartingPrice + 1))
         const amount = new BigNum(asset.saleData.buyNowOrStartingPrice + 1)
         const standardSTXPostCondition = makeStandardSTXPostCondition(
