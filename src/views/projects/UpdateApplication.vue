@@ -101,7 +101,7 @@ export default {
       dims: { width: 250, height: 250 },
       result: 'Saving data to your storage - back in a mo!',
       project: {
-        logo: require('@/assets/img/risidio_collection_logo.svg'),
+        logo: require('@/assets/img/risidio_white.png'),
         projectId: null,
         gaiaFilename: '',
         appOrigin: location.origin,
@@ -116,7 +116,7 @@ export default {
       },
       files: [],
       doValidate: true,
-      defaultBadge: require('@/assets/img/risidio_collection_logo.svg'),
+      defaultBadge: require('@/assets/img/risidio_white.png'),
       defaultBadgeData: null
     }
   },

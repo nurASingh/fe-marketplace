@@ -4,7 +4,7 @@
       <div class="row mt-5">
         <div class="col-12">
           <div class="text-17-500 ">
-            Transfering: {{asset.title}}
+            Transfering: {{asset.name}}
           </div>
           <div class="mt-3 text-11-500 text-left ">
             From: {{asset.owner}} [{{clarityAsset.owner}}]

@@ -34,7 +34,7 @@
     </div>
   </div>
   <div class="login-sidebar__item-group login-sidebar--border-bottom">
-    <div class="text2"><router-link to="/my-assets"><b-icon class="mr-2" icon="collection" /> My Collectibles</router-link></div>
+    <div class="text2"><router-link to="/my-assets"><b-icon class="mr-2" icon="collection" /> My Items</router-link></div>
     <div class="text2"><router-link to="/favourites"><b-icon class="mr-2" icon="heart" /> Favourites</router-link></div>
     <!-- <div class="text2"><router-link to="#"><b-icon class="mr-2" icon="gift" /> My Offers</router-link></div> -->
   </div>

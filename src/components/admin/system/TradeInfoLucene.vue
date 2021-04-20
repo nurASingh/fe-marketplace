@@ -1,7 +1,7 @@
 <template>
 <div>
   <div v-if="asset">
-    <div class="d-flex justify-content-between"><div class="w-25">Title:</div> <div class="w-75">{{asset.title}}</div></div>
+    <div class="d-flex justify-content-between"><div class="w-25">Title:</div> <div class="w-75">{{asset.name}}</div></div>
     <div class="d-flex justify-content-between"><div class="w-25">Owner:</div> <div class="w-75">{{asset.owner}}</div></div>
     <div class="d-flex justify-content-between"><div class="w-25">Artist:</div> <div class="w-75">{{asset.artist }}</div></div>
   </div>
@@ -23,7 +23,7 @@ export default {
   mounted () {
     const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
     if (!asset) {
-      this.$store.dispatch('searchStore/findAssetByHash', this.assetHash)
+      this.$store.dispatch('rpaySearchStore/findAssetByHash', this.assetHash)
     }
   },
   methods: {

@@ -49,7 +49,7 @@ export default {
   },
   methods: {
     findAssets () {
-      this.$store.dispatch('searchStore/findBySearchTerm').then((results) => {
+      this.$store.dispatch('rpaySearchStore/findBySearchTerm').then((results) => {
         this.results = results
       })
     },

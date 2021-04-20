@@ -23,7 +23,7 @@ export default {
   },
   mounted () {
     const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.$route.params.assetHash)
-    if (asset && asset.saleData) this.saleData = asset.saleData
+    if (asset && asset.contractAsset.saleData) this.saleData = asset.contractAsset.saleData
     return asset
   },
   methods: {

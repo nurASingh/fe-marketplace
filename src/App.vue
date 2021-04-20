@@ -105,15 +105,15 @@ export default {
   methods: {
     setFilter (data) {
       if (data.filter === 'application') {
-        this.$store.dispatch('searchStore/findByProjectId', data.contractId)
+        this.$store.dispatch('rpaySearchStore/findByProjectId', data.contractId)
       } else if (data.filter === 'category') {
-        this.$store.dispatch('searchStore/findByObject', data.category)
+        this.$store.dispatch('rpaySearchStore/findByObject', data.category)
       } else if (data.filter === 'text-search') {
-        this.$store.dispatch('searchStore/findBySearchTerm', data.query)
+        this.$store.dispatch('rpaySearchStore/findBySearchTerm', data.query)
       } else if (data.filter === 'sale-type') {
-        this.$store.dispatch('searchStore/findBySaleType', data.saleType)
+        this.$store.dispatch('rpaySearchStore/findBySaleType', data.saleType)
       } else {
-        this.$store.dispatch('searchStore/findBySearchTerm')
+        this.$store.dispatch('rpaySearchStore/findBySearchTerm')
       }
       this.$store.commit(APP_CONSTANTS.SET_CURRENT_SEARCH, data)
       if (this.$route.name !== 'marketplace') {

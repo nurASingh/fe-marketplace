@@ -26,7 +26,7 @@
         <template v-slot:button-content class="">
           <span>Gallery</span>
         </template>
-        <b-dropdown-item>Type of Collectibles</b-dropdown-item>
+        <b-dropdown-item>Type of Item</b-dropdown-item>
         <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'all' })">All</a></b-dropdown-item>
         <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'popular' })">Popular</a></b-dropdown-item>
         <b-dropdown-item><a href="#" @click.prevent="$emit('set-filter', { filter: 'recent' })">Recently Added</a></b-dropdown-item>
@@ -85,7 +85,7 @@ export default {
   data () {
     return {
       query: null,
-      logo: require('@/assets/img/risidio_collection_logo.svg')
+      logo: require('@/assets/img/risidio_white.png')
     }
   },
   methods: {

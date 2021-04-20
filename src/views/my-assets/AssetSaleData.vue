@@ -9,12 +9,12 @@
     </div>
   </div>
   <b-card-group deck v-if="!loading">
-    <b-card :img-src="asset.assetUrl" img-alt="Card image" img-left class="p-5" style="max-height: 363px; width: 976px;">
+    <b-card :img-src="asset.imageUrl" img-alt="Card image" img-left class="p-5" style="max-height: 363px; width: 976px;">
       <b-card-text>
         <div class="row">
           <div class="col-4">
-            <p class="text2">Collectible name</p>
-            <p class="text1">#{{asset.nftIndex}} {{asset.title}}</p>
+            <p class="text2">Item name</p>
+            <p class="text1">#{{asset.contractAsset.nftIndex}} {{asset.name}}</p>
           </div>
           <div class="col-6">
             <div class="d-flex flex-column align-items-start">
@@ -77,8 +77,8 @@ export default {
   },
   mounted () {
     this.assetHash = this.$route.params.assetHash
-    this.$store.dispatch('searchStore/findAssetByHash', this.assetHash).then((asset) => {
-      if (asset.saleData && asset.saleData.saleType > 0) this.saleType = asset.saleData.saleType
+    this.$store.dispatch('rpaySearchStore/findAssetByHash', this.assetHash).then((asset) => {
+      if (asset.contractAsset && asset.contractAsset.saleData && asset.contractAsset.saleData.saleType > 0) this.saleType = asset.contractAsset.saleData.saleType
       this.loading = false
     })
   },
@@ -92,11 +92,11 @@ export default {
     },
     setTradeInfo (saleData) {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      if (typeof asset.nftIndex === 'undefined' || asset.projectId.indexOf('.') < 0) {
+      if (typeof asset.contractAsset.nftIndex === 'undefined' || asset.projectId.indexOf('.') < 0) {
         this.$notify({ type: 'error', title: 'Not Registered', text: 'This item isn\'t registered on-chain.' })
         return
       }
-      asset.saleData = saleData
+      asset.contractAsset.saleData = saleData
       this.$store.commit('setModalMessage', 'Calling wallet to sign and send... transactions can take a few minutes to confirm!')
       this.$root.$emit('bv::show::modal', 'waiting-modal')
       this.$store.dispatch('rpayStacksStore/setTradeInfo', asset).then((result) => {

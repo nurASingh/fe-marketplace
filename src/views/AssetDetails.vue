@@ -7,7 +7,7 @@
   </div>
   <div class="row">
     <div class="offset-md-2 col-md-4 col-sm-12">
-      <div class="mb-4"><img :src="asset.assetUrl" class="img-responsive" width="100%"/></div>
+      <div class="mb-4"><img :src="coverImageSrc" class="img-responsive" width="100%"/></div>
       <div class="mb-4">
         <p class="mb-2 text-11-700">Description</p>
         <p class="mb-2 text-11-500">{{asset.description}}</p>
@@ -21,7 +21,7 @@
 
     <div class="col-md-6 col-sm-12">
       <div class="d-flex justify-content-between">
-        <p class="text-40-300">{{asset.title}}</p>
+        <p class="text-40-300">{{asset.name}}</p>
         <p class="text-11-500 bg-secondary text-white text-center pt-2 mt-3" style="text-transform: capitalize; width: 80px; height: 32px;">{{saleType()}}</p>
       </div>
       <div class="mb-3" style="margin-top: -15px;">
@@ -79,6 +79,7 @@ export default {
   },
   data () {
     return {
+      missingCoverImage: require('@/assets/img/main-navbar-bg.svg'),
       assetHash: null,
       showStxAddress: false
     }
@@ -86,7 +87,7 @@ export default {
   mounted () {
     this.loading = false
     this.assetHash = this.$route.params.assetHash
-    this.$store.dispatch('searchStore/findAssetByHash', this.assetHash)
+    this.$store.dispatch('rpaySearchStore/findAssetByHash', this.assetHash)
   },
   methods: {
     projectName (projectId) {
@@ -94,7 +95,7 @@ export default {
     },
     buyingPrice () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      const rate = this.$store.getters[APP_CONSTANTS.KEY_STX_AMOUNT](asset.saleData.buyNowOrStartingPrice)
+      const rate = this.$store.getters[APP_CONSTANTS.KEY_STX_AMOUNT](asset.contractAsset.saleData.buyNowOrStartingPrice)
       return rate
     },
     isOwner () {
@@ -104,9 +105,9 @@ export default {
     },
     isBuyNow () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      if (!asset.saleData || !asset.saleData.saleType === 1) return false
+      if (!asset.contractAsset.saleData || !asset.contractAsset.saleData.saleType === 1) return false
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
-      return profile.loggedIn && asset.saleData.saleType === 1 && asset.saleData.buyNowOrStartingPrice > 0
+      return profile.loggedIn && asset.contractAsset.saleData.saleType === 1 && asset.contractAsset.saleData.buyNowOrStartingPrice > 0
     },
     confirmBuyNow () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
@@ -133,18 +134,18 @@ export default {
     },
     isPlaceBid () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      if (!asset.saleData || !asset.saleData.saleType === 2) return false
+      if (!asset.contractAsset.saleData || !asset.contractAsset.saleData.saleType === 2) return false
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
-      return profile.loggedIn && asset.saleData.saleType === 2
+      return profile.loggedIn && asset.contractAsset.saleData.saleType === 2
     },
     saleType () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      if (asset.saleData) {
-        if (asset.saleData.saleType === 0) {
+      if (asset.contractAsset.saleData) {
+        if (asset.contractAsset.saleData.saleType === 0) {
           return 'Pre Sale'
-        } else if (asset.saleData.saleType === 1) {
+        } else if (asset.contractAsset.saleData.saleType === 1) {
           return 'On Sale'
-        } else if (asset.saleData.saleType === 2) {
+        } else if (asset.contractAsset.saleData.saleType === 2) {
           return 'On Auction'
         }
       }
@@ -157,13 +158,20 @@ export default {
     }
   },
   computed: {
+    coverImageSrc () {
+      const gaiaAsset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
+      if (gaiaAsset && gaiaAsset.nftMedia && gaiaAsset.nftMedia.coverImage && gaiaAsset.nftMedia.coverImage.fileUrl) {
+        return gaiaAsset.nftMedia.coverImage.fileUrl
+      }
+      return this.missingCoverImage
+    },
     profile () {
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
       return profile
     },
     rate () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      const rate = this.$store.getters[APP_CONSTANTS.KEY_EXCHANGE_RATE](asset.saleData.buyNowOrStartingPrice)
+      const rate = this.$store.getters[APP_CONSTANTS.KEY_EXCHANGE_RATE](asset.contractAsset.saleData.buyNowOrStartingPrice)
       return rate
     },
     asset () {

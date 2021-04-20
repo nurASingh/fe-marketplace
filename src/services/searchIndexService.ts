@@ -49,7 +49,7 @@ const searchIndexService = {
 
   addTradeInfo: function (asset: any) {
     return new Promise(function (resolve, reject) {
-      axios.post(SEARCH_API_PATH + '/v1/trade-info/' + asset.assetHash, asset.saleData).then((result) => {
+      axios.post(SEARCH_API_PATH + '/v1/trade-info/' + asset.assetHash, asset.contractAsset.saleData).then((result) => {
         resolve(result.data)
       }).catch((error) => {
         reject(new Error('Unable index record: ' + error))
@@ -195,8 +195,6 @@ const searchIndexService = {
   findAssetByHash: function (assetHash: string) {
     return new Promise(function (resolve, reject) {
       axios.get(SEARCH_API_PATH + '/v1/asset/' + assetHash).then((asset: any) => {
-        if (asset.nftIndex === 'null') asset.nftIndex = null
-        if (asset.tokenId === 'null') asset.tokenId = null
         resolve(asset)
       }).catch((error) => {
         reject(new Error('Unable index record: ' + error))

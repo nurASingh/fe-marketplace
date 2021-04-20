@@ -189,7 +189,7 @@ export default {
   },
   mounted () {
     this.loading = false
-    this.$store.dispatch('searchStore/findBySearchTerm')
+    this.$store.dispatch('rpaySearchStore/findBySearchTerm')
   },
   methods: {
     isActive (category) {

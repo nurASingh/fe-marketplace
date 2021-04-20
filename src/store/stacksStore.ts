@@ -84,8 +84,8 @@ const pollTxStatus = function (dispatch, txId) {
 **/
 const handleSetTradeInfo = function (asset, result, resolve) {
   asset.hexResp = (result && result.data) ? result.data : ''
-  // if (asset.saleData.biddingEndTime && typeof asset.saleData.biddingEndTime === 'string' && asset.saleData.biddingEndTime.indexOf('-') > -1) {
-  //  asset.saleData.biddingEndTime = moment(asset.saleData.biddingEndTime).valueOf()
+  // if (asset.contractAsset.saleData.biddingEndTime && typeof asset.contractAsset.saleData.biddingEndTime === 'string' && asset.contractAsset.saleData.biddingEndTime.indexOf('-') > -1) {
+  //  asset.contractAsset.saleData.biddingEndTime = moment(asset.contractAsset.saleData.biddingEndTime).valueOf()
   // }
   searchIndexService.addTradeInfo(asset).then(() => {
     console.log(asset)
@@ -97,12 +97,12 @@ const handleSetTradeInfo = function (asset, result, resolve) {
 }
 const handleBuyNow = function (asset, result, resolve, purchaseInfo) {
   asset.owner = purchaseInfo.buyer
-  if (asset.saleData) {
-    asset.saleData.saleType = 0
-    asset.saleData.buyNowOrStartingPrice = 0
-    asset.saleData.incrementPrice = 0
-    asset.saleData.reservePrice = 0
-    asset.saleData.biddingEndTime = 0
+  if (asset.contractAsset.saleData) {
+    asset.contractAsset.saleData.saleType = 0
+    asset.contractAsset.saleData.buyNowOrStartingPrice = 0
+    asset.contractAsset.saleData.incrementPrice = 0
+    asset.contractAsset.saleData.reservePrice = 0
+    asset.contractAsset.saleData.biddingEndTime = 0
   }
   asset.hexResp = (result && result.data) ? result.data : ''
   searchIndexService.addRecord(asset).then(() => {
@@ -167,7 +167,7 @@ const stacksStore = {
     result: null,
     contracts: [],
     appName: 'Risidio Auctions',
-    appLogo: '/img/risidio_collection_logo.svg',
+    appLogo: '/img/risidio_white.png',
     macsWallet: mac,
     skysWallet: sky
   },
@@ -410,12 +410,12 @@ const stacksStore = {
       return new Promise((resolve, reject) => {
         // (asset-hash (buff 32)) (sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint)
         const buffer = bufferCV(Buffer.from(asset.assetHash, 'hex')) // Buffer.from(hash.toString(CryptoJS.enc.Hex), 'hex')
-        const saleType = uintCV(asset.saleData.saleType)
-        const incrementPrice = uintCV(utils.toOnChainAmount(asset.saleData.incrementPrice))
-        const reservePrice = uintCV(utils.toOnChainAmount(asset.saleData.reservePrice))
-        const buyNowOrStartingPrice = uintCV(utils.toOnChainAmount(asset.saleData.buyNowOrStartingPrice))
-        const biddingEndTime = uintCV(asset.saleData.biddingEndTime)
-        const auctionId = uintCV(asset.saleData.biddingEndTime)
+        const saleType = uintCV(asset.contractAsset.saleData.saleType)
+        const incrementPrice = uintCV(utils.toOnChainAmount(asset.contractAsset.saleData.incrementPrice))
+        const reservePrice = uintCV(utils.toOnChainAmount(asset.contractAsset.saleData.reservePrice))
+        const buyNowOrStartingPrice = uintCV(utils.toOnChainAmount(asset.contractAsset.saleData.buyNowOrStartingPrice))
+        const biddingEndTime = uintCV(asset.contractAsset.saleData.biddingEndTime)
+        const auctionId = uintCV(asset.contractAsset.saleData.biddingEndTime)
         const functionArgs = [buffer, saleType, incrementPrice, reservePrice, buyNowOrStartingPrice, biddingEndTime, auctionId]
         const data: any = {
           contractAddress: asset.projectId.split('.')[0],
@@ -446,8 +446,8 @@ const stacksStore = {
         // (asset-hash (buff 32)) (sale-type uint) (increment-stx uint) (reserve-stx uint) (amount-stx uint)
         const asset = purchaseInfo.asset
         const profile = rootGetters.getters['rpayAuthStore/getMyProfile']
-        // const amount = new BigNum(utils.toOnChainAmount(asset.saleData.buyNowOrStartingPrice + 1))
-        const amount = new BigNum(asset.saleData.buyNowOrStartingPrice + 1)
+        // const amount = new BigNum(utils.toOnChainAmount(asset.contractAsset.saleData.buyNowOrStartingPrice + 1))
+        const amount = new BigNum(asset.contractAsset.saleData.buyNowOrStartingPrice + 1)
         const standardSTXPostCondition = makeStandardSTXPostCondition(
           profile.stxAddress,
           FungibleConditionCode.LessEqual,

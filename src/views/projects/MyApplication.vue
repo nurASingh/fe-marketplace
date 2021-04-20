@@ -223,7 +223,7 @@ export default {
       let project = this.$store.getters[APP_CONSTANTS.KEY_MY_PROJECT](this.projectId)
       if (!project) {
         project = {
-          imageUrl: require('@/assets/img/risidio_collection_logo.svg'),
+          imageUrl: require('@/assets/img/risidio_white.png'),
           mintPrice: '',
           title: '',
           description: ''

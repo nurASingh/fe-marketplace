@@ -114,29 +114,29 @@ export default {
       }
     },
     findUsers () {
-      this.$store.dispatch('searchStore/findUsers').then((results) => {
+      this.$store.dispatch('rpaySearchStore/findUsers').then((results) => {
         this.searchResults = results
         this.searchType = 'users'
       })
     },
     findAssets () {
-      this.$store.dispatch('searchStore/findAssets').then((results) => {
+      this.$store.dispatch('rpaySearchStore/findAssets').then((results) => {
         this.searchResults = results
         this.searchType = 'assets'
       })
     },
     indexUsers (users) {
-      this.$store.dispatch('searchStore/indexUsers', users).then((result) => {
+      this.$store.dispatch('rpaySearchStore/indexUsers', users).then((result) => {
         this.result = result
       })
     },
     clearUsers () {
-      this.$store.dispatch('searchStore/clearUsers').then(() => {
+      this.$store.dispatch('rpaySearchStore/clearUsers').then(() => {
         this.$notify({ type: 'info', title: 'Index Details', text: 'Cleared the user lucene index' })
       })
     },
     clearAssets () {
-      this.$store.dispatch('searchStore/clearAssets').then(() => {
+      this.$store.dispatch('rpaySearchStore/clearAssets').then(() => {
         this.$notify({ type: 'info', title: 'Index Details', text: 'Cleared the assets lucene index' })
       })
     }

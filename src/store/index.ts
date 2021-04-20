@@ -3,7 +3,6 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 // import authStore from './authStore'
 import contentStore from './contentStore'
-import searchStore from './searchStore'
 import stacksStore from './stacksStore'
 import openNodeStore from './openNodeStore'
 import projectStore from './projectStore'
@@ -125,7 +124,7 @@ const gaiaAsset = {
 
 const setup = function (data) {
   if (!data.asset) data.asset = {}
-  let risidioCardMode = 'config-flow'
+  let risidioCardMode = 'marketplace-flow'
   if (data.flow) {
     risidioCardMode = data.flow
   }
@@ -134,12 +133,14 @@ const setup = function (data) {
   const risidioBaseApi = RISIDIO_API_PATH
   const configuration = {
     lookAndFeel: lookAndFeel,
-    gaiaAsset: gaiaAsset,
+    gaiaAppDomains: ['localhost:8080', 'localhost:8081', 'localhost:8082'],
+    gaiaAsset: (data.asset) ? data.asset : gaiaAsset,
     payment: payment,
     marketConfig: marketConfig,
     selling: selling,
     minter: minter,
     network: useNetwork,
+    risidioProjectId: null, // STX_CONTRACT_ADDRESS + '.' + STX_CONTRACT_NAME,
     risidioBaseApi: risidioBaseApi,
     risidioStacksApi: RISIDIO_STACKS_API,
     risidioWalletMac: RISIDIO_WALLET_MAC,
@@ -153,7 +154,6 @@ const setup = function (data) {
 export default new Vuex.Store({
   modules: {
     contentStore,
-    searchStore,
     projectStore,
     stacksStore,
     openNodeStore

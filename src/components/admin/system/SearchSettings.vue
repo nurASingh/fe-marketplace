@@ -112,7 +112,7 @@ export default {
       }
     },
     findUsers () {
-      this.$store.dispatch('searchStore/findUsers').then((results) => {
+      this.$store.dispatch('rpaySearchStore/findUsers').then((results) => {
         this.searchResults = results
         this.searchType = 'users'
       })
@@ -126,7 +126,7 @@ export default {
       return contractId.substring(0, 10) + '...'
     },
     findAssets () {
-      this.$store.dispatch('searchStore/findAssets').then((results) => {
+      this.$store.dispatch('rpaySearchStore/findAssets').then((results) => {
         this.searchResults = results
         this.searchType = 'assets'
       })

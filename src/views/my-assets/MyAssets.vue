@@ -26,7 +26,7 @@ export default {
   data () {
     return {
       results: null,
-      pageTitle: 'My Collectibles',
+      pageTitle: 'My Items',
       gridClasses: ['col-lg-3', 'col-md-4', 'col-sm-6', 'col-12']
     }
   },
@@ -39,12 +39,12 @@ export default {
   },
   methods: {
     findAssets () {
-      this.$store.dispatch('searchStore/findByOwner').then((results) => {
+      this.$store.dispatch('rpaySearchStore/findByOwner').then((results) => {
         this.results = results
       })
     },
     setProjectFilter (projectId) {
-      this.$store.dispatch('searchStore/findByProjectId', projectId).then((results) => {
+      this.$store.dispatch('rpaySearchStore/findByProjectId', projectId).then((results) => {
         this.results = results
       })
     },

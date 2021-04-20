@@ -61,10 +61,10 @@ export default {
     this.loading = false
     this.assetHash = this.$route.params.assetHash
     const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.$route.params.assetHash)
-    if (asset && asset.saleData) this.saleData = asset.saleData
+    if (asset && asset.contractAsset && asset.contractAsset.saleData) this.saleData = asset.contractAsset.saleData
 
-    if (asset.saleData && asset.saleData.biddingEndTime > 0) {
-      this.saleData.biddingEndTime = moment(asset.saleData.biddingEndTime).format()
+    if (asset.contractAsset.saleData && asset.contractAsset.saleData.biddingEndTime > 0) {
+      this.saleData.biddingEndTime = moment(asset.contractAsset.saleData.biddingEndTime).format()
     } else {
       const dd = moment({}).add(2, 'days')
       dd.hour(10)
