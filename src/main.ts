@@ -4,13 +4,15 @@ import './registerServiceWorker'
 import router from './router'
 import store from './store'
 import { BootstrapVue, BootstrapVueIcons, FormFilePlugin } from 'bootstrap-vue'
-import '@/assets/scss/custom.scss'
 import Notifications from 'vue-notification'
 import VueScrollTo from 'vue-scrollto'
 import PrismicVue from 'prismic-vue'
 import linkResolver from './prismic/link-resolver'
 import htmlSerializer from './prismic/html-serializer'
 import RisidioPay from 'risidio-pay'
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue/dist/bootstrap-vue.css'
+import '@/assets/scss/custom.scss'
 
 Vue.config.productionTip = false
 Vue.use(BootstrapVue)

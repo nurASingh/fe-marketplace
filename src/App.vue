@@ -65,12 +65,20 @@ export default {
     if (window.eventBus && window.eventBus.$on) {
       window.eventBus.$on('rpayEvent', function (data) {
         if (data.opcode === 'configured') {
+          $self.$store.dispatch('rpayStacksContractStore/indexGaiaData').then((result) => {
+            $self.result = result
+          }).catch((err) => {
+            $self.result = err
+          })
           $self.$store.dispatch('rpayAuthStore/fetchMyAccount').then((profile) => {
             $self.$store.dispatch('fetchRatesFromDb')
-            $self.$store.dispatch('stacksStore/fetchMacSkyWalletInfo').then(() => {
+            $self.$store.dispatch('rpayStacksStore/fetchMacSkyWalletInfo').then(() => {
               $self.$store.dispatch('projectStore/initSchema', profile).then(() => {
                 $self.configured = true
                 $self.$store.dispatch('projectStore/fetchMyProjects', profile)
+                if ($self.$route.query && $self.$route.query) {
+                  $self.setFilter($self.$route.query)
+                }
               })
             })
           })
@@ -117,7 +125,7 @@ export default {
       }
       this.$store.commit(APP_CONSTANTS.SET_CURRENT_SEARCH, data)
       if (this.$route.name !== 'marketplace') {
-        this.$router.push('/marketplace?filter=' + data.filter)
+        // this.$router.push('/marketplace?filter=' + data.filter)
       }
     },
     toggleOnNavbar () {

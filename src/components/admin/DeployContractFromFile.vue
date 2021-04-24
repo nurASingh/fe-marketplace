@@ -93,7 +93,7 @@ export default {
       // contractName = this.this.files[0].name.split(/\./)[1]
       const projectPlus = this.project
       projectPlus.codeBody = this.plainFile()
-      this.$store.dispatch('stacksStore/deployProjectContract', projectPlus).then((project) => {
+      this.$store.dispatch('rpayStacksStore/deployProjectContract', projectPlus).then((project) => {
         this.$emit('deployed', { error: false, project: project })
       }).catch((error) => {
         this.result = error

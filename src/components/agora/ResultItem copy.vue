@@ -27,6 +27,7 @@
       </div>
   </div>
 </div>
+<!-- {{created(result.created)}} / {{created(result.updated)}} -->
 </template>
 
 <script>
@@ -150,6 +151,7 @@ export default {
         playOnHover: true,
         assetHash: this.result.assetHash,
         autoplay: false,
+        muted: true,
         showMeta: false,
         controls: true,
         aspectRatio: '1:1',

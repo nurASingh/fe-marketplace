@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import Vue from 'vue'
 import Vuex from 'vuex'
-// import authStore from './authStore'
 import contentStore from './contentStore'
-import stacksStore from './stacksStore'
 import openNodeStore from './openNodeStore'
 import projectStore from './projectStore'
 import rates from 'risidio-rates'
@@ -155,7 +153,6 @@ export default new Vuex.Store({
   modules: {
     contentStore,
     projectStore,
-    stacksStore,
     openNodeStore
   },
   state: {

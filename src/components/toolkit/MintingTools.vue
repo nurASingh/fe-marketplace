@@ -119,7 +119,7 @@ export default {
       window.eventBus.$on('rpayEvent', function (data) {
         if (data.opcode === 'save-selling-data') {
           $self.$bvModal.hide('rpay-modal')
-        } else if (data.opcode === 'stx-mint-success' || data.opcode === 'eth-mint-success') {
+        } else if (data.opcode === 'stx-transaction-finished' || data.opcode === 'eth-mint-success') {
           $self.showRpay = false
           $self.$bvModal.hide('rpay-modal')
           $self.$bvModal.show('result-modal')

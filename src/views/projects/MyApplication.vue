@@ -25,16 +25,17 @@
                   <p class="mb-2 text1">{{project.description}}</p>
                   <div v-if="contractInterface">
                     <div class="mb-2 text1"><span>Contract found on the <a class="text-info" :href="openContractUrl()" target="_blank">Stacks Blockchain</a>  <a href="#" @click="showContractData = !showContractData">show contract</a></span></div>
-                    <div class="mb-2 text1" v-if="appmapProject">
-                      Application is registered with the marketplace (#{{appmapProject.appCounter}})
+                    <div class="mb-2 text1" v-if="application">
+                      Application is registered with the marketplace (#{{application.appCounter}})
+                      <div class="mb-2 text1">App Status: {{application.status}}</div>
                       <div class="mb-2 text1">
-                         <a href="#" @click.prevent="updateApp(appmapProject.appCounter)">Update Contract Data</a>
+                         <a href="#" @click.prevent="updateApp(application.appCounter)">Update Contract Data</a>
                       </div>
-                      <div v-if="appmapProject.status === 0" class="mb-2 text1">
-                         <a href="#" @click.prevent="disableApplication(1)">disable</a>
+                      <div v-if="application.status === 0" class="mb-2 text1">
+                         <a href="#" @click.prevent="changeApplicationStatus(1)">disable</a>
                       </div>
-                      <div v-else-if="appmapProject.status === 1" class="mb-2 text1">
-                         <a href="#" @click.prevent="disableApplication(0)">enable</a>
+                      <div v-else-if="application.status === 1" class="mb-2 text1">
+                         <a href="#" @click.prevent="changeApplicationStatus(0)">enable</a>
                       </div>
                     </div>
                     <div class="mt-4 mb-2 text1" v-else>
@@ -64,9 +65,9 @@
               <b-button :to="'/customise-contract/' + project.projectId" variant="outline-info" class="text-info">I Need a Contract</b-button>
             </div>
           </div>
-          <div class="text-light" v-if="appmapProject">
-            <div>{{appmapProject.baseTokenUri}}</div>
-            <div v-for="(asset, index) in appmapProject.assets" :key="index">
+          <div class="text-light" v-if="application">
+            <div>{{application.baseTokenUri}}</div>
+            <div v-for="(asset, index) in application.assets" :key="index">
               <pre>Owner: {{asset.owner}}</pre>
               <pre>Asset hash: {{asset.assetHash}}</pre>
             </div>
@@ -111,15 +112,7 @@ export default {
   },
   mounted () {
     this.projectId = this.$route.params.projectId
-    // this.$store.dispatch('stacksStore/fetchMacSkyWalletInfo')
-    /**
-    this.$store.dispatch('projectStore/findProjectByProjectId', this.projectId).then((project) => {
-      this.project = project
-      this.lookupContract()
-      this.loaded = true
-    })
-    **/
-    this.$store.dispatch('stacksStore/lookupContractInterface', this.projectId).then((data) => {
+    this.$store.dispatch('rpayStacksStore/lookupContractInterface', this.projectId).then((data) => {
       this.contractInterface = data
       this.loaded = true
     }).catch(() => {
@@ -133,9 +126,10 @@ export default {
       })
     },
     updateApp: function (appCounter) {
+      const application = this.application
       const project = this.$store.getters[APP_CONSTANTS.KEY_MY_PROJECT](this.projectId)
       const owner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
-      const functionArgs = [intCV(appCounter), standardPrincipalCV(owner), bufferCV(Buffer.from(project.appOrigin)), bufferCV(Buffer.from(project.gaiaFilename)), bufferCV(Buffer.from(this.projectId)), intCV(0), intCV(0)]
+      const functionArgs = [intCV(appCounter), standardPrincipalCV(owner), bufferCV(Buffer.from(project.appOrigin)), bufferCV(Buffer.from(project.gaiaFilename)), bufferCV(Buffer.from(this.projectId)), intCV(0), intCV(application.status)]
       const data = {
         contractAddress: REGISTRY_CONTRACT_ID.split('.')[0],
         contractName: REGISTRY_CONTRACT_ID.split('.')[1],
@@ -181,13 +175,12 @@ export default {
         })
       })
     },
-    disableApplication (appIndex, status) {
-      const appmapContractId = this.$store.getters[APP_CONSTANTS.KEY_REGISTRY_CONTRACT_ID]
-      // const owner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].username
-      const functionArgs = [intCV(appIndex), intCV(status)]
+    changeApplicationStatus (status) {
+      const application = this.application
+      const functionArgs = [intCV(application.appIndex), intCV(status)]
       const data = {
-        contractAddress: appmapContractId.split('.')[0],
-        contractName: appmapContractId.split('.')[1],
+        contractAddress: this.projectId.split('.')[0],
+        contractName: 'appmap',
         functionName: 'set-app-status',
         functionArgs: functionArgs,
         eventCode: 'disable-application'
@@ -199,7 +192,7 @@ export default {
         this.result = result
         this.$root.$emit('bv::hide::modal', 'waiting-modal')
         this.$root.$emit('bv::show::modal', 'success-modal')
-        this.$store.commit('setModalMessage', 'Application is now connected to the Stacks blockchain.')
+        this.$store.commit('setModalMessage', 'Application status has been changed to ' + status + ' on the Stacks blockchain.')
       }).catch((error) => {
         this.result = error
         this.$store.commit('setModalMessage', 'Error occurred processing transaction.')
@@ -231,9 +224,13 @@ export default {
       }
       return project
     },
-    appmapProject () {
-      const appmap = this.$store.getters[APP_CONSTANTS.KEY_APPLICATION_FROM_REGISTRY_BY_CONTRACT_ID](this.projectId)
-      return appmap
+    application () {
+      let application = this.$store.getters[APP_CONSTANTS.KEY_APPLICATION_FROM_REGISTRY_BY_CONTRACT_ID](this.projectId)
+      if (!application) {
+        const registry = this.$store.getters[APP_CONSTANTS.KEY_REGISTRY]
+        if (registry && registry.notAllowed) application = registry.notAllowed.find((o) => o.contractId === this.projectId)
+      }
+      return application
     }
   }
 }

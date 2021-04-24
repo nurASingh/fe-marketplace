@@ -111,7 +111,7 @@ export default {
         mintPrice: '100000',
         contractName: null,
         contractOwner: 'stacks-address',
-        callBack: 'https://staging.thisisnumberone.com/index/v2/asset/'
+        callBack: 'https://truma.risidio.com/mesh/v2/asset/'
       },
       // contractSourceDisplay: null,
       contractSource: `
@@ -156,7 +156,8 @@ export default {
 (define-map nft-high-bid-counter {nft-index: uint} {high-bid-counter: uint, bidder: principal, amount: uint, when-bid: uint, sale-cycle: uint})
 (define-map nft-transfer-counter {nft-index: uint} {transfer-counter: uint})
 
-(define-constant percentage-with-twodp u10000000000)
+;; (define-constant percentage-with-twodp u10000000000)
+(define-constant percentage-with-twodp u10000)
 
 (define-constant not-allowed (err u10))
 (define-constant not-found (err u11))
@@ -792,6 +793,7 @@ export default {
     )
 )
 
+;; In the pay-royalty function, the unit of saleAmount is in Satoshi and the share variable is a percentage (ex for 5% it will be equal to 5)
 (define-private (pay-royalty (saleAmount uint) (payee principal) (share uint))
     (begin
         (if (> share u0)
@@ -844,6 +846,10 @@ export default {
             )
         )
     )
+)
+
+(define-read-only (get-balance (user principal))
+    (ok (stx-get-balance user))
 )
 `
     }
@@ -941,7 +947,7 @@ export default {
       this.$store.commit('setModalMessage', 'Processing request..')
       this.$root.$emit('bv::show::modal', 'waiting-modal')
       this.showWaitingModal = true
-      this.$store.dispatch('stacksStore/deployProjectContract', projectPlus).then((project) => {
+      this.$store.dispatch('rpayStacksStore/deployProjectContract', projectPlus).then((project) => {
         this.deployedProject = project
         this.$root.$emit('bv::hide::modal', 'waiting-modal')
         this.$root.$emit('bv::show::modal', 'success-modal')

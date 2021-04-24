@@ -31,9 +31,8 @@ export default {
   },
   data () {
     return {
-      results: null,
       query: null,
-      gridClasses: ['col-lg-3', 'col-md-4', 'col-sm-6', 'col-12']
+      gridClasses: ['col-lg-4', 'col-md-4', 'col-sm-6', 'col-12']
     }
   },
   mounted () {
@@ -49,9 +48,7 @@ export default {
   },
   methods: {
     findAssets () {
-      this.$store.dispatch('rpaySearchStore/findBySearchTerm').then((results) => {
-        this.results = results
-      })
+      this.$store.dispatch('rpaySearchStore/findBySearchTerm')
     },
     truncateProjectId (projectId) {
       if (projectId.indexOf('.') > -1) {

@@ -22,7 +22,7 @@
     <audio controls :src="mediaItem().fileUrl" :style="dimensions()">
       Your browser does not support the <code>audio</code> element.
     </audio>
-    <div class="d-flex justify-content-between">
+    <div class="d-flex justify-content-between" v-if="videoOptions.showMeta">
       <div class="text-small text-info">{{mediaItem().type}}  ({{getSizeMeg(mediaItem().size)}})</div>
       <div v-if="!contractAsset" @click="deleteMediaItem()" class="text-small text-danger"><b-icon icon="trash"/></div>
     </div>
@@ -35,7 +35,7 @@
 
   <div v-else-if="isImage(mediaItem())">
     <img :src="mediaItem().fileUrl" :alt="mediaItem().name" :style="dimensions()">
-    <div class="d-flex justify-content-between">
+    <div class="d-flex justify-content-between" v-if="videoOptions.showMeta">
       <div class="text-small text-info">{{mediaItem().type}}  ({{getSizeMeg(mediaItem().size)}})</div>
       <div v-if="!contractAsset" @click="deleteMediaItem()" class="text-small text-danger"><b-icon icon="trash"/></div>
     </div>

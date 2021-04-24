@@ -45,4 +45,12 @@ export default {
 
 <style>
   @import '../../assets/scss/video-js.css';
+  .video-js {
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+}
+.vjs-default-skin.vjs-paused .vjs-big-play-button {
+  display: none;
+}
 </style>

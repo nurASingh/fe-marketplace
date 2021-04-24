@@ -510,9 +510,9 @@ const stacksStore = {
         })
       })
     },
-    deployContractRisidio ({ state }, project) {
+    deployContractRisidio ({ state, rootGetters }, project) {
       return new Promise((resolve, reject) => {
-        const sender = state.macsWallet
+        const sender = rootGetters['rpayStacksStore/getMacsWallet']
         const contractName = project.projectId.split('.')[1]
         const network = new StacksTestnet()
         const txOptions = {
@@ -646,7 +646,6 @@ const stacksStore = {
           resolve(null)
           pollTxStatus(result.txId).then(() => {
             store.dispatch('projectStore/updateProject', { projectId: datum.projectId, contractId: datum.projectId, txId: result.txId }).then((project) => {
-              // dispatch('fetchMacSkyWalletInfo')
               resolve(project)
             })
           })

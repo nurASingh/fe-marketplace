@@ -20,11 +20,11 @@
       </b-form>
     </div>
   </div>
-<div class="upload-preview bg-info text-warning text-small text-bold  my-5 p-4" v-if="registry">
+<div class="upload-preview bg-danger text-white  my-5 p-4" v-if="registry">
   <div class="row border-bottom mb-3 pb-2">
     <div class="col-12"><h3>All Contract Data</h3></div>
-    <div class="col-2">administrator</div><div class="col-10">{{registry.administrator}}</div>
-    <div class="col-2">appCounter</div><div class="col-10">{{registry.appCounter}}</div>
+    <div class="col-2">Administrator</div><div class="col-10">{{registry.administrator}}</div>
+    <div class="col-2">Apps Connected</div><div class="col-10">{{registry.appCounter}}</div>
   </div>
   <div class="row border-bottom mb-3 pb-2" v-for="(application, index) in registry.applications" :key="index">
     <div class="col-2">Contract Id</div><div class="col-10">{{application.contractId}}</div>
@@ -40,32 +40,37 @@
         <div class="col-2">administrator</div><div class="col-10">{{application.tokenContract.administrator}}</div>
         <div class="col-2">Platform</div><div class="col-10">{{application.tokenContract.platformFee}}</div>
         <div class="col-2">Minted</div><div class="col-10">{{application.tokenContract.mintCounter}}</div>
-        <div class="row text-danger ml-4 mt-3 border-bottom mb-3 pb-2" v-for="(token, index) in application.tokenContract.tokens" :key="index">
-          <div class="col-2">NFT</div><div class="col-10">#<a href="#" class="text-small text-info" @click.prevent="loadToken(application.contractId, token.nftIndex)">{{token.nftIndex}}</a></div>
-          <div class="col-2">TokenInfo</div><div class="col-10"><a href="#" class="text-small text-info" @click.prevent="loadToken(application.contractId, token.nftIndex, token.tokenInfo.assetHash)">{{token.tokenInfo.assetHash}}</a></div>
-          <div class="col-2">Owner</div><div class="col-10">{{token.owner}}</div>
-          <div class="col-2">Offers</div><div class="col-10">{{token.offerCounter}}</div>
-          <div class="col-2"></div>
-          <div class="col-10">
-            <div v-for="(offer, index1) in token.offerHistory" :key="index1">
-              <div>{{offer}}</div>
-              <div><a href="#" @click.prevent="acceptOffer(offer, index1)">accept</a></div>
-            </div>
-          </div>
-          <div class="col-2">SaleData</div><div class="col-10">Type={{token.saleData.saleType}}, Amount {{token.saleData.buyNowOrStartingPrice}}</div>
-          <div class="col-2">Reserve</div><div class="col-10">{{token.saleData.reservePrice}}, Increment {{token.saleData.incrementPrice}}</div>
-          <div class="col-2">End time</div><div class="col-10">{{token.saleData.biddingEndTime}}</div>
+        <div class="row ml-4 mt-3 border-bottom mb-3 pb-2" v-for="(token, index) in application.tokenContract.tokens" :key="index">
+          <div class="col-2">NFT</div><div class="col-10">#{{token.nftIndex}}</div>
           <div class="col-2">Edition</div><div class="col-10">{{token.tokenInfo.edition}} / {{token.tokenInfo.maxEditions}}</div>
+          <div class="col-2">SHA(256)</div><div class="col-10">{{token.tokenInfo.assetHash}}</div>
+          <div class="col-2">Owner</div><div class="col-10">{{token.owner}}</div>
+          <div class="col-2">Sale Data</div><div class="col-10">Type={{token.saleData.saleType}}, Amount={{token.saleData.buyNowOrStartingPrice}} Reserve={{token.saleData.reservePrice}} Increment={{token.saleData.incrementPrice}}</div>
+          <div class="col-2">End time</div><div class="col-10">{{formatDate(token.saleData.biddingEndTime)}}</div>
           <div class="col-2">Block-height</div><div class="col-10">{{token.tokenInfo.date}}</div>
           <div class="col-2">Original</div><div class="col-10">{{token.tokenInfo.seriesOriginal}}</div>
+          <div class="col-2">Offers</div><div class="col-10">{{token.offerCounter}}</div>
+          <div class="col-2"></div>
+          <div class="col-10" v-if="token.offerHistory">
+            <div v-for="(offer, index1) in token.offerHistory" :key="index1">
+              <div>{{offer.amount}}</div>
+              <div>{{offer.offerer}}</div>
+              <div>{{offer.saleCycle}}</div>
+              <div>{{formatDate(offer.madeDate)}}</div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
+
 </div>
 </template>
+-(define-constant percentage-with-twodp u10000 000 000)
++(define-constant percentage-with-twodp u10000)
 
 <script>
+import moment from 'moment'
 import DeployContractFromFile from '@/components/admin/DeployContractFromFile'
 import { APP_CONSTANTS } from '@/app-constants'
 
@@ -85,6 +90,10 @@ export default {
     }
   },
   methods: {
+    formatDate: function (date) {
+      const loaclEndM = moment(date)
+      return loaclEndM.format('DD-MM-YY')
+    },
     valid: function () {
       return this.project.projectId.indexOf('replace') === -1 &&
         this.project.projectId.split('.').length === 2 &&
