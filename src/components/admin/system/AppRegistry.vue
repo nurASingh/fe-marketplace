@@ -48,7 +48,17 @@
           <div class="col-2">Sale Data</div><div class="col-10">Type={{token.saleData.saleType}}, Amount={{token.saleData.buyNowOrStartingPrice}} Reserve={{token.saleData.reservePrice}} Increment={{token.saleData.incrementPrice}}</div>
           <div class="col-2">End time</div><div class="col-10">{{formatDate(token.saleData.biddingEndTime)}}</div>
           <div class="col-2">Block-height</div><div class="col-10">{{token.tokenInfo.date}}</div>
+          <div class="col-2">Transfer Count</div><div class="col-10">{{token.transferCounter}}</div>
+          <div class="col-2">Transfer History</div><div class="col-10">{{token.transferHistoryMap}}</div>
           <div class="col-2">Original</div><div class="col-10">{{token.tokenInfo.seriesOriginal}}</div>
+          <div class="col-2">Royalties:</div>
+          <div class="col-10">
+            <div class="row" v-for="(beneficiary, index) in token.beneficiaries" :key="index">
+              <div class="col-2">{{beneficiary.username}}</div>
+              <div class="col-2">{{beneficiary.royalty}}</div>
+              <div class="col-8">{{beneficiary.chainAddress}}</div>
+            </div>
+          </div>
           <div class="col-2">Offers</div><div class="col-10">{{token.offerCounter}}</div>
           <div class="col-2"></div>
           <div class="col-10" v-if="token.offerHistory">

@@ -65,11 +65,13 @@ export default {
     if (window.eventBus && window.eventBus.$on) {
       window.eventBus.$on('rpayEvent', function (data) {
         if (data.opcode === 'configured') {
+          /**
           $self.$store.dispatch('rpayStacksContractStore/indexGaiaData').then((result) => {
             $self.result = result
           }).catch((err) => {
             $self.result = err
           })
+          **/
           $self.$store.dispatch('rpayAuthStore/fetchMyAccount').then((profile) => {
             $self.$store.dispatch('fetchRatesFromDb')
             $self.$store.dispatch('rpayStacksStore/fetchMacSkyWalletInfo').then(() => {

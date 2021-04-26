@@ -3,31 +3,31 @@
   <div class="login-sidebar__item-group login-sidebar--border-bottom">
     <div class="text2"><router-link to="/account"><b-icon class="mr-2" icon="person"></b-icon> Account</router-link></div>
     <div class="text2 mb-2"><router-link to="/wallet"><b-icon class="mr-2" icon="wallet2"></b-icon> Wallet</router-link></div>
-    <div class="text-xlight mb-0 ml-4 d-flex justify-content-between">
+    <div class="text2 mb-0 ml-4 d-flex justify-content-between">
       <span class="ml-2 pl-1">Balance</span>
-      <div><span>STX</span> <span class="text-info">{{ balance }}</span></div>
+      <div><span>STX</span> <span class="text-info text-bold">{{ balance }}</span></div>
     </div>
-    <div class="text-xlight ml-4 d-flex justify-content-between">
+    <div class="text2 ml-4 d-flex justify-content-between">
       <span class="ml-2 pl-1" ref="lndQrcode" style="white-space: nowrap;">Address </span>
       <span>{{ stxAddress }} <a href="#" @click.prevent="copyAddress" class=""><b-icon icon="files"></b-icon></a></span>
     </div>
-    <div class="text-xlight ml-4 d-flex justify-content-between">
+    <div class="text2 ml-4 d-flex justify-content-between">
       <span class="ml-2 pl-1 text-capitalize">Using {{walletMode}} Wallet</span>
     </div>
     <div v-if="walletMode === 'risidio'">
-      <div class="text-xlight mb-0 ml-4 d-flex justify-content-between">
+      <div class="text2 mb-0 ml-4 d-flex justify-content-between">
         <span class="ml-2 pl-1">Macs Balance</span>
         <div><span>STX</span> <span class="text-info">{{ balanceMac }}</span></div>
       </div>
-      <div class="text-xlight ml-4 d-flex justify-content-between">
+      <div class="text2 ml-4 d-flex justify-content-between">
         <span class="ml-2 pl-1">Macs Address</span>
         <span>{{ stxAddressMac }}</span>
       </div>
-      <div class="text-xlight mb-0 ml-4 d-flex justify-content-between">
+      <div class="text2 mb-0 ml-4 d-flex justify-content-between">
         <span class="ml-2 pl-1">Skys Balance</span>
         <div><span>STX</span> <span class="text-info">{{ balanceSky }}</span></div>
       </div>
-      <div class="text-xlight ml-4 d-flex justify-content-between">
+      <div class="text2 ml-4 d-flex justify-content-between">
         <span class="ml-2 pl-1">Skys Address</span>
         <span>{{ stxAddressSky }}</span>
       </div>
@@ -95,10 +95,8 @@ export default {
     },
     stxAddress () {
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
-      if (profile.wallet && profile.wallet.keyInfo.address) {
-        return profile.wallet.keyInfo.address.substring(0, 5) + '...' + profile.wallet.keyInfo.address.substring(profile.wallet.keyInfo.address.length - 5)
-      }
-      return 'n/a'
+      if (!profile || !profile.stxAddress) return 'n/a'
+      return profile.stxAddress.substring(0, 5) + '...' + profile.stxAddress.substring(profile.stxAddress.length - 5)
     },
     stxAddressMac () {
       const wallet = this.$store.getters[APP_CONSTANTS.KEY_MACS_WALLET]
