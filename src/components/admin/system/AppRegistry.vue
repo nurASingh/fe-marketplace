@@ -59,6 +59,16 @@
               <div class="col-8">{{beneficiary.chainAddress}}</div>
             </div>
           </div>
+          <div class="col-2">Bids</div><div class="col-10">{{token.bidCounter}}</div>
+            <div class="col-2"></div>
+            <div class="col-10">
+              <div class="row bg-dark p-2 mr-5" v-for="(bid, index1) in token.bidHistory" :key="index1">
+                <div class="col-2">Amount</div><div class="col-10">{{bid.amount}}</div>
+                <div class="col-2">Bidder</div><div class="col-10">{{bid.bidder}}</div>
+                <div class="col-2">Placed</div><div class="col-10">{{formatDate(bid.whenBid)}}</div>
+                <div class="col-2">Cycle</div><div class="col-10">{{bid.saleCycle}}</div>
+              </div>
+            </div>
           <div class="col-2">Offers</div><div class="col-10">{{token.offerCounter}}</div>
           <div class="col-2"></div>
           <div class="col-10" v-if="token.offerHistory">

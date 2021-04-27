@@ -20,6 +20,13 @@ export const APP_CONSTANTS = {
   KEY_CONTRACT: 'projectStore/getContract',
   KEY_FAVOURITES: 'projectStore/getFavourites',
 
+  KEY_BIDDING_CURRENT_BID: 'rpayPurchaseStore/getCurrentBid',
+  KEY_BIDDING_NEXT_BID: 'rpayPurchaseStore/getNextBid',
+  KEY_SALES_BUTTON_LABEL: 'rpayPurchaseStore/getSalesButtonLabel',
+  KEY_SALES_BADGE_LABEL: 'rpayPurchaseStore/getSalesBadgeLabel',
+  KEY_SALES_INFO_TEXT: 'rpayPurchaseStore/getSalesInfoText',
+  KEY_FORMATTED_BIDDING_END_TIME: 'rpayPurchaseStore/getFormattedBiddingEndTime',
+
   SET_PROFILE: 'rpayAuthStore/myProfile',
   KEY_PROFILE: 'rpayAuthStore/getMyProfile',
   KEY_EVENT_CODE: 'getEventCode',

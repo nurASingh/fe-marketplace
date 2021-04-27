@@ -119,7 +119,7 @@ export default {
         buyer: profile.username,
         asset: asset
       }
-      this.$store.dispatch('rpayStacksStore/buyNow', purchaseInfo).then((result) => {
+      this.$store.dispatch('rpayPurchaseStore/buyNow', purchaseInfo).then((result) => {
         this.result = result
         this.$store.commit('setModalMessage', 'Thank You! <br/>Transfer begun - check explorer for progress.')
         this.$root.$emit('bv::hide::modal', 'waiting-modal')
