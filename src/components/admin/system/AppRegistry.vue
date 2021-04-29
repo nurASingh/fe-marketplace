@@ -86,15 +86,11 @@
 
 </div>
 </template>
--(define-constant percentage-with-twodp u10000 000 000)
-+(define-constant percentage-with-twodp u10000)
 
 <script>
 import moment from 'moment'
 import DeployContractFromFile from '@/components/admin/DeployContractFromFile'
 import { APP_CONSTANTS } from '@/app-constants'
-
-const mac = JSON.parse(process.env.VUE_APP_WALLET_MAC || '')
 
 export default {
   name: 'AppRegistry',
@@ -104,7 +100,7 @@ export default {
   data () {
     return {
       project: {
-        projectId: mac.keyInfo.address + '.replacewithfilename'
+        projectId: process.env.VUE_APP_STACKS_CONTRACT_ADDRESS + '.' + process.env.VUE_APP_STACKS_CONTRACT_NAME
       },
       deployedProject: null
     }
