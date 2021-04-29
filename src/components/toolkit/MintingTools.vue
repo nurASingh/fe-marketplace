@@ -4,7 +4,7 @@
     <div class="w-100 text-small">
       <div v-if="contractAsset">
         <div v-if="!lastTransaction.txId">Minting - <a :href="trackingUrl()" target="_blank">track progress here...</a></div>
-        <b-alert show variant="success">Minted: Series Number {{contractAsset.nftIndex}} : Edition {{contractAsset.tokenInfo.edition}} of {{contractAsset.tokenInfo.maxEditions}}</b-alert>
+        <b-alert show variant="success">Minted: Series Number {{contractAsset.nftIndex}} : Edition {{contractAsset.tokenInfo.edition}} of {{contractAsset.tokenInfo.maxEditions}} Cost: {{contractAsset.tokenInfo.editionCost}} STX</b-alert>
       </div>
       <b-alert v-else-if="isValid" show variant="danger">
         <b-button style="width: 100%;" variant="danger" @click.prevent="mintToken()">Mint this item now.</b-button>
@@ -218,7 +218,7 @@ export default {
       } else if (contractAsset.saleData.saleType === 1) {
         return 'Buy now for ' + (contractAsset.saleData.buyNowOrStartingPrice)
       } else if (contractAsset.saleData.saleType === 2) {
-        return 'Place a bid current highest bid is ' + (contractAsset.saleData.buyNowOrStartingPrice)
+        return 'Place a bid current bid is ' + (contractAsset.saleData.buyNowOrStartingPrice)
       } else if (contractAsset.saleData.saleType === 3) {
         return 'Offers over ' + (contractAsset.saleData.reservePrice) + ' STX will be considered'
       } else {

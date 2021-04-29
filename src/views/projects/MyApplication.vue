@@ -153,8 +153,7 @@ export default {
       this.connectApplication(data) // $emit('updateEventCode', data)
     },
     connectApplication (data) {
-      const walletMode = this.$store.getters[APP_CONSTANTS.KEY_WALLET_MODE]
-      const method = (walletMode === 'risidio') ? 'rpayStacksStore/callContractRisidio' : 'rpayStacksStore/callContractBlockstack'
+      const method = (process.env.VUE_APP_NETWORK === 'local') ? 'rpayStacksStore/callContractRisidio' : 'rpayStacksStore/callContractBlockstack'
       this.$root.$emit('bv::show::modal', 'waiting-modal')
       this.$store.dispatch(method, data).then((result) => {
         this.result = result
@@ -185,8 +184,7 @@ export default {
         functionArgs: functionArgs,
         eventCode: 'disable-application'
       }
-      const walletMode = this.$store.getters[APP_CONSTANTS.KEY_WALLET_MODE]
-      const method = (walletMode === 'risidio') ? 'rpayStacksStore/callContractRisidio' : 'rpayStacksStore/callContractBlockstack'
+      const method = (process.env.VUE_APP_NETWORK === 'local') ? 'rpayStacksStore/callContractRisidio' : 'rpayStacksStore/callContractBlockstack'
       this.$root.$emit('bv::show::modal', 'waiting-modal')
       this.$store.dispatch(method, data).then((result) => {
         this.result = result
