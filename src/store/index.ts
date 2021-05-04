@@ -19,7 +19,7 @@ const STX_CONTRACT_ADDRESS = process.env.VUE_APP_STACKS_CONTRACT_ADDRESS
 const STX_CONTRACT_NAME = process.env.VUE_APP_STACKS_CONTRACT_NAME
 const STX_MINT_FUNCTION = process.env.VUE_APP_STACKS_MINT_FUNCTION
 const ETH_CONTRACT_ADDRESS = process.env.VUE_APP_NFT_CONTRACT_ADDRESS
-const RISIDIO_STACKS_API = process.env.VUE_APP_API_STACKS
+const RISIDIO_STACKS_API = process.env.VUE_APP_STACKS_API
 const RISIDIO_WALLET_MAC = process.env.VUE_APP_WALLET_MAC
 const RISIDIO_WALLET_SKY = process.env.VUE_APP_WALLET_SKY
 
@@ -125,7 +125,7 @@ const setup = function (data) {
   if (data.flow) {
     risidioCardMode = data.flow
   }
-  const useNetwork = 'testnet'
+  const NETWORK = process.env.VUE_APP_NETWORK
   // let beneficiaries = []
   const risidioBaseApi = RISIDIO_API_PATH
   const configuration = {
@@ -136,7 +136,7 @@ const setup = function (data) {
     marketConfig: marketConfig,
     selling: selling,
     minter: minter,
-    network: useNetwork,
+    network: NETWORK,
     risidioProjectId: null, // STX_CONTRACT_ADDRESS + '.' + STX_CONTRACT_NAME,
     risidioBaseApi: risidioBaseApi,
     risidioStacksApi: RISIDIO_STACKS_API,

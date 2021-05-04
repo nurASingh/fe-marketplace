@@ -100,7 +100,7 @@ export default {
   data () {
     return {
       project: {
-        projectId: process.env.VUE_APP_STACKS_CONTRACT_ADDRESS + '.' + process.env.VUE_APP_STACKS_CONTRACT_NAME
+        projectId: process.env.VUE_APP_REGISTRY_CONTRACT_ADDRESS + '.' + process.env.VUE_APP_REGISTRY_CONTRACT_NAME
       },
       deployedProject: null
     }

@@ -74,7 +74,8 @@ export default {
           **/
           $self.$store.dispatch('rpayAuthStore/fetchMyAccount').then((profile) => {
             $self.$store.dispatch('fetchRatesFromDb')
-            $self.$store.dispatch('rpayStacksStore/fetchMacSkyWalletInfo').then(() => {
+            if (profile.loggedIn) {
+              $self.$store.dispatch('rpayAuthStore/fetchAccountInfo', { stxAddress: profile.stxAddress, force: true })
               $self.$store.dispatch('projectStore/initSchema', profile).then(() => {
                 $self.configured = true
                 $self.$store.dispatch('projectStore/fetchMyProjects', profile)
@@ -82,7 +83,10 @@ export default {
                   $self.setFilter($self.$route.query)
                 }
               })
-            })
+            } else {
+              $self.configured = true
+            }
+            $self.$store.dispatch('rpayStacksStore/fetchMacSkyWalletInfo')
           })
         }
       })

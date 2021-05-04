@@ -83,6 +83,8 @@ import SideMenu from '@/components/admin/SideMenu'
 import TitleBar from '@/components/admin/TitleBar'
 import utils from '@/services/utils'
 
+const NETWORK = process.env.VUE_APP_NETWORK
+
 export default {
   name: 'CustomiseContract',
   components: {
@@ -103,7 +105,7 @@ export default {
       deployedProject: null,
       result: null,
       params: {
-        platformAddress: process.env.VUE_APP_STACKS_CONTRACT_ADDRESS,
+        platformAddress: process.env.VUE_APP_REGISTRY_CONTRACT_ADDRESS,
         tokenName: 'tokenName',
         tokenSymbol: 'tokenSymbol',
         mintPrice: '100000',
@@ -1021,6 +1023,7 @@ export default {
       this.$store.commit('setModalMessage', 'Processing request..')
       this.$root.$emit('bv::show::modal', 'waiting-modal')
       this.showWaitingModal = true
+      projectPlus.network = NETWORK
       this.$store.dispatch('rpayStacksStore/deployProjectContract', projectPlus).then((project) => {
         this.deployedProject = project
         this.$root.$emit('bv::hide::modal', 'waiting-modal')

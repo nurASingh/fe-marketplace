@@ -89,8 +89,10 @@ import {
   standardPrincipalCV
 } from '@stacks/transactions'
 
-const STACKS_API = process.env.VUE_APP_API_STACKS
-const REGISTRY_CONTRACT_ID = process.env.VUE_APP_REGISTRY_CONTRACT_ID
+const STACKS_API = process.env.VUE_APP_STACKS_API
+const REGISTRY_CONTRACT_ADDRESS = process.env.VUE_APP_REGISTRY_CONTRACT_ADDRESS
+const REGISTRY_CONTRACT_NAME = process.env.VUE_APP_REGISTRY_CONTRACT_NAME
+const NETWORK = process.env.VUE_APP_NETWORK
 
 export default {
   name: 'MyApplication',
@@ -131,8 +133,8 @@ export default {
       const owner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
       const functionArgs = [intCV(appCounter), standardPrincipalCV(owner), bufferCV(Buffer.from(project.appOrigin)), bufferCV(Buffer.from(project.gaiaFilename)), bufferCV(Buffer.from(this.projectId)), intCV(0), intCV(application.status)]
       const data = {
-        contractAddress: REGISTRY_CONTRACT_ID.split('.')[0],
-        contractName: REGISTRY_CONTRACT_ID.split('.')[1],
+        contractAddress: REGISTRY_CONTRACT_ADDRESS,
+        contractName: REGISTRY_CONTRACT_NAME,
         functionName: 'update-app',
         functionArgs: functionArgs,
         eventCode: 'connect-application'
@@ -144,8 +146,8 @@ export default {
       const owner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
       const functionArgs = [standardPrincipalCV(owner), bufferCV(Buffer.from(project.appOrigin)), bufferCV(Buffer.from(project.gaiaFilename)), bufferCV(Buffer.from(this.projectId)), intCV(0)]
       const data = {
-        contractAddress: REGISTRY_CONTRACT_ID.split('.')[0],
-        contractName: REGISTRY_CONTRACT_ID.split('.')[1],
+        contractAddress: REGISTRY_CONTRACT_ADDRESS,
+        contractName: REGISTRY_CONTRACT_NAME,
         functionName: 'register-app',
         functionArgs: functionArgs,
         eventCode: 'connect-application'
@@ -153,7 +155,7 @@ export default {
       this.connectApplication(data) // $emit('updateEventCode', data)
     },
     connectApplication (data) {
-      const method = (process.env.VUE_APP_NETWORK === 'local') ? 'rpayStacksStore/callContractRisidio' : 'rpayStacksStore/callContractBlockstack'
+      const method = (NETWORK === 'local') ? 'rpayStacksStore/callContractRisidio' : 'rpayStacksStore/callContractBlockstack'
       this.$root.$emit('bv::show::modal', 'waiting-modal')
       this.$store.dispatch(method, data).then((result) => {
         this.result = result
@@ -184,7 +186,7 @@ export default {
         functionArgs: functionArgs,
         eventCode: 'disable-application'
       }
-      const method = (process.env.VUE_APP_NETWORK === 'local') ? 'rpayStacksStore/callContractRisidio' : 'rpayStacksStore/callContractBlockstack'
+      const method = (NETWORK === 'local') ? 'rpayStacksStore/callContractRisidio' : 'rpayStacksStore/callContractBlockstack'
       this.$root.$emit('bv::show::modal', 'waiting-modal')
       this.$store.dispatch(method, data).then((result) => {
         this.result = result

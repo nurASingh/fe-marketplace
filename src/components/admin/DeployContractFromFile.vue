@@ -43,6 +43,8 @@
 <script>
 import MediaFilesUpload from '@/components/utils/MediaFilesUpload'
 
+const NETWORK = process.env.VUE_APP_NETWORK
+
 export default {
   name: 'DeployContractFromFile',
   components: {
@@ -92,6 +94,7 @@ export default {
       }
       // contractName = this.this.files[0].name.split(/\./)[1]
       const projectPlus = this.project
+      projectPlus.network = NETWORK
       projectPlus.codeBody = this.plainFile()
       this.$store.dispatch('rpayStacksStore/deployProjectContract', projectPlus).then((project) => {
         this.$emit('deployed', { error: false, project: project })

@@ -72,7 +72,7 @@ export default {
   methods: {
     copyAddress () {
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
-      utils.copyAddress(document, this.$refs.lndQrcode, profile.wallet.keyInfo.address)
+      utils.copyAddress(document, this.$refs.lndQrcode, profile.stxAddress)
       this.$notify({ type: 'info', title: 'Copied', text: 'STX Address to clipboard.' })
     }
   },
@@ -83,7 +83,8 @@ export default {
     },
     balance () {
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
-      return (profile && profile.wallet) ? profile.wallet.balance : 0
+      if (profile.accountInfo) return profile.accountInfo.balance
+      return null
     },
     balanceMac () {
       const wallet = this.$store.getters[APP_CONSTANTS.KEY_MACS_WALLET]

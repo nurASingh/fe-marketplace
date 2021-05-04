@@ -29,7 +29,7 @@ const mac = JSON.parse(process.env.VUE_APP_WALLET_MAC || '')
 const sky = JSON.parse(process.env.VUE_APP_WALLET_SKY || '')
 const contractDeployFee = 40000
 
-const STACKS_API = process.env.VUE_APP_API_STACKS
+const STACKS_API = process.env.VUE_APP_STACKS_API
 const MESH_API = process.env.VUE_APP_RISIDIO_API + '/mesh'
 let provider = 'risidio'
 if (MESH_API.indexOf('local') > -1) {

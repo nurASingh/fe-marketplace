@@ -17,7 +17,7 @@
 </template>
 
 <script>
-const STACKS_API = process.env.VUE_APP_API_STACKS
+const STACKS_API = process.env.VUE_APP_STACKS_API
 const mac = JSON.parse(process.env.VUE_APP_WALLET_MAC || '')
 const SEARCH_API = process.env.VUE_APP_RISIDIO_API + '/index'
 
