@@ -244,8 +244,6 @@ const projectStore = {
           data.project.projectId.split('.').length !== 2 ||
           !data.project.projectId.split('.')[0].startsWith('S') ||
           !data.project.owner ||
-          !data.project.appOrigin ||
-          !data.project.gaiaFilename ||
           !data.project.title ||
           !data.project.description) {
           reject(new Error('Unable to save your app - check the contract id is in the format "stx_address.app_name"'))

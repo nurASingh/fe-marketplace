@@ -20,8 +20,6 @@
                 <b-card-text>
                   <div class="mb-2 contract-id">{{project.projectId}}</div>
                   <p class="mb-2 text1">{{project.owner}}</p>
-                  <p class="mb-2 text1">{{project.gaiaFilename}}</p>
-                  <p class="mb-2 text1">Origin: {{project.appOrigin}}</p>
                   <p class="mb-2 text1">{{project.description}}</p>
                   <div v-if="contractInterface">
                     <div class="mb-2 text1"><span>Contract found on the <a class="text-info" :href="openContractUrl()" target="_blank">Stacks Blockchain</a>  <a href="#" @click="showContractData = !showContractData">show contract</a></span></div>
@@ -129,9 +127,8 @@ export default {
     },
     updateApp: function (appCounter) {
       const application = this.application
-      const project = this.$store.getters[APP_CONSTANTS.KEY_MY_PROJECT](this.projectId)
       const owner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
-      const functionArgs = [intCV(appCounter), standardPrincipalCV(owner), bufferCV(Buffer.from(project.appOrigin)), bufferCV(Buffer.from(project.gaiaFilename)), bufferCV(Buffer.from(this.projectId)), intCV(0), intCV(application.status)]
+      const functionArgs = [intCV(appCounter), standardPrincipalCV(owner), bufferCV(Buffer.from(this.projectId)), intCV(0), intCV(application.status)]
       const data = {
         contractAddress: REGISTRY_CONTRACT_ADDRESS,
         contractName: REGISTRY_CONTRACT_NAME,
@@ -142,9 +139,8 @@ export default {
       this.connectApplication(data) // $emit('updateEventCode', data)
     },
     connectApp: function () {
-      const project = this.$store.getters[APP_CONSTANTS.KEY_MY_PROJECT](this.projectId)
       const owner = this.$store.getters[APP_CONSTANTS.KEY_PROFILE].stxAddress
-      const functionArgs = [standardPrincipalCV(owner), bufferCV(Buffer.from(project.appOrigin)), bufferCV(Buffer.from(project.gaiaFilename)), bufferCV(Buffer.from(this.projectId)), intCV(0)]
+      const functionArgs = [standardPrincipalCV(owner), bufferCV(Buffer.from(this.projectId)), intCV(0)]
       const data = {
         contractAddress: REGISTRY_CONTRACT_ADDRESS,
         contractName: REGISTRY_CONTRACT_NAME,
@@ -180,8 +176,8 @@ export default {
       const application = this.application
       const functionArgs = [intCV(application.appIndex), intCV(status)]
       const data = {
-        contractAddress: this.projectId.split('.')[0],
-        contractName: 'appmap',
+        contractAddress: REGISTRY_CONTRACT_ADDRESS,
+        contractName: REGISTRY_CONTRACT_NAME,
         functionName: 'set-app-status',
         functionArgs: functionArgs,
         eventCode: 'disable-application'

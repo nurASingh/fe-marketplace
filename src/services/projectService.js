@@ -1,13 +1,14 @@
 // import { UserSession } from 'blockstack'
-import { UserSession } from '@stacks/connect'
-import { Storage } from '@stacks/storage'
 import moment from 'moment'
 import axios from 'axios'
+import { AppConfig, UserSession } from '@stacks/connect'
+import { Storage } from '@stacks/storage'
 
 const SEARCH_API_PATH = process.env.VUE_APP_RISIDIO_API + '/index'
 const PROJECT_ROOT_PATH = process.env.VUE_APP_PROJECT_ROOT_PATH
 
-const userSession = new UserSession()
+const appConfig = new AppConfig(['store_write', 'publish_data'])
+const userSession = new UserSession({ appConfig })
 const storage = new Storage({ userSession })
 
 const getNewRootFile = function () {

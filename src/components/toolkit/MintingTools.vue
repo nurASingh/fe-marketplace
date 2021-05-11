@@ -113,7 +113,6 @@ export default {
     const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
     const item = this.$store.getters[APP_CONSTANTS.KEY_MY_ITEM](this.assetHash)
     if (item.uploader !== profile.username) throw new Error('Unexpected NFT ownership error')
-    item.gaiaUsername = item.uploader
     this.$store.commit(APP_CONSTANTS.SET_RPAY_FLOW, { flow: 'minting-flow', asset: item })
     if (window.eventBus && window.eventBus.$on) {
       window.eventBus.$on('rpayEvent', function (data) {

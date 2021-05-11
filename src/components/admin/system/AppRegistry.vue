@@ -24,14 +24,14 @@
   <div class="row border-bottom mb-3 pb-2">
     <div class="col-12"><h3>All Contract Data</h3></div>
     <div class="col-2">Administrator</div><div class="col-10">{{registry.administrator}}</div>
+    <div class="col-2">Admin Contract Address</div><div class="col-10">{{registry.adminContractAddress}}</div>
+    <div class="col-2">Admin Contract Name</div><div class="col-10">{{registry.adminContractName}}</div>
     <div class="col-2">Apps Connected</div><div class="col-10">{{registry.appCounter}}</div>
   </div>
   <div class="row border-bottom mb-3 pb-2" v-for="(application, index) in registry.applications" :key="index">
     <div class="col-2">Contract Id</div><div class="col-10">{{application.contractId}}</div>
     <div class="col-2">Owner</div><div class="col-10">{{application.owner}}</div>
     <div class="col-2">App-Index</div><div class="col-10">{{application.appIndex}}</div>
-    <div class="col-2">Gaia Json</div><div class="col-10">{{application.gaiaFilename}}</div>
-    <div class="col-2">App origin</div><div class="col-10">{{application.appOrigin}}</div>
     <div class="col-2">Storage</div><div class="col-10">{{application.storageModel}}</div>
     <div class="col-2">Status</div><div class="col-10">{{application.status}}</div>
       <div class="row ml-3 p-3" v-if="application.tokenContract">
@@ -41,15 +41,29 @@
         <div class="col-2">Platform</div><div class="col-10">{{application.tokenContract.platformFee}}</div>
         <div class="col-2">Minted</div><div class="col-10">{{application.tokenContract.mintCounter}}</div>
         <div class="row ml-4 mt-3 border-bottom mb-3 pb-2" v-for="(token, index) in application.tokenContract.tokens" :key="index">
+          <div class="col-2 my-2">
+            <div v-if="gaiaAsset(token.tokenInfo.assetHash)"><img width="70px" :src="gaiaAsset(token.tokenInfo.assetHash).imageUrl"/></div>
+          </div>
+          <div class="col-10 my-2" v-if="gaiaAsset(token.tokenInfo.assetHash)">
+            <div>{{gaiaAsset(token.tokenInfo.assetHash).name}}</div>
+            <div>[#{{token.nftIndex}}] : Edition {{token.tokenInfo.edition}} / {{token.tokenInfo.maxEditions}} / {{token.tokenInfo.editionCost}}</div>
+            <div>Uploaded by:     {{gaiaAsset(token.tokenInfo.assetHash).owner}}</div>
+            <div>metaDataUrl:       {{token.tokenInfo.metaDataUrl}}</div>
+            <div class="text-info">
+              <a class="text-info pr-3 mr-3 border-right" href="#" @click.prevent="transferAsset(token.nftIndex)">transfer</a>
+              <a class="text-info pr-3 mr-3 border-right" href="#" @click.prevent="mintNextEdition(token.tokenInfo.assetHash, token.nftIndex)">mint edition {{token.editionCounter}}</a>
+              <a class="text-info pr-3 mr-3 border-right" href="#" @click.prevent="confirmBuyNow(token.tokenInfo.assetHash, token.owner)">buy now</a>
+              <a class="text-info pr-3 mr-3" href="#" @click.prevent="placeBid(token.tokenInfo.assetHash, token.nftIndex)">place bid</a>
+            </div>
+          </div>
           <div class="col-2">NFT</div><div class="col-10">#{{token.nftIndex}}</div>
+            <div class="col-2">Meta Data Url</div><div class="col-10">{{token.tokenInfo.metaDataUrl}}</div>
           <div class="col-2">Edition</div><div class="col-10">{{token.tokenInfo.edition}} / {{token.tokenInfo.maxEditions}} / {{token.tokenInfo.editionCost}}</div>
           <div class="col-2">SHA(256)</div><div class="col-10">{{token.tokenInfo.assetHash}}</div>
           <div class="col-2">Owner</div><div class="col-10">{{token.owner}}</div>
           <div class="col-2">Sale Data</div><div class="col-10">Type={{token.saleData.saleType}}, Amount={{token.saleData.buyNowOrStartingPrice}} Reserve={{token.saleData.reservePrice}} Increment={{token.saleData.incrementPrice}}</div>
           <div class="col-2">End time</div><div class="col-10">{{formatDate(token.saleData.biddingEndTime)}}</div>
           <div class="col-2">Block-height</div><div class="col-10">{{token.tokenInfo.date}}</div>
-          <div class="col-2">Transfer Count</div><div class="col-10">{{token.transferCounter}}</div>
-          <div class="col-2">Transfer History</div><div class="col-10">{{token.transferHistoryMap}}</div>
           <div class="col-2">Original</div><div class="col-10">{{token.tokenInfo.seriesOriginal}}</div>
           <div class="col-2">Royalties:</div>
           <div class="col-10">
@@ -106,6 +120,10 @@ export default {
     }
   },
   methods: {
+    gaiaAsset (hash) {
+      const gaiaAsset = this.$store.getters[APP_CONSTANTS.KEY_GAIA_ASSET_BY_HASH](hash)
+      return gaiaAsset
+    },
     formatDate: function (date) {
       const loaclEndM = moment(date)
       return loaclEndM.format('DD-MM-YY')
