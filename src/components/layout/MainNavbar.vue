@@ -1,6 +1,6 @@
 <template>
 <div class="d-flex justify-content-center">
-<b-navbar id="navbar" :style="bannerImage" toggleable="xl" class="my-nav">
+<b-navbar variant="secondary" id="navbar" :style="bannerImage" toggleable="xl" class="my-nav">
 
   <b-navbar-brand><router-link class="navbar-brand" to="/"><img :src="logo" alt="risidio-logo"/></router-link></b-navbar-brand>
   <b-navbar-toggle target="nav-collapse" @click="mobileMenuExpandClass(); noScroll();">

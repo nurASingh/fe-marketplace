@@ -1,6 +1,6 @@
 <template>
 <div v-if="content" id="homepage">
-  <div :style="bannerImage" class="pt-5 d-flex align-items-center flex-column">
+  <div :style="bannerImage" class="bg-secondary pt-5 d-flex align-items-center flex-column">
     <div class="my-auto text-white text-center">
         <prismic-rich-text class="title-container"
           :field="content.header"
