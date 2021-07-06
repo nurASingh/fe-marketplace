@@ -1,4 +1,4 @@
-# fe-marketplace
+# Risidio Xchange
 
 Risidio Auction client application. Features include:
 
