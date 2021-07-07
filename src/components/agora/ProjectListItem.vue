@@ -1,7 +1,7 @@
 <template>
 <div v-if="application">
   <div v-if="application.gaiaProject">
-    <img class="mr-3" width="30px" height="30px" :src="application.gaiaProject.imageUrl"/>
+    <img class="mr-3" width="30px" height="30px" :src="application.gaiaProject.image"/>
     <!-- <router-link class="mr-3" to="/admin-app"><b-icon icon="eye"></b-icon></router-link> -->
     <a class="text-11-500" href="#" @click.prevent="$emit('set-filter', { contractId: contractId, filter: 'application' })">{{application.gaiaProject.title}}</a>
   </div>

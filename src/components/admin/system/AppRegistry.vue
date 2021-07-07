@@ -42,7 +42,7 @@
         <div class="col-2">Minted</div><div class="col-10">{{application.tokenContract.mintCounter}}</div>
         <div class="row ml-4 mt-3 border-bottom mb-3 pb-2" v-for="(token, index) in application.tokenContract.tokens" :key="index">
           <div class="col-2 my-2">
-            <div v-if="gaiaAsset(token.tokenInfo.assetHash)"><img width="70px" :src="gaiaAsset(token.tokenInfo.assetHash).imageUrl"/></div>
+            <div v-if="gaiaAsset(token.tokenInfo.assetHash)"><img width="70px" :src="gaiaAsset(token.tokenInfo.assetHash).image"/></div>
           </div>
           <div class="col-10 my-2" v-if="gaiaAsset(token.tokenInfo.assetHash)">
             <div>{{gaiaAsset(token.tokenInfo.assetHash).name}}</div>

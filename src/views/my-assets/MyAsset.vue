@@ -100,7 +100,7 @@ export default {
     /**
     download () {
       const asset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      const extUrl = asset.imageUrl.replace('.png', '_minted.png')
+      const extUrl = asset.image.replace('.png', '_minted.png')
       imageDataURI.encodeFromURL(extUrl).then(dataUrl => {
         const image = dataUrl.replace('image/png', 'image/octet-stream')
         const link = document.createElement('a')
@@ -108,7 +108,7 @@ export default {
         link.href = image
         link.click()
       }).catch(() => {
-        imageDataURI.encodeFromURL(asset.imageUrl).then(dataUrl => {
+        imageDataURI.encodeFromURL(asset.image).then(dataUrl => {
           const image = dataUrl.replace('image/png', 'image/octet-stream')
           const link = document.createElement('a')
           link.download = asset.name + '.png'

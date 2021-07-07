@@ -100,7 +100,7 @@ export default {
         height: this.height + 'px',
         width: '100%',
         'background-repeat': 'no-repeat',
-        'background-image': `url(${this.result.imageUrl})`,
+        'background-image': `url(${this.result.image})`,
         'background-position': 'center center',
         '-webkit-background-size': 'cover',
         '-moz-background-size': 'cover',

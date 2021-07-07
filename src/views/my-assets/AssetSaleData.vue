@@ -9,7 +9,7 @@
     </div>
   </div>
   <b-card-group deck v-if="!loading">
-    <b-card :img-src="asset.imageUrl" img-alt="Card image" img-left class="p-5" style="max-height: 363px; width: 976px;">
+    <b-card :img-src="asset.image" img-alt="Card image" img-left class="p-5" style="max-height: 363px; width: 976px;">
       <b-card-text>
         <div class="row">
           <div class="col-4">

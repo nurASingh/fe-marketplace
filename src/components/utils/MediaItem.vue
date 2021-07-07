@@ -70,7 +70,7 @@ export default {
     bannerImage () {
       if (this.nftMedia) {
         const item = this.$store.getters['myItemStore/myItem'](this.nftMedia.artworkFile.dataHash)
-        return this.$store.getters[APP_CONSTANTS.KEY_WAITING_IMAGE](item.nftMedia.imageUrl)
+        return this.$store.getters[APP_CONSTANTS.KEY_WAITING_IMAGE](item.image)
       }
       return this.$store.getters[APP_CONSTANTS.KEY_WAITING_IMAGE](null)
     }
