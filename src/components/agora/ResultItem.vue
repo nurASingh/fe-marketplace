@@ -3,7 +3,7 @@
   <div v-if="!video">
     <div @mouseover="transme()" @mouseout="transbackme()" :style="dimensions()" class="">
       <router-link :style="'opacity: ' + opacity + ';'" style="padding: 3px; position: absolute; top: 5px; right: 25px; z-index: 100; width: 40px; height: 40px;" :to="assetUrl"><b-icon style="width: 40px; height: 40px;" icon="arrow-right-circle"/></router-link>
-      <media-item :videoOptions="videoOptions" :nftMedia="result.nftMedia" :targetItem="targetItem()"/>
+      <media-item :videoOptions="videoOptions" :attributes="result.attributes" :targetItem="targetItem()"/>
     </div>
   </div>
   <div v-else>
@@ -153,9 +153,9 @@ export default {
         showMeta: false,
         controls: true,
         aspectRatio: '1:1',
-        poster: (this.result.nftMedia.coverImage) ? this.result.nftMedia.coverImage.fileUrl : null,
+        poster: (this.result.attributes.coverImage) ? this.result.attributes.coverImage.fileUrl : null,
         sources: [
-          { src: this.result.nftMedia.artworkFile.fileUrl, type: this.result.nftMedia.artworkFile.type }
+          { src: this.result.attributes.artworkFile.fileUrl, type: this.result.attributes.artworkFile.type }
         ],
         fluid: true
       }
@@ -163,8 +163,8 @@ export default {
     },
     coverImageSrc () {
       const gaiaAsset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.result.assetHash)
-      if (gaiaAsset && gaiaAsset.nftMedia && gaiaAsset.nftMedia.coverImage && gaiaAsset.nftMedia.coverImage.fileUrl) {
-        return gaiaAsset.nftMedia.coverImage.fileUrl
+      if (gaiaAsset && gaiaAsset.attributes && gaiaAsset.attributes.coverImage && gaiaAsset.attributes.coverImage.fileUrl) {
+        return gaiaAsset.attributes.coverImage.fileUrl
       }
       return this.missingCoverImage
     },

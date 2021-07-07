@@ -160,8 +160,8 @@ export default {
   computed: {
     coverImageSrc () {
       const gaiaAsset = this.$store.getters[APP_CONSTANTS.KEY_ASSET](this.assetHash)
-      if (gaiaAsset && gaiaAsset.nftMedia && gaiaAsset.nftMedia.coverImage && gaiaAsset.nftMedia.coverImage.fileUrl) {
-        return gaiaAsset.nftMedia.coverImage.fileUrl
+      if (gaiaAsset && gaiaAsset.attributes && gaiaAsset.attributes.coverImage && gaiaAsset.attributes.coverImage.fileUrl) {
+        return gaiaAsset.attributes.coverImage.fileUrl
       }
       return this.missingCoverImage
     },
