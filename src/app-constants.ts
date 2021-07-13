@@ -29,7 +29,6 @@ export const APP_CONSTANTS = {
 
   SET_PROFILE: 'rpayAuthStore/myProfile',
   KEY_PROFILE: 'rpayAuthStore/getMyProfile',
-  KEY_ACCOUNT_INFO: 'rpayAuthStore/getAccountInfo',
   KEY_ACCOUNTS: 'rpayAuthStore/getAccounts',
 
   KEY_EVENT_CODE: 'getEventCode',
