@@ -153,7 +153,7 @@ export default {
         showMeta: false,
         controls: true,
         aspectRatio: '1:1',
-        poster: (this.result.attributes.coverImage) ? this.result.attributes.coverImage.fileUrl : null,
+        poster: this.result.image,
         sources: [
           { src: this.result.attributes.artworkFile.fileUrl, type: this.result.attributes.artworkFile.type }
         ],

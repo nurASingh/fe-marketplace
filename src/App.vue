@@ -93,21 +93,10 @@ export default {
     }
 
     let resizeTimer
-    /**
-    const configuration = this.$store.getters[APP_CONSTANTS.KEY_RPAY_CONFIGURATION]
-    if (window.eventBus && window.eventBus.$on) {
-      window.eventBus.$on('rpayEvent', function (data) {
-        if (data.opcode === 'configured') {
-          $self.$store.dispatch('rpayStacksContractStore/fetchContractData', configuration)
-        }
-      })
-    }
-    **/
     window.addEventListener('resize', function () {
       clearTimeout(resizeTimer)
       resizeTimer = setTimeout(function () {
         $self.$store.commit('setWinDims')
-        // $self.componentKey += 1
       }, 200)
     })
     this.$prismic.client.getSingle('homepage').then(document => {
