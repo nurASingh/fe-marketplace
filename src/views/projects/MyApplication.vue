@@ -21,9 +21,9 @@
                   <div class="mb-2 contract-id">{{project.projectId}}</div>
                   <p class="mb-2 text1">{{project.owner}}</p>
                   <p class="mb-2 text1">{{project.description}}</p>
-                  <div v-if="contractInterface">
+                  <div v-if="application">
                     <div class="mb-2 text1"><span>Contract found on the <a class="text-info" :href="openContractUrl()" target="_blank">Stacks Blockchain</a>  <a href="#" @click="showContractData = !showContractData">show contract</a></span></div>
-                    <div class="mb-2 text1" v-if="application">
+                    <div class="mb-2 text1">
                       Application is registered with the marketplace (#{{application.appCounter}})
                       <div class="mb-2 text1">App Status: {{application.status}}</div>
                       <div class="mb-2 text1">
@@ -36,14 +36,14 @@
                          <a href="#" @click.prevent="changeApplicationStatus(0)">enable</a>
                       </div>
                     </div>
-                    <div class="mt-4 mb-2 text1" v-else>
-                      <b-button @click.prevent="connectApp()" variant="info">Connect App to Marketplace</b-button>
-                    </div>
                     <div v-if="showContractData">
                       <pre class="source-code">{{project.codeBody}}</pre>
                     </div>
                   </div>
                   <div class="mt-4 mb-2 text1" v-else>
+                    <div class="mt-4 mb-2 text1" v-if="contractInterface">
+                      <b-button @click.prevent="connectApp()" variant="info">Connect App to Marketplace</b-button>
+                    </div>
                     <b-button @click.prevent="deleteApp(project)" class="text-info" variant="outline-info">Delete Application</b-button>
                   </div>
                 </b-card-text>
@@ -51,23 +51,21 @@
             </b-col>
           </b-row>
         </b-card>
-        <div class="w-75 mt-4 text-light">
-          <div v-if="contractInterface">
-          </div>
-          <div class="my-4" v-else>
-            <div>
-              <p class="text-12-700">Deploy a contract</p>
-              <p class="text2">Click 'I need a contract' to customise a smart contract template and deploy to the Stacks blockchain.
-                If you have a contract which conforms to the interface click 'I have a contract'.</p>
-              <b-button class="mr-3" :to="'/upload-contract/' + project.projectId" variant="info">I Have a Contract</b-button>
-              <b-button :to="'/customise-contract/' + project.projectId" variant="outline-info" class="text-info">I Need a Contract</b-button>
-            </div>
-          </div>
+        <div class="w-75 mt-4 text-light mt-4">
           <div class="text-light" v-if="application">
             <div>{{application.baseTokenUri}}</div>
             <div v-for="(asset, index) in application.assets" :key="index">
               <pre>Owner: {{asset.owner}}</pre>
               <pre>Asset hash: {{asset.assetHash}}</pre>
+            </div>
+          </div>
+          <div v-else>
+            <div v-if="!contractInterface">
+              <p class="text-12-700">Deploy a contract</p>
+              <p class="text2">Click 'I need a contract' to customise a smart contract template and deploy to the Stacks blockchain.
+                If you have a contract which conforms to the interface click 'I have a contract'.</p>
+              <b-button class="mr-3" :to="'/upload-contract/' + project.projectId" variant="info">I Have a Contract</b-button>
+              <b-button :to="'/customise-contract/' + project.projectId" variant="outline-info" class="text-info">I Need a Contract</b-button>
             </div>
           </div>
         </div>
@@ -219,6 +217,11 @@ export default {
         }
       }
       return project
+    },
+    registration () {
+      const registry = this.$store.getters[APP_CONSTANTS.KEY_REGISTRY](this.projectId)
+      const app = registry.applications.find((o) => o.contractId === this.projectId)
+      return app
     },
     application () {
       let application = this.$store.getters[APP_CONSTANTS.KEY_APPLICATION_FROM_REGISTRY_BY_CONTRACT_ID](this.projectId)
