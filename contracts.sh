@@ -8,7 +8,7 @@ fi
 
 printf "\n====================================================================== \n";
 printf "Info: Testnet \n";
-curl -X GET https://stacks-node-api.regtest.stacks.co/v2/info
+curl -X GET https://stacks-node-api.testnet.stacks.co/v2/info
 
 printf "\n====================================================================== \n";
 printf "Info: Xenon \n";
