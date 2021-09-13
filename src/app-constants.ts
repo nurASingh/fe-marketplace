@@ -39,9 +39,6 @@ export const APP_CONSTANTS = {
   KEY_MACS_WALLET: 'rpayStacksStore/getMacsWallet',
   KEY_SKYS_WALLET: 'rpayStacksStore/getSkysWallet',
 
-  KEY_ASSET_TRANSACTIONS: 'rpayStacksContractStore/getAssetTransactions',
-  KEY_ASSET_LAST_TRANSACTION: 'rpayStacksContractStore/getAssetLastTransaction',
-  KEY_ASSET_TRANSACTION: 'rpayStacksContractStore/getAssetTransaction',
   KEY_TARGET_FILE_FOR_DISPLAY: 'rpayStacksContractStore/getTargetFileForDisplay',
   KEY_GAIA_ASSET_BY_HASH: 'rpayStacksContractStore/getGaiaAssetByHash',
   KEY_GAIA_ASSETS: 'rpayStacksContractStore/getGaiaAssets',

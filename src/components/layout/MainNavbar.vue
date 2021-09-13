@@ -147,7 +147,7 @@ export default {
     },
     showAdmin () {
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
-      return profile.showAdmin || location.origin.indexOf('local') > -1
+      return profile.superAdmin || location.origin.indexOf('local') > -1
     },
     balance () {
       const profile = this.$store.getters[APP_CONSTANTS.KEY_PROFILE]
